@@ -1,38 +1,24 @@
 import React from "react";
 import styles from "./Product.module.scss";
+import type { IProduct } from "../../store";
 
-interface ProductImage {
-  id: number;
-  url: string;
-  altText?: string;
-}
 
-interface ProductTranslation {
-  name: string;
-  description?: string;
-}
 
 interface ProductProps {
-  product: {
-    id: number;
-    price: number;
-    priceSale: number;
-    images: ProductImage[];
-    translation: ProductTranslation;
-  };
+  product: IProduct
 }
 
 const Product: React.FC<ProductProps> = ({ product }) => {
-  const { price, priceSale, images, translation } = product;
+  const { price, priceSale, images } = product;
 
   return (
     <div className={styles.product}>
       <div className={styles.imageWrapper}>
-        {images.length > 0 && (
-          <img src={images[0].url} alt={images[0].altText || translation.name} />
+        {images && images.length > 0 && (
+          <img src={images[0].url} alt={images[0].altText} />
         )}
       </div>
-      <h3 className={styles.name}>{translation.name}</h3>
+
       <p className={styles.price}>
         {priceSale < price ? (
           <>

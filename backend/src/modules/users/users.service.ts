@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, Role, User } from '@prisma/client';
+import { Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { UserResponseMapper } from './dto/user-resp-mapper';
 import { BaseUserDto } from './dto/base-user.dto';

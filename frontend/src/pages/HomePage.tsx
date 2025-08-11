@@ -1,8 +1,11 @@
+import Products from "../modules/products/Products"
 
 
 const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <div>
+      <Products/>
+    </div>
   )
 }
 

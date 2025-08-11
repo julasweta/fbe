@@ -4,6 +4,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { ProductsModule } from './modules/products/products.module';
+import { LanguagesModule } from './modules/languages/languages.module';
+import { ProductTranslationsModule } from './modules/product-translations/product-translations.module';
 
 @Module({
   imports: [
@@ -12,6 +15,9 @@ import { ConfigModule } from '@nestjs/config';
     }),
     AuthModule,
     UsersModule,
+    ProductsModule,
+    LanguagesModule,
+    ProductTranslationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
