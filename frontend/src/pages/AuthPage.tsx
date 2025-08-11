@@ -1,10 +1,12 @@
+
 import { LoginForm } from "../modules/auth/LoginForm";
+import styles from "./pages.module.scss";
 
 export default function AuthPage() {
 
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className={styles.centerWrapper}>
       <LoginForm />
     </div>
   );

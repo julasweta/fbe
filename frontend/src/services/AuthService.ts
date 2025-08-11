@@ -1,13 +1,12 @@
 import type { IAuth } from "../interfaces/IAuth";
-import type { IRegister } from "../interfaces/IRegister";
 import type { ITokens } from "../interfaces/ITokens";
 import type { IUser } from "../interfaces/IUser";
 import { useAuthStore } from "../store";
 import { apiService, type IRes } from "./ApiServices";
 
 const authService = {
-  register: (user: IRegister): Promise<IRes<IRegister>> =>
-    apiService.post("register", user),
+  register: (user: IUser): Promise<IRes<IUser>> =>
+    apiService.post("auth/register", user),
 
   async login(authData: IAuth): Promise<IUser> {
     try {

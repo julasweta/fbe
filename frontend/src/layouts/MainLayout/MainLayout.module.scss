@@ -1,0 +1,15 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f7fa; // світлий фон для всього лейауту
+}
+
+.content {
+  flex: 1; // займати весь вільний простір
+  max-width: 1200px;
+  margin: 0 auto; // центр по горизонталі
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}

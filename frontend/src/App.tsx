@@ -1,20 +1,28 @@
+// App.js
 import { Routes, Route, Navigate } from "react-router-dom";
-import { publicRoutes, privateRoutes } from "./routes/routes";
-import MainLayout from "./layouts/MainLayout";
-import { useAuthStore } from "./store/useAuthStore";
+import { publicRoutes, privateRoutes, notFoundRoute } from "./routes/routes";
+import MainLayout from "./layouts/MainLayout/MainLayout";
 import { useThemeStore } from "./store/useThemeStore";
+import { useAuthStore } from "./store";
+import "./App.css";
 
 export default function App() {
-  const { accessToken } = useAuthStore();
   const { theme } = useThemeStore();
+  const { accessToken } = useAuthStore();
 
   return (
-    <div className={`${theme} `}>
+    <div className={`${theme}`}>
       <Routes>
+        {/* Публічні роути - доступні всім */}
         {publicRoutes.map(({ path, element }) => (
-          <Route key={path} path={path} element={element} />
+          <Route
+            key={path}
+            path={path}
+            element={<MainLayout>{element}</MainLayout>}
+          />
         ))}
 
+        {/* Приватні роути - тільки для залогінених */}
         {privateRoutes.map(({ path, element }) => (
           <Route
             key={path}
@@ -28,6 +36,12 @@ export default function App() {
             }
           />
         ))}
+
+        {/* 404 сторінка - має бути в кінці */}
+        <Route
+          path={notFoundRoute.path}
+          element={notFoundRoute.element}
+        />
       </Routes>
     </div>
   );

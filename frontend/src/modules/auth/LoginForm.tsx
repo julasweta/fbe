@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import classNames from "classnames";
 import styles from "./LoginForm.module.scss";
@@ -22,7 +22,7 @@ export const LoginForm = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard");
+      navigate("/");
     }
   }, [user, navigate]);
 
@@ -75,19 +75,10 @@ export const LoginForm = () => {
         <Button type="submit" disabled={loading}>
           {loading ? "Signing In..." : "Sign In"}
         </Button>
-        <p className={styles.infoText}>
-          This is a test authentication.
-          Enter
-          <strong> UserName</strong>: emilys
-          <strong> Password</strong>: emilyspass
-          <p>_</p>
-          Це тестова авторизація.
-          Для входу введіть 
-          <strong> UserName</strong>: emilys
-          <strong> Password</strong>: emilyspass
-          <p>_</p>
-          <a href="https://github.com/julasweta/react-dashboard-starter-kit " target="_blank" rel="noopener noreferrer" className={styles.link}>  Link to GitHub Project  </a>
-        </p>
+        
+        <p className={styles.registerPrompt}>
+          Don't have an account? <Link to="/register">Register here</Link>  </p>
+    
       </form>
     </div>
   );

@@ -1,0 +1,223 @@
+/* HEADER */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 100;
+  wIdth: 100%;
+  padding: 0 1rem;
+}
+
+.authBlock {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userName {
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+}
+
+.authButton {
+  background-color: #0070f3;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+
+  &:hover,
+  &:focus {
+    background-color: #005bb5;
+  }
+}
+
+/* HEADER MENU  */
+
+
+.headerMenu {
+  position: relative;
+  background: #fff;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    background: #fff;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.menuListOpen {
+  max-height: 100vh; // достатня висота, щоб показати всі пункти
+
+  @media (min-width: 769px) {
+    max-height: none;
+  }
+}
+
+.menuItem {
+  position: relative;
+
+  @media (max-width: 768px) {
+    border-bottom: 1px solid #ddd;
+  }
+}
+
+.menuLink {
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+
+  &:hover,
+  &:focus {
+    color: #0070f3;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+    padding: 1rem;
+  }
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 1000;
+
+  @media (max-width: 768px) {
+    position: relative;
+    box-shadow: none;
+    min-width: auto;
+  }
+}
+
+.submenuItem {
+  padding: 0;
+
+  a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #555;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      background-color: #f0f0f0;
+      color: #0070f3;
+    }
+  }
+}
+
+.arrow {
+  border: solid #333;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  margin-left: 5px;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+
+  /* Повертаємо стрілку вниз, якщо підменю відкрито */
+  &[aria-expanded="true"],
+  &.open {
+    transform: rotate(-135deg);
+  }
+}
+
+/* Бургер меню */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 25px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 1rem;
+  z-index: 1100;
+
+  span {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    border-radius: 2px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+  }
+
+  &.open span:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  &.open span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  &.open span:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+}
+
+/* Ховаємо меню на мобільних, якщо не відкрито */
+@media (max-width: 768px) {
+  .menuList {
+    display: flex;
+  }
+}

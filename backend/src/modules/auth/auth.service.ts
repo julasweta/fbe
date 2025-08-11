@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create.users.dto';
+import { UserResponseMapper } from '../users/dto/user-resp-mapper';
 
 @Injectable()
 export class AuthService {
@@ -93,7 +94,8 @@ export class AuthService {
       },
     });
 
-    return this.login(user);
+    const currentUser =await this.login(user);
+    return UserResponseMapper.toResUserMapper(currentUser);
   }
 
   logout(userId) {
