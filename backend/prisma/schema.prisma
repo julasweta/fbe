@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  first_name   String
+  last_name    String
+  email        String?   @unique
+  password     String
+  phone        String?
+  address      String?
+  city         String?
+  country      String?
+  postalCode   String?
+  dateOfBirth  DateTime?
+  role         Role      @default(USER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  accessToken  String?
+  refreshToken String?
+
+  cart   Cart?
+  orders Order[]
+}
+
+enum Role {
+  ADMIN
+  USER
+  CUSTOMER
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  sku       String   @unique
+  price     Float
+  priceSale Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations ProductTranslation[]
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  images       ProductImage[] // додано зв’язок з картинками
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  url       String // URL або шлях до зображення
+  altText   String? // альтернативний текст (опціонально)
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Language {
+  id   Int    @id @default(autoincrement())
+  code String @unique
+  name String
+
+  productTranslations ProductTranslation[]
+}
+
+model ProductTranslation {
+  id         Int      @id @default(autoincrement())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int
+  language   Language @relation(fields: [languageId], references: [id])
+  languageId Int
+
+  name        String
+  description String?
+
+  @@unique([productId, languageId])
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int        @unique
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  cartId    Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    Int
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(1)
+  price     Float // ціна продукту на момент замовлення
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELED
+}

@@ -1,0 +1,112 @@
+.fileUploadContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+
+  &.light {
+    --background-color: #f9f9f9;
+    --border-color: #ccc;
+    --text-color: #333;
+    --subtext-color: #777;
+    --file-item-bg: #fff;
+    --file-item-border: #ddd;
+    --remove-button-color: #d9534f;
+    --remove-button-hover: #c9302c;
+    --drag-active-bg: #e0f7fa;
+    --drag-active-border: #00acc1;
+  }
+
+  &.dark {
+    --background-color: #f8f7f7;
+    --border-color: #555;
+    --text-color: #131111;
+    --subtext-color: #aaa;
+    --file-item-bg: #2a2a2a;
+    --file-item-border: #444;
+    --remove-button-color: #ff6b6b;
+    --remove-button-hover: #ff4d4d;
+    --drag-active-bg: #2e4a4f;
+    --drag-active-border: #00d4d4;
+  }
+}
+
+.uploadWrapper {
+  border: 2px dashed var(--border-color);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  background-color: var(--background-color);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+
+  &.dragActive {
+    background-color: var(--drag-active-bg);
+    border-color: var(--drag-active-border);
+  }
+    &.dark{
+    background-color: var(--background-color);
+    }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.text {
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.subtext {
+  font-size: 12px;
+  color: var(--subtext-color);
+  display: block;
+  margin-top: 5px;
+}
+
+.filesAndButtonWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.fileList {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin: 0 0 10px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px;
+  background: var(--file-item-bg);
+  margin-bottom: 6px;
+  border: 1px solid var(--file-item-border);
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--text-color);
+  &.dark{
+    background: white;
+    color: var(--text-color);
+  }
+}
+
+.removeButton {
+  background: transparent;
+  border: none;
+  color: var(--remove-button-color);
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+
+  &:hover {
+    color: var(--remove-button-hover);
+  }
+}
