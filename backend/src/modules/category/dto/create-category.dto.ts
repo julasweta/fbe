@@ -10,4 +10,9 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsInt()
   parentId?: number;
+
+  @ApiProperty({ example: 'dress', description: 'Slug for SEO' })
+  @IsOptional()
+  @IsString()
+  slug?: string;
 }

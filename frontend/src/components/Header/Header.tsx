@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store";
-import HeaderMenu from "./HeaderMenu";
+import HeaderMenu from "./HeaderMenu/HeaderMenu";
 import styles from "./Header.module.scss";
 import { useEffect } from "react";
 

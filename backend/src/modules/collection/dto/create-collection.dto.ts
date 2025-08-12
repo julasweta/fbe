@@ -10,4 +10,9 @@ export class CreateCollectionDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ example: 'summer-collection', description: 'Slug для SEO' })
+  @IsOptional()
+  @IsString()
+  slug?: string;
 }

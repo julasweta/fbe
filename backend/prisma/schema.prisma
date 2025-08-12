@@ -77,7 +77,7 @@ model Collection {
   description String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  
+  slug        String?    @unique // для SEO, може бути null
   products    ProductCollection[]
 }
 
@@ -98,7 +98,7 @@ model Category {
   parentId    Int?        // для підкатегорії посилається на батьківську категорію
   parent      Category?   @relation("CategoryToSubcategory", fields: [parentId], references: [id])
   subcategories Category[] @relation("CategoryToSubcategory")
-  
+  slug        String?     @unique // для SEO, може бути null
   products    Product[]   // товари, що належать до категорії
 }
 

@@ -1,30 +1,35 @@
-import React, { useState } from "react";
-import styles from "./Header.module.scss";
+import React, { useEffect, useState } from "react";
+import styles from "./HeaderMenu.module.scss";
+import CategoriesSubmenu from "./CategoriesSubmenu";
+import CollectionsSubmenu from "./CollectionsSubmenu";
+import { useCategoryStore } from "../../../store/useCategoryStore";
+import { useCollectionStore } from "../../../store/useCollectionStore";
 
 interface MenuItem {
   label: string;
   link?: string;
-  submenu?: MenuItem[];
+  submenu?: boolean; // Якщо true — є підменю
 }
-
-const menuItems: MenuItem[] = [
-  { label: "Головна", link: "/" },
-  {
-    label: "Магазин",
-    submenu: [
-      { label: "Літня колекія", link: "/group/summer" },
-      { label: "Зимова колекція", link: "/group/winter" },
-      { label: "Весняна колекція", link: "/group/spring" },
-    ],
-  },
-  { label: "Про нас", link: "about" },
-  { label: "Контакти", link: "/contact" },
-];
 
 const HeaderMenu: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubmenuIndex, setOpenSubmenuIndex] = useState<number | null>(null);
+
+  const { categories, fetchCategories } = useCategoryStore();
+  const { collections, fetchCollections } = useCollectionStore();
+
+  useEffect(() => {
+    fetchCategories();
+    fetchCollections();
+  }, [fetchCategories, fetchCollections]);
+
+  const menuItems: MenuItem[] = [
+    { label: "Головна", link: "/" },
+    { label: "Магазин", submenu: true },
+    { label: "Про нас", link: "about" },
+    { label: "Контакти", link: "/contact" },
+  ];
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -32,11 +37,7 @@ const HeaderMenu: React.FC = () => {
   };
 
   const toggleSubmenu = (index: number) => {
-    if (openSubmenuIndex === index) {
-      setOpenSubmenuIndex(null);
-    } else {
-      setOpenSubmenuIndex(index);
-    }
+    setOpenSubmenuIndex(openSubmenuIndex === index ? null : index);
   };
 
   return (
@@ -51,10 +52,7 @@ const HeaderMenu: React.FC = () => {
         <span />
       </button>
 
-      <ul
-        className={`${styles.menuList} ${mobileMenuOpen ? styles.menuListOpen : ""
-          }`}
-      >
+      <ul className={`${styles.menuList} ${mobileMenuOpen ? styles.menuListOpen : ""}`}>
         {menuItems.map((item, index) => (
           <li
             key={index}
@@ -76,13 +74,18 @@ const HeaderMenu: React.FC = () => {
 
                 {(activeIndex === index || openSubmenuIndex === index) && (
                   <ul className={styles.submenu}>
-                    {item.submenu.map((subItem, subIndex) => (
-                      <li key={subIndex} className={styles.submenuItem}>
-                        <a href={subItem.link} className={styles.submenuLink}>
-                          {subItem.label}
-                        </a>
-                      </li>
-                    ))}
+                    <li className={styles.submenuItem}>
+                      <span className={styles.submenuLink}>Категорії</span>
+                      <ul className={styles.subsubmenu}>
+                        <CategoriesSubmenu categories={categories} />
+                      </ul>
+                    </li>
+                    <li className={styles.submenuItem}>
+                      <span className={styles.submenuLink}>Колекції</span>
+                      <ul className={styles.subsubmenu}>
+                        <CollectionsSubmenu collections={collections} />
+                      </ul>
+                    </li>
                   </ul>
                 )}
               </>
