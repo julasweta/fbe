@@ -19,6 +19,9 @@ const HeaderMenu: React.FC = () => {
   const { categories, fetchCategories } = useCategoryStore();
   const { collections, fetchCollections } = useCollectionStore();
 
+  console.log("Categories:", categories);
+  console.log("Collections:", collections);
+
   useEffect(() => {
     fetchCategories();
     fetchCollections();

@@ -97,7 +97,6 @@ export const useProductStore = create<ProductState>((set) => ({
   error: null,
 
   setProducts: (products) => {
-    console.log('Setting products in store:', products);
     set({ products, error: null });
   },
 
