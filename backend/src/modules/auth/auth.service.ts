@@ -94,7 +94,7 @@ export class AuthService {
       },
     });
 
-    const currentUser =await this.login(user);
+    const currentUser = await this.login(user);
     return UserResponseMapper.toResUserMapper(currentUser);
   }
 

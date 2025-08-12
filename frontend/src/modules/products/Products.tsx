@@ -1,42 +1,30 @@
-// Products.tsx
 import { useEffect, useState } from "react";
 import { useProductStore } from "../../store/useProductStore";
-import Product from "./Product";
 import styles from "./Products.module.scss";
-import { productService } from "../../services/ProductService";
+import Card from "./Card";
 
 const Products = () => {
-  const { products } = useProductStore();
+  const { products, fetchProducts } = useProductStore(); // Додано fetchProducts
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Завантажуємо продукти при монтуванні компонента
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       setIsLoading(true);
       setError(null);
-
       try {
-        await productService.getAll();
-        console.log('Products loaded successfully');
+        await fetchProducts(); // Викликаємо метод зі стору
+        console.log("Products loaded successfully from store");
       } catch (err) {
-        console.error('Failed to load products:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        console.error("Failed to load products:", err);
+        setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProducts();
-  }, []); // Пустий масив залежностей - виконується один раз при монтуванні
-
-  // Додаємо дебаг інформацію
-  console.log('Products component render:', {
-    productsCount: products.length,
-    isLoading,
-    error,
-    products: products.slice(0, 2) // Показуємо перші 2 продукти для дебагу
-  });
+    loadProducts();
+  }, [fetchProducts]); // Додано fetchProducts як залежність
 
   if (isLoading) {
     return (
@@ -79,11 +67,11 @@ const Products = () => {
   }
 
   return (
-    <div className={styles.productsGrid}>
+    <div className={styles.productsContainer}>
       <h2>Продукти ({products.length})</h2>
-      <div className={styles.grid}>
+      <div className={styles.productsContainer}>
         {products.map((product) => (
-          <Product key={product.id} product={product} />
+          <Card key={product.id} product={product} />
         ))}
       </div>
     </div>

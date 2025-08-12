@@ -15,6 +15,50 @@ export interface IProductTranslation {
   description?: string;
 }
 
+export enum ESize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  XXL = "XXL"
+}
+
+export enum EColor {
+  RED = "RED",
+  BLUE = "BLUE",
+  BLACK = "BLACK",
+  WHITE = "WHITE",
+  GREEN = "GREEN",
+  YELLOW = "YELLOW"
+}
+
+export const sizeLabels: Record<ESize, string> = {
+  [ESize.XS]: "Дуже малий",
+  [ESize.S]: "Малий",
+  [ESize.M]: "Середній",
+  [ESize.L]: "Великий",
+  [ESize.XL]: "Дуже великий",
+  [ESize.XXL]: "Максимальний"
+};
+
+export const colorLabels: Record<EColor, string> = {
+  [EColor.RED]: "Червоний",
+  [EColor.BLUE]: "Синій",
+  [EColor.BLACK]: "Чорний",
+  [EColor.WHITE]: "Білий",
+  [EColor.GREEN]: "Зелений",
+  [EColor.YELLOW]: "Жовтий"
+};
+
+
+export interface IProductFeature {
+  id: number;
+  text: string;
+  order?: number | null;
+}
+
+
 export interface IProduct {
   id: number;
   sku: string;
@@ -24,6 +68,9 @@ export interface IProduct {
   updatedAt: string;
   images?: IProductImage[];
   translations?: IProductTranslation[];
+  features?: IProductFeature[];
+  sizes: ESize[];   // масив enum з Prisma
+  colors: EColor[]; // масив enum з Prisma
 }
 
 interface ProductState {
@@ -44,13 +91,13 @@ interface ProductState {
 }
 
 // Стор
-export const useProductStore = create<ProductState>((set, get) => ({
+export const useProductStore = create<ProductState>((set) => ({
   products: [],
   isLoading: false,
   error: null,
 
   setProducts: (products) => {
-    console.log('Setting products in store:', products.length);
+    console.log('Setting products in store:', products);
     set({ products, error: null });
   },
 

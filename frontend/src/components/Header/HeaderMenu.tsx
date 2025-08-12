@@ -10,11 +10,11 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { label: "Головна", link: "/" },
   {
-    label: "Послуги",
+    label: "Магазин",
     submenu: [
-      { label: "Веб-розробка", link: "/services/web" },
-      { label: "Мобільні додатки", link: "/services/mobile" },
-      { label: "UI/UX дизайн", link: "/services/design" },
+      { label: "Літня колекія", link: "/group/summer" },
+      { label: "Зимова колекція", link: "/group/winter" },
+      { label: "Весняна колекція", link: "/group/spring" },
     ],
   },
   { label: "Про нас", link: "about" },

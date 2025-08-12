@@ -1,5 +1,4 @@
-import { BaseUserDto } from "./base-user.dto";
-
+import { BaseUserDto } from './base-user.dto';
 
 export class UserResponseMapper {
   static toResUserMapper(data: Partial<BaseUserDto>): Partial<BaseUserDto> {
@@ -14,7 +13,7 @@ export class UserResponseMapper {
       city: data?.city,
       country: data?.country,
       postalCode: data?.postalCode,
-      dateOfBirth: data?.dateOfBirth
+      dateOfBirth: data?.dateOfBirth,
     };
   }
 

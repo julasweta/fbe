@@ -8,5 +8,4 @@ import { PrismaService } from '../../../prisma/prisma.service';
   providers: [LanguagesService, PrismaService],
   exports: [LanguagesService],
 })
-export class LanguagesModule { }
-
+export class LanguagesModule {}

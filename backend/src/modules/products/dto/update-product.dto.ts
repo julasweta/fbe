@@ -1,22 +1,18 @@
-import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, MinLength, IsOptional, IsNumber, IsPositive } from "class-validator";
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CreateProductFeatureDto } from '../../product-feature/dto/create-product-feature.dto';
 
 export class UpdateProductDto {
-  @ApiPropertyOptional({ example: 'SKU-12345', description: 'Унікальний код продукту' })
-  @IsString()
-  @MinLength(1)
-  @IsOptional()
-  sku?: string;
+  // інші поля...
 
-  @ApiPropertyOptional({ example: 100.00, description: 'Ціна продукту' })
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
+  @ApiPropertyOptional({
+    type: [CreateProductFeatureDto], // замість UpdateProductFeatureDto
+    description: 'Оновлення пунктів опису продукту (повне перезаписування)',
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateProductFeatureDto)
   @IsOptional()
-  price?: number;
-
-  @ApiPropertyOptional({ example: 80.00, description: 'Ціна зі знижкою' })
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
-  @IsOptional()
-  priceSale?: number;
+  features?: CreateProductFeatureDto[];
 }

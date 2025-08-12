@@ -13,6 +13,8 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
+
 model User {
   id           Int       @id @default(autoincrement())
   first_name   String
@@ -30,6 +32,8 @@ model User {
   updatedAt    DateTime  @updatedAt
   accessToken  String?
   refreshToken String?
+  size ESize?
+  colr  EColor?
 
   cart   Cart?
   orders Order[]
@@ -52,8 +56,20 @@ model Product {
   translations ProductTranslation[]
   cartItems    CartItem[]
   orderItems   OrderItem[]
-  images       ProductImage[] // додано зв’язок з картинками
+  images       ProductImage[]
+  features     ProductFeature[] 
+  sizes       ESize[] @default([])
+  colors      EColor[] @default([])
 }
+
+model ProductFeature {
+  id        Int      @id @default(autoincrement())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  text      String   // тут зберігається один пункт опису
+  order     Int?     // щоб можна було задавати порядок пунктів
+}
+
 
 model ProductImage {
   id        Int     @id @default(autoincrement())
@@ -128,4 +144,25 @@ enum OrderStatus {
   PROCESSING
   COMPLETED
   CANCELED
+}
+
+enum ESize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+}
+
+enum EColor {
+  RED
+  GREEN
+  BLUE
+  BLACK
+  WHITE
+  YELLOW
+  ORANGE
+  PURPLE
+  PINK
 }

@@ -4,7 +4,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class LanguagesService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(data: Prisma.LanguageCreateInput) {
     return await this.prisma.language.create({ data });
@@ -28,4 +28,3 @@ export class LanguagesService {
     return await this.prisma.language.delete({ where: { id } });
   }
 }
-

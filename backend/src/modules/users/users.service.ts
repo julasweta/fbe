@@ -27,7 +27,10 @@ export class UsersService {
     return UserResponseMapper.toResUserMapper(user);
   }
 
-  async update(id: number, data: Prisma.UserUpdateInput): Promise<Partial<BaseUserDto>> {
+  async update(
+    id: number,
+    data: Prisma.UserUpdateInput,
+  ): Promise<Partial<BaseUserDto>> {
     const user = await this.prisma.user.update({
       where: { id } as Prisma.UserWhereUniqueInput,
       data,

@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, MinLength, IsOptional } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, MinLength, IsOptional } from 'class-validator';
 
 export class CreateLanguageDto {
   @ApiProperty({ example: 'uk', description: 'Код мови (ISO 639-1)' })

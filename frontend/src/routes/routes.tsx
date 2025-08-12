@@ -1,8 +1,6 @@
 // routes/routes.js
-import { AuthPage, NotFoundPage } from "../pages";
-import RegisterPage from "../pages/RegisterPage";
-import HomePage from "../pages/HomePage";
-import ProfilePage from "../pages/ProfilePage";
+import { AboutPage, AuthPage, HomePage, NotFoundPage, ProfilePage, RegisterPage } from "../pages";
+import ContactPage from "../pages/ContactPage";
 
 // Публічні роути - доступні всім
 export const publicRoutes = [
@@ -10,15 +8,15 @@ export const publicRoutes = [
   { path: "/home", element: <HomePage /> },
   { path: "/login", element: <AuthPage /> },
   { path: "/register", element: <RegisterPage /> },
-  // Додайте інші публічні сторінки
-  // { path: "/about", element: <AboutPage /> },
+  { path: "/about", element: <AboutPage /> },
   // { path: "/products", element: <ProductsPage /> },
+  {path: "/contact", element: <ContactPage /> },
 ];
 
 // Приватні роути - тільки для залогінених
 export const privateRoutes = [
   { path: "/profile", element: <ProfilePage /> },
- // { path: "/cart", element: <CartPage /> },
+  // { path: "/cart", element: <CartPage /> },
   //{ path: "/orders", element: <OrdersPage /> },
 ];
 

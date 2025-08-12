@@ -1,5 +1,11 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, MinLength, IsOptional, IsNumber, IsPositive } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsString,
+  MinLength,
+  IsOptional,
+  IsNumber,
+  IsPositive,
+} from 'class-validator';
 
 export class ProductTranslationDto {
   @ApiProperty({ example: 'Ноутбук Gaming', description: 'Назва продукту' })
@@ -7,7 +13,10 @@ export class ProductTranslationDto {
   @MinLength(1)
   name: string;
 
-  @ApiPropertyOptional({ example: 'Потужний ноутбук для роботи та ігор', description: 'Опис продукту' })
+  @ApiPropertyOptional({
+    example: 'Потужний ноутбук для роботи та ігор',
+    description: 'Опис продукту',
+  })
   @IsString()
   @IsOptional()
   description?: string;
@@ -18,4 +27,4 @@ export class ProductTranslationDto {
   languageId: number;
 }
 
-export class CreateProductTranslationDto extends ProductTranslationDto { }
+export class CreateProductTranslationDto extends ProductTranslationDto {}

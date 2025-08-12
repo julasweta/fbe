@@ -1,37 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateProductDto) {
-    const { translations, images, ...productData } = dto;
-
-    const data: Prisma.ProductCreateInput = {
-      ...productData,
-      translations: {
-        create: translations  // Правильный формат для Prisma
-      },
-      images: {
-        create: images       // Правильный формат для Prisma
-      }
-    };
+    const { translations, images, features, ...productData } = dto;
 
     return await this.prisma.product.create({
-      data,
+      data: {
+        ...productData,
+        translations: {
+          create: translations,
+        },
+        images: {
+          create: images,
+        },
+        features: {
+          create: features.map((f) => ({
+            text: f.text, // обов'язкове поле
+            order: f.order ?? null,
+          })),
+        },
+      },
       include: {
         translations: { include: { language: true } },
-        images: true
-      }
+        images: true,
+        features: true,
+      },
     });
   }
+
   async findAll() {
-    return await this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       include: { images: true, translations: true },
     });
+    return products;
   }
 
   async findOne(id: number) {
@@ -43,10 +50,26 @@ export class ProductsService {
     return product;
   }
 
-  async update(id: number, data: Prisma.ProductUpdateInput) {
+  async update(id: number, data: UpdateProductDto) {
+    const { features, ...rest } = data;
+
     return await this.prisma.product.update({
       where: { id },
-      data,
+      data: {
+        ...rest,
+        ...(features
+          ? {
+              features: {
+                deleteMany: {}, // видаляємо всі старі фічі
+                create: features.map((f) => ({
+                  text: f.text, // тепер завжди string
+                  order: f.order ?? null,
+                })),
+              },
+            }
+          : {}),
+      },
+      include: { features: true },
     });
   }
 
@@ -54,4 +77,3 @@ export class ProductsService {
     return await this.prisma.product.delete({ where: { id } });
   }
 }
-

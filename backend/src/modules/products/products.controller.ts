@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -7,33 +16,12 @@ import { UpdateProductDto } from './dto/update-product.dto';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Створити новий продукт' })
   @ApiBody({
     type: CreateProductDto,
-    examples: {
-      example: {
-        summary: 'Приклад створення продукту',
-        value: {
-          sku: 'SKU-12345',
-          price: 100,
-          priceSale: 80,
-          images: [
-            { url: 'https://example.com/image1.jpg', altText: 'Зображення 1' },
-            { url: 'https://example.com/image2.jpg', altText: 'Зображення 2' }
-          ],
-          translations: [
-            {
-              name: 'Ноутбук',
-              description: 'Потужний ноутбук для роботи та ігор',
-              languageId: 1
-            }
-          ]
-        }
-      }
-    }
   })
   @ApiResponse({ status: 201, description: 'Продукт успішно створено' })
   create(@Body() dto: CreateProductDto) {
@@ -64,4 +52,3 @@ export class ProductsController {
     return this.productsService.remove(id);
   }
 }
-

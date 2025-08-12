@@ -15,6 +15,7 @@ const Header = () => {
   return (
     <div className={styles.header}>
       <HeaderMenu />
+      <div className={styles.logo}>FBE</div>
       <div className={styles.authBlock}>
         {accessToken ? (
           <>

@@ -1,11 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { LanguagesService } from './languages.service';
 import { Prisma } from '@prisma/client';
 import { CreateLanguageDto } from './dto/languages.dto';
 
 @Controller('languages')
 export class LanguagesController {
-  constructor(private readonly languagesService: LanguagesService) { }
+  constructor(private readonly languagesService: LanguagesService) {}
 
   @Post()
   create(@Body() data: CreateLanguageDto) {
@@ -23,7 +32,10 @@ export class LanguagesController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() data: Prisma.LanguageUpdateInput) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: Prisma.LanguageUpdateInput,
+  ) {
     return this.languagesService.update(id, data);
   }
 

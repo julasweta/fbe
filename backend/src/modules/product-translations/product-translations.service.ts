@@ -4,14 +4,16 @@ import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class ProductTranslationsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(data: Prisma.ProductTranslationCreateInput) {
     return await this.prisma.productTranslation.create({ data });
   }
 
   async findAll() {
-    return await this.prisma.productTranslation.findMany({ include: { product: true, language: true } });
+    return await this.prisma.productTranslation.findMany({
+      include: { product: true, language: true },
+    });
   }
 
   async findOne(id: number) {

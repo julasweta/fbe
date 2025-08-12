@@ -8,7 +8,6 @@ const productService = {
     console.log('ProductService: Fetching products...');
 
     try {
-      // Ваш backend повертає масив продуктів напряму, а не обгорнутий в об'єкт
       const { data } = await apiService.get<IProduct[]>(`products?limit=${limit}&skip=${skip}`);
 
       console.log('ProductService: Received data:', data);

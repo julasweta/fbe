@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './modules/products/products.module';
 import { LanguagesModule } from './modules/languages/languages.module';
 import { ProductTranslationsModule } from './modules/product-translations/product-translations.module';
+import { ProductFeatureModule } from './modules/product-feature/product-feature.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProductTranslationsModule } from './modules/product-translations/produc
     ProductsModule,
     LanguagesModule,
     ProductTranslationsModule,
+    ProductFeatureModule,
   ],
   controllers: [AppController],
   providers: [AppService],
