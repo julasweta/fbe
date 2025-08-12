@@ -13,7 +13,25 @@ import {
 import { ProductImageDto } from '../../images/dto/images.dto';
 import { ProductTranslationDto } from '../../product-translations/dto/product-translation.dto';
 import { CreateProductFeatureDto } from '../../product-feature/dto/create-product-feature.dto';
-import { ESize, EColor } from '@prisma/client';
+
+export enum ESize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  XXL = "XXL"
+}
+
+export enum EColor {
+  RED = "RED",
+  BLUE = "BLUE",
+  BLACK = "BLACK",
+  WHITE = "WHITE",
+  GREEN = "GREEN",
+  YELLOW = "YELLOW"
+}
+
 
 export class CreateProductDto {
   @ApiProperty({ example: 'SKU-12345', description: 'Унікальний код продукту' })
