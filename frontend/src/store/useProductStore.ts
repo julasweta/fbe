@@ -34,12 +34,12 @@ export enum EColor {
 }
 
 export const sizeLabels: Record<ESize, string> = {
-  [ESize.XS]: "Дуже малий",
-  [ESize.S]: "Малий",
-  [ESize.M]: "Середній",
-  [ESize.L]: "Великий",
-  [ESize.XL]: "Дуже великий",
-  [ESize.XXL]: "Максимальний"
+  [ESize.XS]: "XS",
+  [ESize.S]: "S",
+  [ESize.M]: "M",
+  [ESize.L]: "L",
+  [ESize.XL]: "XL",
+  [ESize.XXL]: "XXL"
 };
 
 export const colorLabels: Record<EColor, string> = {

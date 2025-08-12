@@ -8,6 +8,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { LanguagesModule } from './modules/languages/languages.module';
 import { ProductTranslationsModule } from './modules/product-translations/product-translations.module';
 import { ProductFeatureModule } from './modules/product-feature/product-feature.module';
+import { CategoryModule } from './modules/category/category.module';
+import { CollectionModule } from './modules/collection/collection.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ProductFeatureModule } from './modules/product-feature/product-feature.
     LanguagesModule,
     ProductTranslationsModule,
     ProductFeatureModule,
+    CategoryModule,
+    CollectionModule
   ],
   controllers: [AppController],
   providers: [AppService],

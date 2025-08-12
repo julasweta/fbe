@@ -9,20 +9,12 @@ const productService = {
 
     try {
       const { data } = await apiService.get<IProduct[]>(`products?limit=${limit}&skip=${skip}`);
-
-      console.log('ProductService: Received data:', data);
-
-      // Перевіряємо чи data є масивом
       const products = Array.isArray(data) ? data : [];
-
-      console.log('ProductService: Processing products:', products.length);
-
       useProductStore.getState().setProducts(products);
       return products;
     } catch (error) {
       console.error('ProductService: Error fetching products:', error);
 
-      // Встановлюємо помилку в store
       useProductStore.getState().setError(
         "Не вдалося отримати список продуктів: " + (error as Error).message
       );

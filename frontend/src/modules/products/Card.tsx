@@ -1,17 +1,23 @@
 import React from "react";
 import styles from "./Card.module.scss";
-import { type IProduct, type ESize, type EColor, sizeLabels, colorLabels } from "../../store";
+import { type IProduct,  type EColor, sizeLabels } from "../../store";
 
 interface CardProps {
   product: IProduct;
 }
 
+const colorMap: Record<EColor, string> = {
+  RED: "#ff0000",
+  BLUE: "#0000ff",
+  BLACK: "#000000",
+  WHITE: "#ffffff",
+  GREEN: "#008000",
+  YELLOW: "#ffff00",
+};
+
 const Card: React.FC<CardProps> = ({ product }) => {
   const { price, priceSale, images, translations, sizes, colors } = product;
 
-  console.log("Rendering Card for product:", product);
-
-  // Візьмемо назву з першого перекладу (якщо є)
   const name = translations && translations.length > 0 ? translations[0].name : "Назва відсутня";
 
   return (
@@ -36,21 +42,31 @@ const Card: React.FC<CardProps> = ({ product }) => {
       </p>
 
       <div className={styles.features}>
-        <strong>Розміри:</strong>{" "}
         {sizes && sizes.length > 0
-          ? sizes.map((size) => sizeLabels[size as ESize]).join(", ")
+          ? sizes.map((size) => sizeLabels[size]).join(", ")
           : "Немає"}
 
         <br />
 
-        <strong>Кольори:</strong>{" "}
-        {colors && colors.length > 0
-          ? colors.map((color) => colorLabels[color as EColor]).join(", ")
-          : "Немає"}
+        {colors && colors.length > 0 ? (
+          <div className={styles.colorDots}>
+            {colors.map((color) => (
+              <span
+                key={color}
+                className={styles.colorDot}
+                style={{ backgroundColor: colorMap[color] }}
+                title={color}
+              />
+            ))}
+          </div>
+        ) : (
+          "Немає"
+        )}
       </div>
     </div>
   );
 };
 
 export default Card;
+
 

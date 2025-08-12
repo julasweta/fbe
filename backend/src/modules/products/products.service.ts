@@ -8,11 +8,30 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateProductDto) {
-    const { translations, images, features, ...productData } = dto;
+    const {
+      translations,
+      images,
+      features,
+      categoryId,
+      collectionIds,
+      ...productData
+    } = dto;
 
     return await this.prisma.product.create({
       data: {
         ...productData,
+
+        // Зв’язок з категорією (одна категорія)
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+
+        // Зв’язок з колекціями (багато-багато)
+        collections:
+          collectionIds && collectionIds.length
+            ? {
+                connect: collectionIds.map((id) => ({ id })),
+              }
+            : undefined,
+
         translations: {
           create: translations,
         },
@@ -21,7 +40,7 @@ export class ProductsService {
         },
         features: {
           create: features.map((f) => ({
-            text: f.text, // обов'язкове поле
+            text: f.text,
             order: f.order ?? null,
           })),
         },
@@ -30,6 +49,8 @@ export class ProductsService {
         translations: { include: { language: true } },
         images: true,
         features: true,
+        collections: true,
+        category: true,
       },
     });
   }
@@ -51,25 +72,38 @@ export class ProductsService {
   }
 
   async update(id: number, data: UpdateProductDto) {
-    const { features, ...rest } = data;
+    const { features, categoryId, collectionIds, ...rest } = data;
 
     return await this.prisma.product.update({
       where: { id },
       data: {
         ...rest,
+        categoryId: categoryId ?? undefined, // оновлюємо категорію (якщо передано)
+
         ...(features
           ? {
               features: {
                 deleteMany: {}, // видаляємо всі старі фічі
                 create: features.map((f) => ({
-                  text: f.text, // тепер завжди string
+                  text: f.text,
                   order: f.order ?? null,
                 })),
               },
             }
           : {}),
+
+        ...(collectionIds
+          ? {
+              collections: {
+                deleteMany: {}, // очищаємо старі зв’язки з колекціями
+                create: collectionIds.map((collectionId) => ({
+                  collectionId,
+                })),
+              },
+            }
+          : {}),
       },
-      include: { features: true },
+      include: { features: true, collections: true, category: true },
     });
   }
 

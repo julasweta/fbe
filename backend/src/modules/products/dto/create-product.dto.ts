@@ -9,29 +9,30 @@ import {
   ValidateNested,
   ArrayNotEmpty,
   IsEnum,
+  IsOptional,
+  IsInt,
 } from 'class-validator';
 import { ProductImageDto } from '../../images/dto/images.dto';
 import { ProductTranslationDto } from '../../product-translations/dto/product-translation.dto';
 import { CreateProductFeatureDto } from '../../product-feature/dto/create-product-feature.dto';
 
 export enum ESize {
-  XS = "XS",
-  S = "S",
-  M = "M",
-  L = "L",
-  XL = "XL",
-  XXL = "XXL"
+  XS = 'XS',
+  S = 'S',
+  M = 'M',
+  L = 'L',
+  XL = 'XL',
+  XXL = 'XXL',
 }
 
 export enum EColor {
-  RED = "RED",
-  BLUE = "BLUE",
-  BLACK = "BLACK",
-  WHITE = "WHITE",
-  GREEN = "GREEN",
-  YELLOW = "YELLOW"
+  RED = 'RED',
+  BLUE = 'BLUE',
+  BLACK = 'BLACK',
+  WHITE = 'WHITE',
+  GREEN = 'GREEN',
+  YELLOW = 'YELLOW',
 }
-
 
 export class CreateProductDto {
   @ApiProperty({ example: 'SKU-12345', description: 'Унікальний код продукту' })
@@ -101,4 +102,14 @@ export class CreateProductDto {
   @IsArray()
   @IsEnum(EColor, { each: true })
   colors: EColor[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsInt()
+  categoryId?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsArray()
+  collectionIds?: number[];
 }
