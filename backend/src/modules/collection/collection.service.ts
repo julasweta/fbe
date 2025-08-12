@@ -11,6 +11,8 @@ export class CollectionService {
       data: {
         name: dto.name,
         description: dto.description,
+        slug: dto.slug,
+        imageUrl: dto.imageUrl,
       },
     });
   }

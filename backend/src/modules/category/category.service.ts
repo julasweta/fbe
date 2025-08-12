@@ -18,6 +18,8 @@ export class CategoryService {
       data: {
         name: dto.name,
         parentId: dto.parentId,
+        slug: dto.slug,
+        imageUrl: dto.imageUrl,
       },
     });
   }
