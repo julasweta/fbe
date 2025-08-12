@@ -20,24 +20,13 @@ export class ProductsService {
     return await this.prisma.product.create({
       data: {
         ...productData,
-
-        // Зв’язок з категорією (одна категорія)
         category: categoryId ? { connect: { id: categoryId } } : undefined,
-
-        // Зв’язок з колекціями (багато-багато)
-        collections:
-          collectionIds && collectionIds.length
-            ? {
-                connect: collectionIds.map((id) => ({ id })),
-              }
+        collection:
+          collectionIds && collectionIds.length > 0
+            ? { connect: { id: collectionIds[0] } }
             : undefined,
-
-        translations: {
-          create: translations,
-        },
-        images: {
-          create: images,
-        },
+        translations: { create: translations },
+        images: { create: images },
         features: {
           create: features.map((f) => ({
             text: f.text,
@@ -49,7 +38,7 @@ export class ProductsService {
         translations: { include: { language: true } },
         images: true,
         features: true,
-        collections: true,
+        collection: true,
         category: true,
       },
     });
@@ -57,7 +46,13 @@ export class ProductsService {
 
   async findAll() {
     const products = await this.prisma.product.findMany({
-      include: { images: true, translations: true },
+      include: {
+        translations: { include: { language: true } },
+        images: true,
+        features: true,
+        collection: true,
+        category: true,
+      },
     });
     return products;
   }
@@ -65,7 +60,13 @@ export class ProductsService {
   async findOne(id: number) {
     const product = await this.prisma.product.findUnique({
       where: { id },
-      include: { images: true, translations: true },
+      include: {
+        translations: { include: { language: true } },
+        images: true,
+        features: true,
+        collection: true,
+        category: true,
+      },
     });
     if (!product) throw new NotFoundException('Product not found');
     return product;
@@ -103,7 +104,13 @@ export class ProductsService {
             }
           : {}),
       },
-      include: { features: true, collections: true, category: true },
+      include: {
+        translations: { include: { language: true } },
+        images: true,
+        features: true,
+        collection: true,
+        category: true,
+      },
     });
   }
 

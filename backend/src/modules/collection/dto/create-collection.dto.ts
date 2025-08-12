@@ -6,7 +6,10 @@ export class CreateCollectionDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'Колекція літнього одягу', description: 'Опис колекції' })
+  @ApiProperty({
+    example: 'Колекція літнього одягу',
+    description: 'Опис колекції',
+  })
   @IsOptional()
   @IsString()
   description?: string;
@@ -16,7 +19,10 @@ export class CreateCollectionDto {
   @IsString()
   slug?: string;
 
-  @ApiProperty({ example: 'https://example.com/image.jpg', description: 'URL зображення колекції' })
+  @ApiProperty({
+    example: 'https://example.com/image.jpg',
+    description: 'URL зображення колекції',
+  })
   @IsOptional()
   @IsString()
   imageUrl?: string;

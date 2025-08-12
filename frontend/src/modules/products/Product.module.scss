@@ -1,0 +1,131 @@
+.product {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+
+  .images {
+    flex: 1;
+    max-width: 500px;
+
+    .mainImage {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .noImage {
+      width: 100%;
+      height: 400px;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 1.2rem;
+      border-radius: 8px;
+    }
+  }
+
+  .info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .description {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+
+    .priceWrapper {
+      margin-bottom: 1.5rem;
+
+      .price,
+      .priceSale {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #000;
+      }
+
+      .priceOriginal {
+        font-size: 1.2rem;
+        text-decoration: line-through;
+        color: #888;
+        margin-left: 0.8rem;
+      }
+
+      .priceSale {
+        color: #d32f2f;
+      }
+    }
+
+    .features {
+      margin-bottom: 1.5rem;
+
+      h3 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      ul {
+        list-style-type: disc;
+        padding-left: 1.2rem;
+
+        li {
+          margin-bottom: 0.3rem;
+          color: #444;
+        }
+      }
+    }
+
+    .attributes {
+      display: flex;
+      gap: 2rem;
+
+      .sizes,
+      .colors {
+        display: flex;
+        flex-direction: column;
+
+        h4 {
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .sizeList {
+        display: flex;
+        gap: 0.5rem;
+
+        .sizeItem {
+          padding: 0.3rem 0.6rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 0.9rem;
+          cursor: default;
+          user-select: none;
+        }
+      }
+
+      .colorList {
+        display: flex;
+        gap: 0.5rem;
+
+        .colorCircle {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 1px solid #ccc;
+          cursor: default;
+        }
+      }
+    }
+  }
+}

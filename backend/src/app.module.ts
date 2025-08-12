@@ -23,7 +23,7 @@ import { CollectionModule } from './modules/collection/collection.module';
     ProductTranslationsModule,
     ProductFeatureModule,
     CategoryModule,
-    CollectionModule
+    CollectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -21,7 +21,7 @@ import {
 @ApiTags('categories') // Групує всі методи цього контролера в swagger під "categories"
 @Controller('categories')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) { }
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
   @ApiOperation({ summary: 'Створити категорію' })

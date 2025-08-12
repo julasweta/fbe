@@ -1,6 +1,7 @@
-import type { IProduct } from "../store/useProductStore";
+
 import { apiService } from "./ApiServices";
 import { useProductStore } from "../store/useProductStore";
+import type { IProduct } from "../interfaces/IProduct";
 
 const productService = {
   // Отримати всі продукти
