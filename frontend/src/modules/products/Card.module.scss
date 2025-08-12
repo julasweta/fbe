@@ -2,12 +2,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 45%;
+  width: 25%;
+  /* Базова ширина для великих екранів */
   margin: 1rem;
   cursor: pointer;
 
   .imageWrapper {
-    width: 220px;
+    width: 90%;
     height: 280px;
     overflow: hidden;
     border-radius: 8px;
@@ -74,4 +75,101 @@
   border-radius: 50%;
   border: 1px solid #ccc;
   cursor: default;
+}
+
+/* Адаптивні стилі */
+@media (max-width: 1024px) {
+
+  /* Планшети */
+  .card {
+    width: 33.33%;
+    /* 3 карти в ряд */
+    margin: 0.75rem;
+  }
+
+  .imageWrapper {
+    height: 220px;
+    /* Зменшення висоти зображення */
+  }
+
+  .name {
+    font-size: 1rem;
+  }
+
+  .price {
+    font-size: 0.9rem;
+  }
+
+  .features {
+    font-size: 0.85rem;
+  }
+
+  .colorDot {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Великі мобільні пристрої */
+  .card {
+    width: 50%;
+    /* 2 карти в ряд */
+    margin: 0.5rem;
+  }
+
+  .imageWrapper {
+    height: 180px;
+  }
+
+  .name {
+    font-size: 0.95rem;
+  }
+
+  .price {
+    font-size: 0.85rem;
+  }
+
+  .features {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  .colorDot {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Маленькі мобільні пристрої */
+  .card {
+    width: 100%;
+    /* 1 карта в ряд */
+    margin: 0.25rem 0;
+  }
+
+  .imageWrapper {
+    height: 150px;
+  }
+
+  .name {
+    font-size: 0.9rem;
+  }
+
+  .price {
+    font-size: 0.8rem;
+  }
+
+  .features {
+    font-size: 0.75rem;
+    margin-top: 0.3rem;
+  }
+
+  .colorDot {
+    width: 14px;
+    height: 14px;
+  }
 }

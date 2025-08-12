@@ -12,18 +12,18 @@ type IRes<DATA> = Promise<AxiosResponse<DATA>>;
 const baseURL = import.meta.env.VITE_REACT_APP_API_URL;
 const apiService: AxiosInstance = axios.create({ baseURL });
 
-
 apiService.interceptors.request.use(
   (req: InternalAxiosRequestConfig) => {
     if (req.data instanceof FormData) {
-      delete req.headers["Content-Type"]; 
+      delete req.headers["Content-Type"];
     } else {
       req.headers["Content-Type"] = "application/json";
     }
 
     req.headers["Accept"] = "*/*";
 
-    if (req.url && req.url !== "/profile/login") {
+    // Виключаємо додавання токену для auth endpoints
+    if (req.url && !req.url.includes("auth/login") && !req.url.includes("auth/register")) {
       const access = localStorage.getItem("accessToken") || null;
       if (access) {
         req.headers.Authorization = `Bearer ${access}`;
@@ -43,18 +43,27 @@ apiService.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config;
 
-    if (error.response && error.response.status === 401) {
+    // ВАЖЛИВО: Виключаємо auth endpoints з автоматичного refresh
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      originalRequest &&
+      originalRequest.url &&
+      !originalRequest.url.includes("auth/login") &&
+      !originalRequest.url.includes("auth/register") &&
+      !originalRequest.url.includes("auth/refresh")
+    ) {
       if (!isRefreshing) {
         isRefreshing = true;
         const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken)
+        if (refreshToken) {
           try {
             await authService.refresh();
             isRefreshing = false;
             afterRefresh();
 
             if (originalRequest) {
-              return apiService(originalRequest); 
+              return apiService(originalRequest);
             }
           } catch (e) {
             console.log("Помилка при оновленні токена:", e);
@@ -63,14 +72,11 @@ apiService.interceptors.response.use(
             console.log("Не вдалося оновити токен.");
             return Promise.reject(error);
           }
-      }
-
-      if (
-        originalRequest &&
-        originalRequest.url &&
-        originalRequest.url.includes("/profile/token/refresh")
-      ) {
-        return Promise.reject(error);
+        } else {
+          isRefreshing = false;
+          useAuthStore.getState().logout();
+          return Promise.reject(error);
+        }
       }
 
       return new Promise((resolve, reject) => {
@@ -78,30 +84,29 @@ apiService.interceptors.response.use(
           if (originalRequest) {
             resolve(apiService(originalRequest));
           } else {
-            reject(new Error("Original request is undefined")); // Відхиляємо проміс, якщо `originalRequest` є `undefined`
+            reject(new Error("Original request is undefined"));
           }
         });
       });
     }
 
+    // Для auth endpoints або інших помилок - просто відхиляємо
     return Promise.reject(error);
   },
 );
 
 type IWaitList = () => void;
 
-
 const subscribeToWaitList = (cb: IWaitList): void => {
   waitList.push(cb);
 };
-
 
 const afterRefresh = (): void => {
   console.log("Оновлення токенів успішно завершене.");
   while (waitList.length) {
     const cb = waitList.pop();
     if (cb) {
-      cb(); 
+      cb();
     }
   }
 };

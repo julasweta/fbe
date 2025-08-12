@@ -1,15 +1,13 @@
+// useProductStore.ts
 import { create } from "zustand";
 import type { IProduct } from "../interfaces/IProduct";
-
-// Інтерфейси
-
+import { productService } from "../services/ProductService";
 
 interface ProductState {
   products: IProduct[];
   isLoading: boolean;
   error: string | null;
 
-  // Actions
   setProducts: (products: IProduct[]) => void;
   addProduct: (product: IProduct) => void;
   updateProduct: (product: IProduct) => void;
@@ -17,19 +15,18 @@ interface ProductState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 
-  // Async actions
   fetchProducts: () => Promise<void>;
+  createProduct: (productData: Partial<IProduct>) => Promise<void>;
+  editProduct: (id: number, productData: Partial<IProduct>) => Promise<void>;
+  deleteProduct: (id: number) => Promise<void>;
 }
 
-// Стор
 export const useProductStore = create<ProductState>((set) => ({
   products: [],
   isLoading: false,
   error: null,
 
-  setProducts: (products) => {
-    set({ products, error: null });
-  },
+  setProducts: (products) => set({ products, error: null }),
 
   addProduct: (product) =>
     set((state) => ({
@@ -52,24 +49,76 @@ export const useProductStore = create<ProductState>((set) => ({
     })),
 
   setLoading: (isLoading) => set({ isLoading }),
-
   setError: (error) => set({ error, isLoading: false }),
 
-  // Async action для завантаження продуктів
   fetchProducts: async () => {
     set({ isLoading: true, error: null });
 
     try {
-      // Імпортуємо сервіс динамічно, щоб уникнути циклічних залежностей
-      const { productService } = await import("../services/ProductService");
-      await productService.getAll();
-      // productService.getAll() вже викликає setProducts через useProductStore.getState().setProducts()
+      const products = await productService.getAll();
+      set({ products, isLoading: false });
     } catch (error) {
       console.error('Error fetching products:', error);
       set({
         error: error instanceof Error ? error.message : 'Unknown error',
         isLoading: false
       });
+    }
+  },
+
+  createProduct: async (productData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const newProduct = await productService.addProduct(productData);
+      set((state) => ({
+        products: [...state.products, newProduct],
+        isLoading: false
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Unknown error',
+        isLoading: false
+      });
+      throw error;
+    }
+  },
+
+  editProduct: async (id, productData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const updatedProduct = await productService.updateProduct(id, productData);
+      set((state) => ({
+        products: state.products.map((p) =>
+          p.id === id ? updatedProduct : p
+        ),
+        isLoading: false
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Unknown error',
+        isLoading: false
+      });
+      throw error;
+    }
+  },
+
+  deleteProduct: async (id) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      await productService.deleteProduct(id);
+      set((state) => ({
+        products: state.products.filter((p) => p.id !== id),
+        isLoading: false
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Unknown error',
+        isLoading: false
+      });
+      throw error;
     }
   },
 }));

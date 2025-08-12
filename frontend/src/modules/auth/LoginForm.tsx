@@ -16,69 +16,118 @@ export const LoginForm = () => {
   const { user } = useAuthStore();
   const [form, setForm] = useState<IAuth>({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-
   useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
+    if (user) navigate("/");
   }, [user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (error) setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!form.email || !form.password) {
-      setError("Please fill in all fields");
+      setError("Будь ласка, заповніть всі поля");
       return;
     }
-    setLoading(true);
+
+    if (!form.email.includes("@")) {
+      setError("Введіть коректний email");
+      return;
+    }
+
     setError(null);
 
     try {
+      console.log("LoginForm: Starting login process for:", form.email);
       await authService.login(form);
-      navigate("/dashboard"); // Перенаправлення після успішного логіну
+      console.log("LoginForm: Login successful, redirecting...");
+      navigate("/");
     } catch (error) {
-      setError((error as Error).message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
+      console.error("LoginForm: Login failed:", error);
+      console.error("LoginForm: Error details:", {
+        type: typeof error,
+        constructor: error?.constructor?.name,
+        message: error instanceof Error ? error.message : error,
+        string: String(error)
+      });
+
+      let errorMessage = "Помилка входу. Спробуйте ще раз.";
+
+      // Правильна обробка різних типів помилок
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object') {
+        // Якщо це об'єкт - спробуємо витягти повідомлення
+        if ('message' in error && typeof error.message === 'string') {
+          errorMessage = error.message;
+        } else if ('error' in error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else {
+          // Якщо нічого не знайдено - використовуємо JSON.stringify з обробкою помилок
+          try {
+            const errorStr = JSON.stringify(error);
+            if (errorStr && errorStr !== '{}' && errorStr !== '[object Object]') {
+              errorMessage = errorStr;
+            }
+          } catch (e) {
+            console.error("Failed to stringify error:", e);
+          }
+        }
+      }
+
+      console.log("LoginForm: Final error message:", errorMessage);
+      setError(errorMessage);
     }
   };
 
   return (
     <div className={classNames(styles.loginContainer)}>
-      <h1 className={styles.title}>Login</h1>
+      <h1 className={styles.title}>Вхід</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         <Input
           label="Email"
           name="email"
           type="email"
-          placeholder="Enter your email"
+          placeholder="Введіть ваш email"
           value={form.email}
           onChange={handleChange}
+          required
         />
         <Input
-          label="Password"
+          label="Пароль"
           name="password"
           type="password"
-          placeholder="Enter your password"
+          placeholder="Введіть ваш пароль"
           value={form.password}
           onChange={handleChange}
           required
         />
-        {error && <p className={styles.error}>{error}</p>}
-        <Button type="submit" disabled={loading}>
-          {loading ? "Signing In..." : "Sign In"}
+
+        {error && (
+          <div className={styles.errorContainer}>
+            <p className={styles.error}>{error}</p>
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          disabled={!form.email || !form.password}
+          className={""} // Видалено styles.loading, оскільки loading більше не використовується
+        >
+          Увійти
         </Button>
-        
+
         <p className={styles.registerPrompt}>
-          Don't have an account? <Link to="/register">Register here</Link>  </p>
-    
+          Немає аккаунта? <Link to="/register">Зареєструйтесь тут</Link>
+        </p>
       </form>
     </div>
   );
