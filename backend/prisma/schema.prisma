@@ -79,6 +79,7 @@ model Collection {
   updatedAt   DateTime   @updatedAt
   slug        String?    @unique // для SEO, може бути null
   products    ProductCollection[]
+  imageUrl    String?
 }
 
 model ProductCollection {
@@ -100,6 +101,7 @@ model Category {
   subcategories Category[] @relation("CategoryToSubcategory")
   slug        String?     @unique // для SEO, може бути null
   products    Product[]   // товари, що належать до категорії
+  imageUrl    String?
 }
 
 model ProductFeature {

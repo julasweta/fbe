@@ -16,7 +16,7 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
 
         return (
           <li key={cat.id} className={styles.submenuItem}>
-            <a href={`/category/${cat.id}`} className={styles.submenuLink}>
+            <a href={`/category/${cat.slug}`} className={styles.submenuLink}>
               {cat.name}
             </a>
             {subcategories.length > 0 && (

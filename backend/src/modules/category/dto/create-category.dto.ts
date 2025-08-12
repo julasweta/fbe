@@ -15,4 +15,10 @@ export class CreateCategoryDto {
   @IsOptional()
   @IsString()
   slug?: string;
+
+
+  @ApiProperty({ example: 'https://example.com/image.jpg', description: 'Image URL' })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }

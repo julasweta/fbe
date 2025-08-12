@@ -15,4 +15,9 @@ export class CreateCollectionDto {
   @IsOptional()
   @IsString()
   slug?: string;
+
+  @ApiProperty({ example: 'https://example.com/image.jpg', description: 'URL зображення колекції' })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }
