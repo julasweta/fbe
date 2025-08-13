@@ -29,6 +29,10 @@ model User {
 
   cart   Cart?
   orders Order[]
+
+   // Нові поля для відновлення пароля
+  resetCode       String?
+  resetCodeExpiry DateTime?
 }
 
 enum Role {

@@ -10,11 +10,35 @@ import { ProductTranslationsModule } from './modules/product-translations/produc
 import { ProductFeatureModule } from './modules/product-feature/product-feature.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CollectionModule } from './modules/collection/collection.module';
+import { EmailModule } from './modules/email/email.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      },
+      defaults: {
+        from: '"nest-modules" <user@outlook.com>',
+      },
+      template: {
+        dir: __dirname + '/../../template/',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
     }),
     AuthModule,
     UsersModule,
@@ -24,8 +48,13 @@ import { CollectionModule } from './modules/collection/collection.module';
     ProductFeatureModule,
     CategoryModule,
     CollectionModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log(` pass +${process.env.SMTP_PASS}`);
+  }
+}

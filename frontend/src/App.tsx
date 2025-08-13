@@ -23,7 +23,7 @@ export default function App() {
         ))}
 
         {/* Приватні роути - тільки для залогінених */}
-        {privateRoutes.map(({ path, element }) => (
+        {privateRoutes.map(({ path, element, children }) => (
           <Route
             key={path}
             path={path}
@@ -34,7 +34,16 @@ export default function App() {
                 <Navigate to="/login" replace />
               )
             }
-          />
+          >
+            {children?.map((child) => (
+              <Route
+                key={child.path || "index"}
+                index={child.index}
+                path={child.path}
+                element={child.element}
+              />
+            ))}
+          </Route>
         ))}
 
         {/* 404 сторінка - має бути в кінці */}

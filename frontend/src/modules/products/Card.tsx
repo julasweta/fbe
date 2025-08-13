@@ -13,10 +13,7 @@ const colorMap: Record<EColor, string> = {
   BLUE: "#0000ff",
   BLACK: "#000000",
   WHITE: "#ffffff",
-  YELLOW: "#ffff00",
-  ORANGE: "#ffa500",
-  PURPLE: "#800080",
-  PINK: "#ffc0cb",
+  YELLOW: "#ffff00"
 };
 
 const Card: React.FC<CardProps> = ({ product }) => {

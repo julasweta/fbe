@@ -1,12 +1,12 @@
 export interface IProductImage {
-  id: number;
+  id?: number;
   url: string;
   altText?: string;
 }
 
 export interface IProductTranslation {
-  id: number;
-  productId: number;
+  id?: number;
+  productId?: number;
   languageId: number;
   name: string;
   description?: string;
@@ -28,9 +28,6 @@ export enum EColor {
   WHITE = "WHITE",
   GREEN = "GREEN",
   YELLOW = "YELLOW",
-  ORANGE = "ORANGE",
-  PURPLE = "PURPLE",
-  PINK = "PINK"
 }
 
 export const sizeLabels: Record<ESize, string> = {
@@ -49,14 +46,11 @@ export const colorLabels: Record<EColor, string> = {
   [EColor.WHITE]: "Білий",
   [EColor.GREEN]: "Зелений",
   [EColor.YELLOW]: "Жовтий",
-  [EColor.ORANGE]: "Помаранчевий",
-  [EColor.PURPLE]: "Фіолетовий",
-  [EColor.PINK]: "Рожевий"
 };
 
 
 export interface IProductFeature {
-  id: number;
+  id?: number;
   text: string;
   order?: number | null;
 }
@@ -74,4 +68,6 @@ export interface IProduct {
   features?: IProductFeature[];
   sizes: ESize[];   // масив enum з Prisma
   colors: EColor[]; // масив enum з Prisma
+  collectionIds: number[]; // масив ID колекцій
+  categoryId?: number; // ID категорії, якщо є
 }

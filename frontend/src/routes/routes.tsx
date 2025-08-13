@@ -1,30 +1,38 @@
-// routes/routes.js
+import CreateProduct from "../modules/admin/create-product/CreateProduct";
+import Dashboard from "../modules/admin/dashboard/Dashboard";
+import EditProduct from "../modules/admin/edit-product/EditProduct";
 import { AboutPage, AuthPage, HomePage, NotFoundPage, ProfilePage, RegisterPage } from "../pages";
+import AdminPage from "../pages/AdminPage";
 import ContactPage from "../pages/ContactPage";
 import ProductPage from "../pages/ProductPage";
 
-// Публічні роути - доступні всім
 export const publicRoutes = [
   { path: "/", element: <HomePage /> },
   { path: "/home", element: <HomePage /> },
   { path: "/login", element: <AuthPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/about", element: <AboutPage /> },
-  // { path: "/products", element: <ProductsPage /> },
   { path: "/contact", element: <ContactPage /> },
   { path: "/product/:id", element: <ProductPage /> },
 ];
 
-// Приватні роути - тільки для залогінених
 export const privateRoutes = [
   { path: "/profile", element: <ProfilePage /> },
-  // { path: "/cart", element: <CartPage /> },
-  //{ path: "/orders", element: <OrdersPage /> },
+  {
+    path: "/admin",
+    element: <AdminPage />,
+    children: [
+      { index: true, element: <div>Admin Dashboard</div> },
+      { path: "createproduct", element: <CreateProduct /> },
+      { path: "edit-product/:id", element: <EditProduct /> },
+      { path: "dashboard", element: <Dashboard /> },
+    ],
+  }
+,
 ];
 
-// Роут для 404 сторінки
 export const notFoundRoute = {
   path: "*",
-  element: <NotFoundPage />
+  element: <NotFoundPage />,
 };
 

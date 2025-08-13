@@ -115,6 +115,15 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    return await this.prisma.product.delete({ where: { id } });
+    // Спочатку видаляємо залежності
+    await this.prisma.productTranslation.deleteMany({ where: { productId: id } });
+    await this.prisma.productImage.deleteMany({ where: { productId: id } });
+    await this.prisma.productFeature.deleteMany({ where: { productId: id } });
+    await this.prisma.cartItem.deleteMany({ where: { productId: id } });
+    await this.prisma.orderItem.deleteMany({ where: { productId: id } });
+
+    // Потім сам продукт
+    return this.prisma.product.delete({ where: { id } });
   }
+
 }

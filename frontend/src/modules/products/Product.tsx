@@ -3,6 +3,7 @@ import styles from "./Product.module.scss";
 import { colorLabels, EColor, ESize, sizeLabels, type IProduct } from "../../interfaces/IProduct";
 import { productService } from "../../services/ProductService";
 import { Button } from "../../components/ui/Buttons/Button";
+import Input from '../../components/ui/Inputs/Input';
 
 interface ProductProps {
   productId: string;
@@ -10,7 +11,7 @@ interface ProductProps {
 
 // Інтерфейс для даних форми
 interface ProductFormData {
-  color: EColor | '';  // ← ИЗМЕНИТЬ с string на EColor | ''
+  color: EColor | '';
   size: ESize | '';
   quantity: number;
 }
@@ -76,6 +77,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   const handleColorChange = (color: EColor) => {
     setFormData(prev => ({ ...prev, color }));
   };
+
   // Обробник зміни розміру
   const handleSizeChange = (size: ESize) => {
     setFormData(prev => ({ ...prev, size }));
@@ -87,7 +89,20 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     setFormData(prev => ({ ...prev, quantity }));
   };
 
-  // Обробник вибору особливостей - видалено, оскільки особливості це просто опис
+  // Функції для кнопок + і -
+  const handleQuantityIncrease = () => {
+    setFormData(prev => ({
+      ...prev,
+      quantity: Math.min(prev.quantity + 1, 99)
+    }));
+  };
+
+  const handleQuantityDecrease = () => {
+    setFormData(prev => ({
+      ...prev,
+      quantity: Math.max(prev.quantity - 1, 1)
+    }));
+  };
 
   // Функція додавання в кошик
   const handleAddToCart = async () => {
@@ -109,7 +124,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
 
     try {
       const translation = product.translations && product.translations[0];
-      
 
       const cartItem: CartItem = {
         productId: product.id,
@@ -123,8 +137,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
       };
 
       // Тут буде виклик функції додавання в кошик
-      // Наприклад: await cartService.addToCart(cartItem);
-      // Або dispatch до Redux/Zustand стору
       console.log('Додано в кошик:', cartItem);
 
       // Симуляція API виклику
@@ -185,7 +197,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
             <h3>Особливості:</h3>
             <ul className={styles.featuresList}>
               {features.map((feature) => (
-                <li key={feature.id}>{feature.text}</li>
+                <li key={feature.id}> - {feature.text}</li>
               ))}
             </ul>
           </div>
@@ -211,12 +223,10 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
               <h4>Колір: {formData.color ? colorLabels[formData.color] : 'Не вибрано'}</h4>
               <div className={styles.colorOptions}>
                 {colors.map((color) => (
-                  <button
+                  <Button
                     key={color}
-                    className={`${styles.colorOption} ${formData.color === color ? styles.selected : ''
-                      }`}
+                    className={`${styles.colorOption} ${formData.color === color ? styles.selected : ''}`}
                     onClick={() => handleColorChange(color)}
-                    title={colorLabels[color]}
                     style={{ backgroundColor: color.toLowerCase() }}
                   />
                 ))}
@@ -230,34 +240,31 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
               <h4>Розмір:</h4>
               <div className={styles.sizeOptions}>
                 {sizes.map((size) => (
-                  <button
+                  <Button
                     key={size}
-                    className={`${styles.sizeOption} ${formData.size === size ? styles.selected : ''
-                      }`}
+                    className={`${styles.sizeOption} ${formData.size === size ? styles.selected : ''}`}
                     onClick={() => handleSizeChange(size)}
                   >
                     {sizeLabels[size]}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Особливості - видалено з форми, показуємо тільки як інформацію вище */}
-
           {/* Кількість */}
           <div className={styles.formGroup}>
             <h4>Кількість:</h4>
             <div className={styles.quantityWrapper}>
-              <button
+              <Button
                 type="button"
                 className={styles.quantityBtn}
-                onClick={() => handleQuantityChange({ target: { value: String(formData.quantity - 1) } } as any)}
+                onClick={handleQuantityDecrease}
                 disabled={formData.quantity <= 1}
               >
-                -
-              </button>
-              <input
+                −
+              </Button>
+              <Input
                 type="number"
                 min="1"
                 max="99"
@@ -265,14 +272,14 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                 onChange={handleQuantityChange}
                 className={styles.quantityInput}
               />
-              <button
+              <Button
                 type="button"
                 className={styles.quantityBtn}
-                onClick={() => handleQuantityChange({ target: { value: String(formData.quantity + 1) } } as any)}
+                onClick={handleQuantityIncrease}
                 disabled={formData.quantity >= 99}
               >
                 +
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -283,8 +290,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
 
           {/* Кнопка додавання в кошик */}
           <Button
-            className={`${styles.addToCartBtn} ${addToCartSuccess ? styles.success : ''
-              }`}
+            className={`${styles.addToCartBtn} ${addToCartSuccess ? styles.success : ''}`}
             onClick={handleAddToCart}
             disabled={isAddingToCart}
           >

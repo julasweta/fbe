@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useProductStore } from "../../store/useProductStore";
 import styles from "./Products.module.scss";
 import Card from "./Card";
+import { Button } from "../../components/ui/Buttons/Button";
 
 const Products = () => {
-  const { products, fetchProducts } = useProductStore(); // Додано fetchProducts
+  const { products, fetchProducts } = useProductStore(); 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,7 +14,7 @@ const Products = () => {
       setIsLoading(true);
       setError(null);
       try {
-        await fetchProducts(); // Викликаємо метод зі стору
+        await fetchProducts(); 
         console.log("Products loaded successfully from store");
       } catch (err) {
         console.error("Failed to load products:", err);
@@ -24,7 +25,7 @@ const Products = () => {
     };
 
     loadProducts();
-  }, [fetchProducts]); // Додано fetchProducts як залежність
+  }, [fetchProducts]); 
 
   if (isLoading) {
     return (
@@ -43,12 +44,12 @@ const Products = () => {
         <h2>Продукти</h2>
         <div className={styles.error}>
           <p>Помилка завантаження: {error}</p>
-          <button
+          <Button
             onClick={() => window.location.reload()}
             className={styles.retryButton}
           >
             Спробувати знову
-          </button>
+          </Button>
         </div>
       </div>
     );

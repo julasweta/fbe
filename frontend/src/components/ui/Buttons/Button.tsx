@@ -1,15 +1,17 @@
-import type { ReactNode } from "react";
+import type { ReactNode, MouseEvent, CSSProperties } from "react";
 import styles from "./Button.module.scss";
 import classNames from "classnames";
 
 interface ButtonProps {
-  type?: "button" | "submit" | "reset";
-  onClick?: () => void | Promise<void>;
+  type?: "button" | "submit" | "reset"; // HTML button types должны быть lowercase
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void | Promise<void>; // Правильная типизация
   disabled?: boolean;
   loading?: boolean;
   variant?: "primary" | "secondary" | "danger";
-  children: ReactNode;
-  className?: string;  // Додаємо підтримку className
+  children?: ReactNode; // Зробили необов'язковим
+  className?: string;
+  style?: CSSProperties; // Добавлена поддержка style
+  title?: string; // Добавлено для поддержки title
 }
 
 export const Button = ({
@@ -20,21 +22,25 @@ export const Button = ({
   variant = "primary",
   children,
   className,
+  style, // Добавляем style в деструктуризацию
+  title, // Добавляем title в деструктуризацию
 }: ButtonProps) => {
   return (
-    <button
+    <button // используем HTML button, а не компонент Button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
+      style={style} // Передаем style в button
+      title={title} // Передаем title в button
       className={classNames(
-        styles.button,
+        styles.Button,
         styles[variant],
         { [styles.disabled]: disabled || loading },
-        className  // додаємо переданий клас сюди
+        className
       )}
     >
       {loading && <span className={styles.loader}></span>}
-      {children}
+      {title || children}
     </button>
   );
 };

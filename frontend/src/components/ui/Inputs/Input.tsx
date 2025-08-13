@@ -1,14 +1,14 @@
-import React from "react"; // Імпорт значення
-import type { InputHTMLAttributes, ForwardedRef } from "react"; // Імпорт типів
+import React from "react";
+import type { InputHTMLAttributes} from "react";
 import styles from "./Input.module.scss";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
-  ref?: ForwardedRef<HTMLInputElement>;
 }
 
-export const Input = ({
+// Create the component with forwardRef and give it a display name
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   label,
   error,
   type = "text",
@@ -16,7 +16,7 @@ export const Input = ({
   disabled = false,
   required = false,
   ...rest
-}: InputProps) => {
+}, ref) => {
   return (
     <div className={styles.inputWrapper}>
       {label && (
@@ -25,6 +25,7 @@ export const Input = ({
         </label>
       )}
       <input
+        ref={ref}
         type={type}
         placeholder={placeholder}
         disabled={disabled}
@@ -35,9 +36,11 @@ export const Input = ({
       {error && <p className={styles.errorText}>{error}</p>}
     </div>
   );
-};
+});
 
-// Обгортаємо компонент у forwardRef
-export default React.forwardRef<HTMLInputElement, InputProps>((props, ref) => (
-  <Input {...props} ref={ref} />
-));
+// Add display name for debugging and Fast Refresh
+Input.displayName = 'Input';
+
+// Export both named and default
+export { Input };
+export default Input;

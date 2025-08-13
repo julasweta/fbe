@@ -4,6 +4,7 @@ import styles from "./RegisterForm.module.scss";
 import type { IUser } from "../../interfaces/IUser";
 import Input from "../../components/ui/Inputs/Input";
 import { authService } from "../../services/AuthService";
+import { Button } from "../../components/ui/Buttons/Button";
 
 const RegisterForm: React.FC = () => {
   const {
@@ -32,9 +33,10 @@ const RegisterForm: React.FC = () => {
       await authService.register(data);
       reset();
     } catch (err: any) {
+      console.log("RegisterForm: Error during registration:", err);
       setError("email", {
         type: "server",
-        message: err.response?.data?.message || "Помилка при реєстрації",
+        message: err.response?.data?.error.message || "Помилка при реєстрації",
       });
     }
   };
@@ -91,12 +93,12 @@ const RegisterForm: React.FC = () => {
       </div>
 
       {isSubmitSuccessful && (
-        <p className={styles.success}>Реєстрація успішна!</p>
+        <p className={styles.success}>Реєстрація успішна! Перейдіть на сторінку авторизації</p>
       )}
 
-      <button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Реєстрація..." : "Зареєструватися"}
-      </button>
+      </Button>
     </form>
   );
 };

@@ -4,6 +4,7 @@ import CategoriesSubmenu from "./CategoriesSubmenu";
 import CollectionsSubmenu from "./CollectionsSubmenu";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { useCollectionStore } from "../../../store/useCollectionStore";
+import { Button } from "../../ui/Buttons/Button";
 
 interface MenuItem {
   label: string;
@@ -19,13 +20,13 @@ const HeaderMenu: React.FC = () => {
   const { categories, fetchCategories } = useCategoryStore();
   const { collections, fetchCollections } = useCollectionStore();
 
-  console.log("Categories:", categories);
-  console.log("Collections:", collections);
+
+
 
   useEffect(() => {
     fetchCategories();
     fetchCollections();
-  }, [fetchCategories, fetchCollections]);
+  }, [fetchCategories, fetchCollections]); 
 
   const menuItems: MenuItem[] = [
     { label: "Головна", link: "/" },
@@ -45,7 +46,7 @@ const HeaderMenu: React.FC = () => {
 
   return (
     <nav className={styles.headerMenu}>
-      <button
+      <Button
         className={`${styles.burger} ${mobileMenuOpen ? styles.open : ""}`}
         onClick={toggleMobileMenu}
         aria-label="Toggle menu"
@@ -53,10 +54,13 @@ const HeaderMenu: React.FC = () => {
         <span />
         <span />
         <span />
-      </button>
+      </Button>
+
 
       <ul className={`${styles.menuList} ${mobileMenuOpen ? styles.menuListOpen : ""}`}>
+
         {menuItems.map((item, index) => (
+
           <li
             key={index}
             className={styles.menuItem}
@@ -65,7 +69,7 @@ const HeaderMenu: React.FC = () => {
           >
             {item.submenu ? (
               <>
-                <button
+                <Button
                   type="button"
                   className={styles.menuLink}
                   onClick={() => toggleSubmenu(index)}
@@ -73,7 +77,7 @@ const HeaderMenu: React.FC = () => {
                 >
                   {item.label}
                   <span className={styles.arrow} />
-                </button>
+                </Button>
 
                 {(activeIndex === index || openSubmenuIndex === index) && (
                   <ul className={styles.submenu}>
@@ -89,6 +93,8 @@ const HeaderMenu: React.FC = () => {
                         <CollectionsSubmenu collections={collections} />
                       </ul>
                     </li>
+
+
                   </ul>
                 )}
               </>

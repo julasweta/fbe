@@ -82,7 +82,7 @@ export const FileUpload = ({
       setSelectedFiles([]);
       onFilesSelected([]);
     } catch (error) {
-      alert("Помилка при завантаженні файлів");
+      alert("Помилка при завантаженні файлів" + error );
     } finally {
       setIsUploading(false);
     }
@@ -124,7 +124,7 @@ export const FileUpload = ({
             {selectedFiles.map((file, index) => (
               <li key={file.name + index} className={classNames(styles.fileItem, styles[theme])}>
                 📄 {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                <button
+                <Button
                   type="button"
                   className={styles.removeButton}
                   onClick={(e) => {
@@ -134,7 +134,7 @@ export const FileUpload = ({
                   disabled={isUploading}
                 >
                   ✕
-                </button>
+                </Button>
               </li>
             ))}
           </ul>

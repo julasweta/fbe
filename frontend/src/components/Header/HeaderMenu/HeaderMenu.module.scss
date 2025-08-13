@@ -112,6 +112,11 @@
   }
 }
 
+.submenuHeader{
+  display: flex;
+  align-items: center;
+}
+
 .arrow {
   border: solid #333;
   border-width: 0 2px 2px 0;
@@ -121,8 +126,6 @@
   transform: rotate(45deg);
   transition: transform 0.3s ease;
 
-  /* Повертаємо стрілку вниз, якщо підменю відкрито */
-  &[aria-expanded="true"],
   &.open {
     transform: rotate(-135deg);
   }

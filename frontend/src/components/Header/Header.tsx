@@ -3,28 +3,31 @@ import { useAuthStore } from "../../store";
 import HeaderMenu from "./HeaderMenu/HeaderMenu";
 import styles from "./Header.module.scss";
 import { useEffect } from "react";
+import { Button } from "../ui/Buttons/Button";
 
 const Header = () => {
   const { logout, accessToken, user } = useAuthStore();
 
+
   useEffect(() => {
-    const user = useAuthStore.getState().user;
-    console.log(user);
-  }, []);
+    useAuthStore.getState();
+  }, [user]);
 
   return (
     <div className={styles.header}>
       <HeaderMenu />
       <div className={styles.logo}>FBE</div>
       <div className={styles.authBlock}>
+
+        {user && user.role === "ADMIN" && <Link to="/admin" >Admin Panel</Link>}
         {accessToken ? (
           <>
             <span className={styles.userName}>
               {user?.first_name.toUpperCase()}
             </span>
-            <button className={styles.authButton} onClick={logout}>
+            <Button className={styles.authButton} onClick={logout}>
               Logout
-            </button>
+            </Button>
           </>
         ) : (
           <Link to="/login" className={styles.authButton}>

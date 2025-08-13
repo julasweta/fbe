@@ -21,7 +21,7 @@ export class CreateUserDto {
   @IsString()
   last_name: string;
 
-  @ApiProperty({ example: 'ivan@example.com' })
+  @ApiProperty({ example: 'julasweta@ukr.net' })
   @IsEmail()
   email: string;
 
@@ -65,4 +65,11 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(Role)
   role?: Role;
+
+
+  @IsOptional()
+  resetCode?: string; // Для відновлення пароля
+
+  @IsOptional()
+  resetCodeExpiry?: Date; // Для відновлення пароля
 }
