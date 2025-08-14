@@ -1,42 +1,78 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/Buttons/Button";
 import { useProductStore } from "../../../store";
 import Card from "../../products/Card";
-import type { IProduct } from "../../../interfaces/IProduct";
+import styles from "./Dashboard.module.scss";
+import type { IProduct, ProductFilters } from "../../../interfaces/IProduct";
+import { CategorySelect } from "../../../components/Category/CategorySelect";
+import { CollectionSelect } from "../../../components/Collection/CollectionSelect";
 
 const Dashboard = () => {
   const { products, fetchProducts } = useProductStore();
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
 
-  console.log(products);
+  const [categorySlug, setCategorySlug] = useState<string>("");
+  const [collectionSlug, setCollectionSlug] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      setIsLoading(true);
+      const filters: ProductFilters = {
+        limit: 50,
+        skip: 0,
+        categorySlug: categorySlug || undefined,
+        collectionSlug: collectionSlug || undefined,
+      };
+      await fetchProducts(filters);
+      setIsLoading(false);
+    };
+    loadProducts();
+  }, [fetchProducts, categorySlug, collectionSlug]);
 
   const handleDelete = (product: IProduct) => {
-    if (window.confirm(`Are you sure you want to delete product ${product.translations && product.translations[0].name}?`)) {
+    if (window.confirm(`Видалити продукт ${product.translations?.[0]?.name}?`)) {
       useProductStore.getState().deleteProduct(product.id);
-      console.log(`Deleting product with id: ${product.translations && product.translations[0].name}`);
-      // Тут має бути виклик до API для видалення продукту
-      // Наприклад: await deleteProduct(id);
     }
+  };
 
-    // Логіка видалення продукту    
-  }
   return (
-    <div>Dashboard
-
+    <div>
       <h1>Dashboard</h1>
-      <p>Total Products: {products.length}</p>
-      <ul>
-        {products && products.map(product => (
-          <div>
-            <Card key={product.id} product={product} />
-            <Button onClick={() => handleDelete(product)} title="Видалити"/ >
-          </div>
-        ))}
-      </ul>
-    </div>
-  )
-}
 
-export default Dashboard
+      {/* Filters */}
+      <div className={styles.filters}>
+        <CategorySelect<string>
+          value={categorySlug}
+          onChange={setCategorySlug}
+          valueKey="slug"
+        />
+        
+        <CollectionSelect
+          value={collectionSlug}
+          onChange={setCollectionSlug}
+          valueKey="slug"
+          multiple={false}
+        />
+      </div>
+
+      <p>Всього продуктів: {products.length}</p>
+
+      {isLoading ? (
+        <p>Завантаження...</p>
+      ) : (
+        <ul className={styles.cardsList}>
+          {products.map((product) => (
+            <div className={styles.cardWrapper} key={product.id}>
+              <Card product={product} />
+              <Button onClick={() => handleDelete(product)} title="Видалити" />
+            </div>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;
+

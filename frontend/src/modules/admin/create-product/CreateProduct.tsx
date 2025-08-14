@@ -1,8 +1,6 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import styles from "./CreateProduct.module.scss";
-import { useCollectionStore } from "../../../store/useCollectionStore";
-import { useCategoryStore } from "../../../store/useCategoryStore";
 import ImageUpload from "../upload-img/ImageUploader";
 import { productService } from "../../../services/ProductService";
 import type { IProduct } from "../../../interfaces/IProduct";
@@ -12,7 +10,8 @@ import {
   sizeLabels,
   colorLabels,
 } from "../../../interfaces/IProduct";
-
+import { CategorySelect } from "../../../components/Category/CategorySelect";
+import { CollectionSelect } from "../../../components/Collection/CollectionSelect";
 // Мапа кольорів для відображення
 const colorHexMap: Record<EColor, string> = {
   [EColor.RED]: "#ff0000",
@@ -21,11 +20,12 @@ const colorHexMap: Record<EColor, string> = {
   [EColor.BLACK]: "#000000",
   [EColor.WHITE]: "#ffffff",
   [EColor.YELLOW]: "#ffff00",
+  [EColor.ORANGE]: "#ffa500",
+  [EColor.PURPLE]: "#800080",
+  [EColor.PINK]: "#ffc0cb",
 };
 
 const CreateProduct: React.FC = () => {
-  const { collections, loading } = useCollectionStore();
-  const { categories } = useCategoryStore();
   const [manualImage, setManualImage] = useState<string>("");
 
   const { register, control, handleSubmit, reset, setValue, watch } =
@@ -48,10 +48,6 @@ const CreateProduct: React.FC = () => {
   const translationsArray = useFieldArray({ control, name: "translations" });
   const featuresArray = useFieldArray({ control, name: "features" });
 
-/*   useEffect(() => {
-    fetchCollections();
-  }, [fetchCollections]); */
-
   const onSubmit = (data: IProduct) => {
     const cleanData = {
       ...data,
@@ -68,29 +64,13 @@ const CreateProduct: React.FC = () => {
         url,
         altText,
       })),
-      collectionIds: data.collectionIds?.map(id => Number(id)),
+      collectionIds: data.collectionIds?.map((id) => Number(id)),
+      categoryId: data.categoryId ? Number(data.categoryId) : undefined,
     };
 
     productService.addProduct(cleanData);
     reset();
   };
-
-  const renderCategories = (
-    cats: typeof categories,
-    parentId: number | null = null,
-    level = 0
-  ) =>
-    cats
-      .filter((cat) => cat.parentId === parentId)
-      .map((cat) => (
-        <React.Fragment key={cat.id}>
-          <option value={cat.id}>
-            {"— ".repeat(level)}
-            {cat.name}
-          </option>
-          {renderCategories(cats, cat.id, level + 1)}
-        </React.Fragment>
-      ));
 
   return (
     <div className={styles.createProduct}>
@@ -133,7 +113,6 @@ const CreateProduct: React.FC = () => {
                   setValue(`images.${index}.url`, url);
                 }}
               />
-              <br></br>
               <input
                 type="text"
                 placeholder="Встав URL вручну"
@@ -259,26 +238,21 @@ const CreateProduct: React.FC = () => {
         {/* Category */}
         <div className={styles.field}>
           <label>Category</label>
-          <select {...register("categoryId", { valueAsNumber: true })}>
-            <option value="">Select category</option>
-            {renderCategories(categories)}
-          </select>
+          <CategorySelect
+            value={watch("categoryId")}
+            onChange={(val) => setValue("categoryId", val as number)}
+            valueKey="id"
+          />
         </div>
 
         {/* Collections */}
         <div className={styles.field}>
           <label>Collections</label>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <select multiple {...register("collectionIds")} className={styles.select}>
-              {collections.map((col) => (
-                <option key={col.id} value={col.id}>
-                  {col.name}
-                </option>
-              ))}
-            </select>
-          )}
+          <CollectionSelect
+            value={watch("collectionIds")?.[0] ?? ""}
+            onChange={(val) => setValue("collectionIds", [Number(val)])}
+            valueKey="id"
+          />
         </div>
 
         <button type="submit" className={styles.submit}>

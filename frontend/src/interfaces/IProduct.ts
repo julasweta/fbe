@@ -28,6 +28,10 @@ export enum EColor {
   WHITE = "WHITE",
   GREEN = "GREEN",
   YELLOW = "YELLOW",
+  ORANGE= "ORANGE",
+  PURPLE= "PURPLE",
+  PINK= "PINK",
+
 }
 
 export const sizeLabels: Record<ESize, string> = {
@@ -46,6 +50,9 @@ export const colorLabels: Record<EColor, string> = {
   [EColor.WHITE]: "Білий",
   [EColor.GREEN]: "Зелений",
   [EColor.YELLOW]: "Жовтий",
+  [EColor.ORANGE]: "Помаранчевий",
+  [EColor.PURPLE]: "Фіолетовий",
+  [EColor.PINK]: "Рожевий",
 };
 
 
@@ -81,8 +88,8 @@ export interface IProductsResponse {
 export interface ProductFilters{
   limit?: number;
   skip?: number;
-  categorySlug?: string;
-  collectionSlug?: string;
+  categorySlug?: string | undefined;
+  collectionSlug?: string | undefined; // додано для фільтрації за колекцією
   size?: ESize;
   color?: EColor;
   priceRange?: [number, number]; // [minPrice, maxPrice]

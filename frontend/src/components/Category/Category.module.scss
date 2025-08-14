@@ -31,3 +31,24 @@
   margin-right: 8px;
   font-size: 12px;
 }
+
+.select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+  margin: 1rem;
+
+  &:focus {
+    border-color: #6d747b;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  }
+
+  option {
+    padding: 6px;
+  }
+}

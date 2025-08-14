@@ -24,7 +24,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className={styles.adminPage}>
+    <div className={`${styles.adminPage} ${styles.page}`}>
       {/* Кнопка бургер-меню (тільки на мобільних) */}
       <button className={styles.burger} onClick={toggleSidebar}>
         <span></span>

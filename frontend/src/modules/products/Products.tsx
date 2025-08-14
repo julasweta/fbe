@@ -37,7 +37,7 @@ const Products = ({ categorySlug, collectionSlug }:ProductsProps) => {
     };
 
     loadProducts();
-  }, [fetchProducts]);
+  }, [fetchProducts, categorySlug, collectionSlug]);
 
   if (isLoading) {
     return (
