@@ -1,14 +1,154 @@
+.dark {
+  color: #ffffff;
+  height: 100vh;
+  background-image: url("https://res.cloudinary.com/divhalkcr/image/upload/v1755108591/c1uvyclqnix61u5gvorx.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.darkContent{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.title {
+  font-size: 5.8rem;
+  margin-bottom: 1rem;
+}
+.description {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-align: center;
+  max-width: 600px;
+  color: #294550;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0);
+  /* Напівпрозорий фон */
+  backdrop-filter: blur(10px);
+  /* Розмитий фон */
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+
+  @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  
+    // Мобільні пристрої
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+}
+
+.headerTop{
+  display: flex;  
+  flex-direction: row;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  justify-content: space-around;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+    height: 50px;
+  background-color: #484a4d; 
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 400;
+
+    @media (max-width: 768px) {
+        display:none;
+      }
+}
+
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #f5f7fa; // світлий фон для всього лейауту
+  background-color: #21395f; // темний фон для всього лейауту
+}
+
+.heroSection {
+  background-color: #21395f; //// Відступ для фіксованого хедера
+  
+  // Планшети
+  @media (max-width: 768px) {
+    padding-top: 56px;
+    min-height: 250px;
+  }
+  
+  // Мобільні пристрої
+  @media (max-width: 480px) {
+    padding-top: 52px;
+    min-height: 200px;
+  }
+}
+
+.heroContent {
+  padding: 40px 20px;
+  color: #ffffff;
+  text-align: center;
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+  }
 }
 
 .content {
   flex: 1; // займати весь вільний простір
   margin: 0 auto; // центр по горизонталі
-  padding: 20px;
+  padding: 0; // забираємо padding щоб секція контролювала відступи
   width: 100%;
   box-sizing: border-box;
+  background-color: #fcfcff; // світлий фон для контенту
+}
+
+.contentSection {
+  background-color: #f0f4f8; // світлий фон для секції контенту
+  /* padding: 40px 20px; */ // переносимо padding сюди
+  // Мінімальна висота для демонстрації
+  
+  // Планшети
+  @media (max-width: 768px) {
+    padding: 30px 16px;
+    min-height: 200px;
+  }
+  
+  // Мобільні пристрої
+  @media (max-width: 480px) {
+    padding: 20px 12px;
+  }
+}
+
+// Глобальні стилі для data-атрибутів
+:global(.hero-section[data-bg="dark"]) {
+  background-color: #21395f !important;
+  color: #ffffff;
+}
+
+:global(.content-section[data-bg="light"]) {
+  background-color: #f0f4f8 !important;
+  color: #333333;
+}
+
+// Альтернативно, якщо :global не працює, використайте класи
+:global(.dark-section) {
+  background-color: #21395f !important;
+  color: #ffffff;
+}
+
+:global(.light-section) {
+  background-color: #f0f4f8 !important;
+  color: #333333;
 }

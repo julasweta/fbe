@@ -71,3 +71,19 @@ export interface IProduct {
   collectionIds: number[]; // масив ID колекцій
   categoryId?: number; // ID категорії, якщо є
 }
+
+export interface IProductsResponse {
+  data: IProduct[];
+  count: number;
+  page: number;
+  totalPages: number;
+}
+export interface ProductFilters{
+  limit?: number;
+  skip?: number;
+  categorySlug?: string;
+  collectionSlug?: string;
+  size?: ESize;
+  color?: EColor;
+  priceRange?: [number, number]; // [minPrice, maxPrice]
+}

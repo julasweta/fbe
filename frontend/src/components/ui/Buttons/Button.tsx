@@ -33,7 +33,7 @@ export const Button = ({
       style={style} // Передаем style в button
       title={title} // Передаем title в button
       className={classNames(
-        styles.Button,
+        styles.button,
         styles[variant],
         { [styles.disabled]: disabled || loading },
         className

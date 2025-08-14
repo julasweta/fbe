@@ -1,10 +1,11 @@
 // App.js
 import { Routes, Route, Navigate } from "react-router-dom";
-import { publicRoutes, privateRoutes, notFoundRoute } from "./routes/routes";
+import { publicRoutes, privateRoutes, notFoundRoute, mainRoutes } from "./routes/routes";
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import { useThemeStore } from "./store/useThemeStore";
 import { useAuthStore } from "./store";
 import "./App.css";
+import SeccondLayout from "./layouts/SeccondLayout";
 
 export default function App() {
   const { theme } = useThemeStore();
@@ -13,12 +14,22 @@ export default function App() {
   return (
     <div className={`${theme}`}>
       <Routes>
+        {/* Головна сторінка */}
+        {mainRoutes.map(({ path, element }) => (
+          <Route
+            key={path}
+            path={path}
+            element={<MainLayout>{element}</MainLayout>}
+          />
+        ))}
+
+
         {/* Публічні роути - доступні всім */}
         {publicRoutes.map(({ path, element }) => (
           <Route
             key={path}
             path={path}
-            element={<MainLayout>{element}</MainLayout>}
+            element={<SeccondLayout>{element}</SeccondLayout>}
           />
         ))}
 
@@ -29,7 +40,7 @@ export default function App() {
             path={path}
             element={
               accessToken ? (
-                <MainLayout>{element}</MainLayout>
+                <SeccondLayout>{element}</SeccondLayout>
               ) : (
                 <Navigate to="/login" replace />
               )

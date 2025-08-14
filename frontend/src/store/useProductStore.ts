@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import type { IProduct } from "../interfaces/IProduct";
 import { productService } from "../services/ProductService";
+import type { ProductFilters } from '../interfaces/IProduct';
 
 interface ProductState {
   products: IProduct[];
@@ -15,7 +16,7 @@ interface ProductState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 
-  fetchProducts: () => Promise<void>;
+  fetchProducts: (filters?: ProductFilters) => Promise<void>;
   createProduct: (productData: Partial<IProduct>) => Promise<void>;
   editProduct: (id: number, productData: Partial<IProduct>) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
@@ -51,11 +52,11 @@ export const useProductStore = create<ProductState>((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error, isLoading: false }),
 
-  fetchProducts: async () => {
+  fetchProducts: async (filters?: ProductFilters) => {
     set({ isLoading: true, error: null });
 
     try {
-      const products = await productService.getAll();
+      const products = await productService.getAll(filters);
       set({ products, isLoading: false });
     } catch (error) {
       console.error('Error fetching products:', error);

@@ -44,17 +44,52 @@ export class ProductsService {
     });
   }
 
-  async findAll() {
-    const products = await this.prisma.product.findMany({
-      include: {
-        translations: { include: { language: true } },
-        images: true,
-        features: true,
-        collection: true,
-        category: true,
-      },
-    });
-    return products;
+  async findAll(params: {
+    limit?: number;
+    skip?: number;
+    page?: number;
+    category?: string;
+    collection?: string;
+  }) {
+    const limit = params.limit ?? 20;
+    const offset = params.page ? (params.page - 1) * limit : (params.skip ?? 0);
+
+    const where: any = {};
+
+    if (params.category) {
+      where.category = {
+        slug: params.category,
+      };
+    }
+
+    if (params.collection) {
+      where.collection = {
+        slug: params.collection,
+      };
+    }
+
+    const [products, count] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        skip: offset,
+        take: limit,
+        where,
+        include: {
+          translations: { include: { language: true } },
+          images: true,
+          features: true,
+          collection: true,
+          category: true,
+        },
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data: products,
+      count,
+      page: params.page || Math.floor(offset / limit) + 1,
+      totalPages: Math.ceil(count / limit),
+    };
   }
 
   async findOne(id: number) {
@@ -116,7 +151,9 @@ export class ProductsService {
 
   async remove(id: number) {
     // Спочатку видаляємо залежності
-    await this.prisma.productTranslation.deleteMany({ where: { productId: id } });
+    await this.prisma.productTranslation.deleteMany({
+      where: { productId: id },
+    });
     await this.prisma.productImage.deleteMany({ where: { productId: id } });
     await this.prisma.productFeature.deleteMany({ where: { productId: id } });
     await this.prisma.cartItem.deleteMany({ where: { productId: id } });
@@ -125,5 +162,4 @@ export class ProductsService {
     // Потім сам продукт
     return this.prisma.product.delete({ where: { id } });
   }
-
 }

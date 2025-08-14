@@ -4,7 +4,7 @@ import { EmailService } from './email.service';
 // Тимчасовий контролер для тестування email
 @Controller('test-email')
 export class EmailController {
-  constructor(private emailService: EmailService) { }
+  constructor(private emailService: EmailService) {}
 
   @Post('send-test')
   async sendTestEmail(@Body() body: { email: string }) {
@@ -24,14 +24,14 @@ export class EmailController {
 
       return {
         success: true,
-        message: 'Test email sent successfully'
+        message: 'Test email sent successfully',
       };
     } catch (error) {
       console.error('[TestEmail] Error:', error);
       return {
         success: false,
         error: error.message,
-        details: error
+        details: error,
       };
     }
   }

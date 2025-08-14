@@ -1,13 +1,13 @@
 // ProductService.ts
 import { apiService } from "./ApiServices";
-import type { IProduct } from "../interfaces/IProduct";
+import type { IProduct, IProductsResponse, ProductFilters } from "../interfaces/IProduct";
 
 const productService = {
-  async getAll(limit = 50, skip = 0): Promise<IProduct[]> {
-    console.log('ProductService: Fetching products...');
-
-    const { data } = await apiService.get<IProduct[]>(`products?limit=${limit}&skip=${skip}`);
-    return Array.isArray(data) ? data : [];
+  async getAll(filters?: ProductFilters): Promise<IProduct[]> {
+    const { data } = await apiService.get<IProductsResponse>(
+      `products?limit=${filters?.limit}&skip=${filters?.skip}&category=${filters?.categorySlug}&collection=${filters?.collectionSlug}`
+    );
+    return data.data; // тепер data — це об’єкт з ключем data
   },
 
   async getById(id: number): Promise<IProduct> {
@@ -18,7 +18,6 @@ const productService = {
   },
 
   async addProduct(productData: Partial<IProduct>): Promise<IProduct> {
-    console.log('ProductService: Adding product:', productData);
 
     const { data } = await apiService.post<IProduct>("products", productData);
     return data;

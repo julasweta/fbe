@@ -28,6 +28,7 @@ const RegisterForm: React.FC = () => {
     },
   });
 
+
   const onSubmit = async (data: IUser) => {
     try {
       await authService.register(data);
@@ -48,14 +49,14 @@ const RegisterForm: React.FC = () => {
       <div className={styles.row}>
         <Input
           type="text"
-          placeholder="Ім'я"
+          placeholder="Ім'я *"
           {...register("first_name", { required: "Ім'я обов'язкове" })}
         />
         {errors.first_name && <p className={styles.error}>{errors.first_name.message}</p>}
 
         <Input
           type="text"
-          placeholder="Прізвище"
+          placeholder="Прізвище *"
           {...register("last_name", { required: "Прізвище обов'язкове" })}
         />
         {errors.last_name && <p className={styles.error}>{errors.last_name.message}</p>}
@@ -63,7 +64,7 @@ const RegisterForm: React.FC = () => {
 
       <Input
         type="email"
-        placeholder="Email"
+        placeholder="Email *"
         {...register("email", {
           required: "Email обов'язковий",
           pattern: { value: /\S+@\S+\.\S+/, message: "Некоректний email" },
@@ -73,12 +74,15 @@ const RegisterForm: React.FC = () => {
 
       <Input
         type="password"
-        placeholder="Пароль"
+        placeholder="Пароль *"
         {...register("password", { required: "Пароль обов'язковий" })}
       />
       {errors.password && <p className={styles.error}>{errors.password.message}</p>}
 
-      <Input type="tel" placeholder="Телефон" {...register("phone")} />
+      <Input type="tel" placeholder="Телефон *" {...register("phone", {
+        required: "Телефон обов'язковий",
+        pattern: { value: /^\+?[0-9\s\-()]+$/, message: "Некоректний номер телефону" },
+      })} />
 
       <Input type="text" placeholder="Адреса" {...register("address")} />
 
@@ -89,8 +93,10 @@ const RegisterForm: React.FC = () => {
 
       <div className={styles.row}>
         <Input type="text" placeholder="Поштовий індекс" {...register("postalCode")} />
-        <Input type="date" {...register("dateOfBirth")} />
+       
       </div>
+      <span >Дата народження  <br></br>
+        <Input type="date" placeholder="Дата народження" {...register("dateOfBirth")} /></span>
 
       {isSubmitSuccessful && (
         <p className={styles.success}>Реєстрація успішна! Перейдіть на сторінку авторизації</p>

@@ -4,7 +4,7 @@
 
 .headerMenu {
   position: relative;
-  background: #fff;
+  background: transparent;
   padding: 0 1rem;
   display: flex;
   align-items: center;
@@ -23,7 +23,6 @@
 
   @media (max-width: 768px) {
     flex-direction: column;
-    background: #fff;
     position: fixed;
     top: 60px;
     left: 0;
@@ -37,6 +36,7 @@
 
 .menuListOpen {
   max-height: 100vh; // достатня висота, щоб показати всі пункти
+  color: #333;
 
   @media (min-width: 769px) {
     max-height: none;
@@ -45,9 +45,9 @@
 
 .menuItem {
   position: relative;
-
   @media (max-width: 768px) {
     border-bottom: 1px solid #ddd;
+    color: #333;
   }
 }
 
@@ -81,6 +81,7 @@
   top: 100%;
   left: 0;
   background: #fff;
+  color: #333;
   list-style: none;
   padding: 0.5rem 0;
   margin: 0;
@@ -115,6 +116,9 @@
 .submenuHeader{
   display: flex;
   align-items: center;
+}
+.mobileMenuOpen{
+  color: #0070f3;
 }
 
 .arrow {

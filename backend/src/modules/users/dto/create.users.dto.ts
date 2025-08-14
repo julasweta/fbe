@@ -66,7 +66,6 @@ export class CreateUserDto {
   @IsEnum(Role)
   role?: Role;
 
-
   @IsOptional()
   resetCode?: string; // Для відновлення пароля
 

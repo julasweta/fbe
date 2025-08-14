@@ -60,3 +60,20 @@ table {
 }
 
 
+/* App.css */
+.light {
+  background-color: #fff;
+  color: #333;
+}
+
+.dark {
+  background-color: #333;
+  color: #fff;
+}
+
+.content {
+  padding-top: 60px;
+  /* Відступ для хедера */
+  min-height: 100vh;
+}
+

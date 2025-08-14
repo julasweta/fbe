@@ -3,18 +3,26 @@ import Dashboard from "../modules/admin/dashboard/Dashboard";
 import EditProduct from "../modules/admin/edit-product/EditProduct";
 import { AboutPage, AuthPage, HomePage, NotFoundPage, ProfilePage, RegisterPage } from "../pages";
 import AdminPage from "../pages/AdminPage";
+import CategoryPage from "../pages/CategoryPage";
+import CollectionPage from "../pages/CollectionPage";
 import ContactPage from "../pages/ContactPage";
 import ProductPage from "../pages/ProductPage";
 
 export const publicRoutes = [
-  { path: "/", element: <HomePage /> },
-  { path: "/home", element: <HomePage /> },
+ 
   { path: "/login", element: <AuthPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/about", element: <AboutPage /> },
   { path: "/contact", element: <ContactPage /> },
   { path: "/product/:id", element: <ProductPage /> },
+  { path: "/category/:categorySlug", element: <CategoryPage /> },
+  { path: "/group/:collectionSlug", element: <CollectionPage /> }
 ];
+
+export const mainRoutes = [
+  { path: "/", element: <HomePage /> },
+  { path: "/home", element: <HomePage /> },
+]
 
 export const privateRoutes = [
   { path: "/profile", element: <ProfilePage /> },

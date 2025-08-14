@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
@@ -13,7 +13,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private emailService: EmailService, // Додайте EmailService для відправки кодів
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email } });
@@ -29,7 +29,9 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User): Promise<{ accessToken: string; refreshToken: string }> {
+  async login(
+    user: User,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     // Перевірка, чи user валідний (якщо це не зроблено раніше)
     if (!user || !user.id || !user.email) {
       throw new UnauthorizedException('Недостатньо даних користувача');
@@ -92,7 +94,7 @@ export class AuthService {
 
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
     const resetCodeExpiry = new Date();
-    resetCodeExpiry.setMinutes(resetCodeExpiry.getMinutes() + 15); 
+    resetCodeExpiry.setMinutes(resetCodeExpiry.getMinutes() + 15);
 
     const user = await this.prisma.user.create({
       data: {
@@ -116,7 +118,11 @@ export class AuthService {
     return UserResponseMapper.toResUserMapper(currentUser);
   }
 
-  async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
+  async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
     try {
       // Знаходимо користувача
       const user = await this.prisma.user.findUnique({
@@ -128,7 +134,10 @@ export class AuthService {
       }
 
       // Перевіряємо поточний пароль
-      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      const isCurrentPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password,
+      );
       if (!isCurrentPasswordValid) {
         throw new UnauthorizedException('Поточний пароль неправильний');
       }
@@ -136,7 +145,9 @@ export class AuthService {
       // Перевіряємо, чи новий пароль не співпадає з поточним
       const isSamePassword = await bcrypt.compare(newPassword, user.password);
       if (isSamePassword) {
-        throw new UnauthorizedException('Новий пароль не може співпадати з поточним');
+        throw new UnauthorizedException(
+          'Новий пароль не може співпадати з поточним',
+        );
       }
 
       // Хешуємо новий пароль
@@ -148,7 +159,7 @@ export class AuthService {
         data: {
           password: hashedNewPassword,
           // Опціонально: інвалідуємо refresh токен для додаткової безпеки
-          refreshToken: null
+          refreshToken: null,
         },
       });
 
@@ -172,7 +183,9 @@ export class AuthService {
 
       if (!user) {
         // Не розкриваємо, що користувача не існує
-        console.log(`[AuthService] Forgot password request for non-existent email: ${email}`);
+        console.log(
+          `[AuthService] Forgot password request for non-existent email: ${email}`,
+        );
         return;
       }
 
@@ -181,7 +194,9 @@ export class AuthService {
       const resetCodeExpiry = new Date();
       resetCodeExpiry.setMinutes(resetCodeExpiry.getMinutes() + 15); // Код дійсний 15 хвилин
 
-      console.log(`[AuthService] Generated reset code: ${resetCode} for user: ${user.id}`);
+      console.log(
+        `[AuthService] Generated reset code: ${resetCode} for user: ${user.id}`,
+      );
 
       // Зберігаємо код в базі даних
       await this.prisma.user.update({
@@ -192,15 +207,22 @@ export class AuthService {
         },
       });
 
-      console.log(`[AuthService] Reset code saved to database for user: ${user.id}`);
+      console.log(
+        `[AuthService] Reset code saved to database for user: ${user.id}`,
+      );
 
       // Відправляємо email з кодом
       try {
         console.log(`ja v servic`);
         await this.emailService.sendResetCode(email, resetCode);
-        console.log(`[AuthService] Reset code email sent successfully to: ${email}`);
+        console.log(
+          `[AuthService] Reset code email sent successfully to: ${email}`,
+        );
       } catch (emailError) {
-        console.error('[AuthService] Failed to send reset code email:', emailError.message);
+        console.error(
+          '[AuthService] Failed to send reset code email:',
+          emailError.message,
+        );
 
         // Очищаємо код з бази, якщо email не відправився
         await this.prisma.user.update({
@@ -211,9 +233,10 @@ export class AuthService {
           },
         });
 
-        throw new Error('Не вдалося відправити код на email. Спробуйте пізніше.');
+        throw new Error(
+          'Не вдалося відправити код на email. Спробуйте пізніше.',
+        );
       }
-
     } catch (error) {
       console.error('[AuthService] Forgot password error:', error);
       if (error.message.includes('email')) {
@@ -223,23 +246,33 @@ export class AuthService {
     }
   }
 
-  async resetPassword(email: string, resetCode: string, newPassword: string): Promise<void> {
+  async resetPassword(
+    email: string,
+    resetCode: string,
+    newPassword: string,
+  ): Promise<void> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
       });
 
       if (!user) {
-        throw new UnauthorizedException('Невалідний код або час дії коду закінчився');
+        throw new UnauthorizedException(
+          'Невалідний код або час дії коду закінчився',
+        );
       }
 
       // Перевіряємо код та його термін дії
       if (!user.resetCode || user.resetCode !== resetCode) {
-        throw new UnauthorizedException('Невалідний код або час дії коду закінчився');
+        throw new UnauthorizedException(
+          'Невалідний код або час дії коду закінчився',
+        );
       }
 
       if (!user.resetCodeExpiry || new Date() > user.resetCodeExpiry) {
-        throw new UnauthorizedException('Невалідний код або час дії коду закінчився');
+        throw new UnauthorizedException(
+          'Невалідний код або час дії коду закінчився',
+        );
       }
 
       // Хешуємо новий пароль
@@ -257,13 +290,17 @@ export class AuthService {
         },
       });
 
-      console.log(`[AuthService] Password reset successfully for user: ${user.id}`);
+      console.log(
+        `[AuthService] Password reset successfully for user: ${user.id}`,
+      );
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
       console.error('[AuthService] Reset password error:', error);
-      throw new UnauthorizedException('Невалідний код або час дії коду закінчився');
+      throw new UnauthorizedException(
+        'Невалідний код або час дії коду закінчився',
+      );
     }
   }
 

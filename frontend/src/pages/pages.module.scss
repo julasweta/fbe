@@ -1,8 +1,14 @@
+.page{
+  padding-top: 120px;
+}
 .centerWrapper{
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  @media (max-width: 480px) {
+      align-items: flex-start;
+    }
 }
 .adminPage {
   width: 100%;
@@ -17,6 +23,7 @@
 
 .adminContent {
   width: 80%;
+  min-height: 70vh;
   padding: 2rem;
   background-color: #fff;
   border-radius: 8px;

@@ -14,6 +14,17 @@
   }
 }
 
+/* styles.css або твій SCSS */
+.swiper-button-prev,
+.swiper-button-next {
+  color: #333;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  color: #000;
+}
+
 // Зображення
 .images {
   position: relative;

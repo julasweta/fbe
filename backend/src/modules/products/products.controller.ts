@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
@@ -29,9 +30,24 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Отримати всі продукти' })
-  findAll() {
-    return this.productsService.findAll();
+  @ApiOperation({
+    summary: 'Отримати всі продукти з пагінацією та фільтром по категорії',
+  })
+  findAll(
+    @Query('limit') limit?: string,
+    @Query('skip') skip?: string,
+    @Query('page') page?: string,
+    @Query('category') category?: string,
+    @Query('collection') collection?: string,
+  ) {
+    return this.productsService.findAll({
+      limit: limit && !isNaN(+limit) ? parseInt(limit, 10) : undefined,
+      skip: skip && !isNaN(+skip) ? parseInt(skip, 10) : undefined,
+      page: page && !isNaN(+page) ? parseInt(page, 10) : undefined,
+      category: category && category !== 'undefined' ? category : undefined,
+      collection:
+        collection && collection !== 'undefined' ? collection : undefined,
+    });
   }
 
   @Get(':id')

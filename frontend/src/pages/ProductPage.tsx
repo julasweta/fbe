@@ -1,4 +1,5 @@
 import Product from "../modules/products/Product"
+import styles from "./pages.module.scss";
 
 
 function ProductPage() {
@@ -8,7 +9,7 @@ function ProductPage() {
     return <div>Продукт не знайдено</div>;
   } 
   return (
-    <div><Product productId={productId } /></div>
+    <div className= {styles.page}><Product productId={productId } /></div>
   )
 }
 

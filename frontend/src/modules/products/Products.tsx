@@ -3,9 +3,15 @@ import { useProductStore } from "../../store/useProductStore";
 import styles from "./Products.module.scss";
 import Card from "./Card";
 import { Button } from "../../components/ui/Buttons/Button";
+import type { ProductFilters } from '../../interfaces/IProduct';
 
-const Products = () => {
-  const { products, fetchProducts } = useProductStore(); 
+interface ProductsProps {
+  categorySlug?: string;
+  collectionSlug?: string;
+}
+
+const Products = ({ categorySlug, collectionSlug }:ProductsProps) => {
+  const { products, fetchProducts } = useProductStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,8 +19,14 @@ const Products = () => {
     const loadProducts = async () => {
       setIsLoading(true);
       setError(null);
+      const filters: ProductFilters = {
+        limit: 50,
+        skip: 0,
+        categorySlug: categorySlug || undefined,
+        collectionSlug: collectionSlug || undefined, // You can add collectionSlug if needed
+      };
       try {
-        await fetchProducts(); 
+        await fetchProducts(filters );
         console.log("Products loaded successfully from store");
       } catch (err) {
         console.error("Failed to load products:", err);
@@ -25,12 +37,12 @@ const Products = () => {
     };
 
     loadProducts();
-  }, [fetchProducts]); 
+  }, [fetchProducts]);
 
   if (isLoading) {
     return (
       <div className={styles.productsGrid}>
-        <h2>Продукти</h2>
+        <h2>cATEGORY name</h2>
         <div className={styles.loading}>
           <p>Завантаження продуктів...</p>
         </div>
@@ -41,7 +53,7 @@ const Products = () => {
   if (error) {
     return (
       <div className={styles.productsGrid}>
-        <h2>Продукти</h2>
+        <h2>cATEGORY name</h2>
         <div className={styles.error}>
           <p>Помилка завантаження: {error}</p>
           <Button
@@ -58,10 +70,8 @@ const Products = () => {
   if (products.length === 0) {
     return (
       <div className={styles.productsGrid}>
-        <h2>Продукти</h2>
         <div className={styles.emptyState}>
-          <p>Продуктів поки немає</p>
-          <p>Додайте перші продукти через адмін панель</p>
+          <p>Товарів поки немає</p>
         </div>
       </div>
     );
@@ -69,12 +79,13 @@ const Products = () => {
 
   return (
     <div className={styles.productsContainer}>
-      <h2>Продукти ({products.length})</h2>
-      <div className={styles.productsContainer}>
-        {products.map((product) => (
-          <Card key={product.id} product={product} />
-        ))}
-      </div>
+
+      {products.map((product) => (
+        <div className={styles.cardWrapper} key={product.id}>
+          <Card product={product} />
+        </div>
+      ))}
+
     </div>
   );
 };

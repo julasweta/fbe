@@ -5,8 +5,21 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className={styles.layout}>
       <Header />
+     
+
       <main className={styles.content}>
-        {children}
+
+        <section data-bg="dark" className={`hero-section ${styles.headerSection}`}>
+          <div className={styles.dark}>
+            <div className={styles.darkContent}>
+              <h1 className={styles.title}>FBE</h1>
+              <p className={styles.description}>Для тих, хто грає красиво</p>
+            </div>
+          </div>
+        </section>
+        <section data-bg="light" className={`content-section ${styles.contentSection}`}>
+          {children}
+        </section>
       </main>
     </div>
   );

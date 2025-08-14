@@ -12,7 +12,11 @@ interface MenuItem {
   submenu?: boolean; // Якщо true — є підменю
 }
 
-const HeaderMenu: React.FC = () => {
+interface HeaderMenuProps {
+  textColor: string;
+}
+
+const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubmenuIndex, setOpenSubmenuIndex] = useState<number | null>(null);
@@ -20,13 +24,10 @@ const HeaderMenu: React.FC = () => {
   const { categories, fetchCategories } = useCategoryStore();
   const { collections, fetchCollections } = useCollectionStore();
 
-
-
-
   useEffect(() => {
     fetchCategories();
     fetchCollections();
-  }, [fetchCategories, fetchCollections]); 
+  }, [fetchCategories, fetchCollections]);
 
   const menuItems: MenuItem[] = [
     { label: "Головна", link: "/" },
@@ -44,23 +45,37 @@ const HeaderMenu: React.FC = () => {
     setOpenSubmenuIndex(openSubmenuIndex === index ? null : index);
   };
 
+  // Стилі з динамічним кольором
+  const dynamicStyles = {
+    color: textColor,
+    transition: 'color 0.3s ease'
+  };
+
+  const arrowStyles = {
+    borderColor: `transparent ${textColor} ${textColor} transparent`,
+    transition: 'border-color 0.3s ease'
+  };
+
+  const burgerSpanStyles = {
+    backgroundColor: textColor,
+    transition: 'background-color 0.3s ease'
+  };
+
   return (
     <nav className={styles.headerMenu}>
       <Button
         className={`${styles.burger} ${mobileMenuOpen ? styles.open : ""}`}
         onClick={toggleMobileMenu}
         aria-label="Toggle menu"
+        style={dynamicStyles}
       >
-        <span />
-        <span />
-        <span />
+        <span style={burgerSpanStyles} />
+        <span style={burgerSpanStyles} />
+        <span style={burgerSpanStyles} />
       </Button>
 
-
       <ul className={`${styles.menuList} ${mobileMenuOpen ? styles.menuListOpen : ""}`}>
-
         {menuItems.map((item, index) => (
-
           <li
             key={index}
             className={styles.menuItem}
@@ -74,9 +89,13 @@ const HeaderMenu: React.FC = () => {
                   className={styles.menuLink}
                   onClick={() => toggleSubmenu(index)}
                   aria-expanded={openSubmenuIndex === index}
+                  style={dynamicStyles}
                 >
                   {item.label}
-                  <span className={styles.arrow} />
+                  <span
+                    className={styles.arrow}
+                    style={arrowStyles}
+                  />
                 </Button>
 
                 {(activeIndex === index || openSubmenuIndex === index) && (
@@ -93,13 +112,15 @@ const HeaderMenu: React.FC = () => {
                         <CollectionsSubmenu collections={collections} />
                       </ul>
                     </li>
-
-
                   </ul>
                 )}
               </>
             ) : (
-              <a href={item.link} className={styles.menuLink}>
+              <a
+                href={item.link}
+                className={styles.menuLink}
+                style={dynamicStyles}
+              >
                 {item.label}
               </a>
             )}

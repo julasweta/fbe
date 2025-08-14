@@ -18,19 +18,26 @@ import { CreateUserDto } from '../users/dto/create.users.dto';
 import { Request } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { ChangePasswordDto, ForgotPasswordDto, ResetPasswordDto } from './dto/change-password.dto';
+import {
+  ChangePasswordDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+} from './dto/change-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'User logged in successfully' })
   @Post('login')
   async login(@Body() body: LoginDto) {
     try {
-      const user = await this.authService.validateUser(body.email, body.password);
+      const user = await this.authService.validateUser(
+        body.email,
+        body.password,
+      );
       if (!user) {
         throw new UnauthorizedException('Неправильний email або пароль');
       }
@@ -86,7 +93,7 @@ export class AuthController {
       await this.authService.changePassword(
         req.user.id,
         body.currentPassword,
-        body.newPassword
+        body.newPassword,
       );
       return { message: 'Пароль успішно змінено' };
     } catch (error) {
@@ -94,7 +101,9 @@ export class AuthController {
         throw error;
       }
       console.error('[AuthController] Change password error:', error);
-      throw new UnauthorizedException('Помилка зміни пароля. Спробуйте пізніше');
+      throw new UnauthorizedException(
+        'Помилка зміни пароля. Спробуйте пізніше',
+      );
     }
   }
 
@@ -119,14 +128,20 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() body: ResetPasswordDto) {
     try {
-      await this.authService.resetPassword(body.email, body.resetCode, body.newPassword);
+      await this.authService.resetPassword(
+        body.email,
+        body.resetCode,
+        body.newPassword,
+      );
       return { message: 'Пароль успішно змінено' };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
       console.error('[AuthController] Reset password error:', error);
-      throw new UnauthorizedException('Невалідний код або час дії коду закінчився');
+      throw new UnauthorizedException(
+        'Невалідний код або час дії коду закінчився',
+      );
     }
   }
 }
