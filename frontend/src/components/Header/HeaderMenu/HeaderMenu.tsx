@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./HeaderMenu.module.scss";
 import CategoriesSubmenu from "./CategoriesSubmenu";
 import CollectionsSubmenu from "./CollectionsSubmenu";
 import { useCategoryStore } from "../../../store/useCategoryStore";
 import { useCollectionStore } from "../../../store/useCollectionStore";
 import { Button } from "../../ui/Buttons/Button";
+import { useAuthStore } from "../../../store";
+import { Role } from "../../../interfaces/IRegister";
 
 interface MenuItem {
   label: string;
   link?: string;
-  submenu?: boolean; // Якщо true — є підменю
+  submenu?: boolean;
 }
 
 interface HeaderMenuProps {
@@ -23,18 +25,27 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
 
   const { categories, fetchCategories } = useCategoryStore();
   const { collections, fetchCollections } = useCollectionStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     fetchCategories();
     fetchCollections();
   }, [fetchCategories, fetchCollections]);
 
-  const menuItems: MenuItem[] = [
-    { label: "Головна", link: "/" },
-    { label: "Магазин", submenu: true },
-    { label: "Про нас", link: "about" },
-    { label: "Контакти", link: "/contact" },
-  ];
+  const menuItems = useMemo<MenuItem[]>(() => {
+    const baseMenu: MenuItem[] = [
+      { label: "Головна", link: "/" },
+      { label: "Магазин", submenu: true },
+      { label: "Про нас", link: "/about" },
+      { label: "Контакти", link: "/contact" },
+    ];
+
+    if (user?.role === Role.ADMIN) {
+      return [...baseMenu, { label: "Адмінка", link: "/admin" }];
+    }
+
+    return baseMenu;
+  }, [user?.role]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -93,7 +104,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
                 >
                   {item.label}
                   <span
-                    className={styles.arrow}
+                    className={`${styles.arrow} ${openSubmenuIndex === index ? styles.open : ""}`}
                     style={arrowStyles}
                   />
                 </Button>
@@ -102,9 +113,9 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
                   <ul className={styles.submenu}>
                     <li className={styles.submenuItem}>
                       <span className={styles.submenuLink}>Категорії</span>
-                      <ul className={styles.subsubmenu}>
+                      
                         <CategoriesSubmenu categories={categories} />
-                      </ul>
+                      
                     </li>
                     <li className={styles.submenuItem}>
                       <span className={styles.submenuLink}>Колекції</span>

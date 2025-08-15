@@ -8,7 +8,7 @@ const CategoryPage = () => {
 
   return (
     <div className={styles.page}>
-      <h2>{categorySlug?.toUpperCase()}</h2>
+      <h2 className={styles.title}>{categorySlug?.toUpperCase()}</h2>
       <Products categorySlug={ categorySlug} />
     </div>
   );

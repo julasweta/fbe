@@ -1,16 +1,32 @@
-.cardsList{
+.cardsList {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 1rem; // відстань між картками
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.cardWrapper{
-  width: 300px;
+.cardWrapper {
+  flex: 1 1 300px; // дозволяє картці змінювати розмір
+  max-width: 300px;
+  display: flex;
   flex-direction: column;
-  margin: 0.5rem;
-  display: flex;   
   align-items: center;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .cardWrapper {
+    flex: 1 1 45%; // дві картки в ряд
+    max-width: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardWrapper {
+    flex: 1 1 100%; // одна картка в ряд
+    max-width: 100%;
+  }
 }

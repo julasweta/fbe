@@ -24,19 +24,20 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
 
         return (
           <li key={cat.id} className={styles.submenuItem}>
-            <div className={styles.submenuHeader}>
-              {/* Лінк на категорію */}
-              <a href={`/category/${cat.slug}`} className={styles.submenuLink}>
+            {/* Контейнер з категорією та стрілкою */}
+            <div
+              className={styles.categoryContainer}
+              onClick={() => subcategories.length > 0 && toggleMenu(cat.id)}
+            >
+              <a
+                href={`/category/${cat.slug}`}
+                className={styles.categoryLink}
+                onClick={(e) => e.stopPropagation()} // Запобігає відкриттю підменю при кліку на посилання
+              >
                 {cat.name}
               </a>
-
-              {/* Стрілочка для відкриття підменю */}
               {subcategories.length > 0 && (
-                <button
-                  type="button"
-                  className={`${styles.arrow} ${isOpen ? styles.open : ""}`}
-                  onClick={() => toggleMenu(cat.id)}
-                />
+                <span className={`${styles.arrow} ${isOpen ? styles.open : ""}`} />
               )}
             </div>
 
@@ -44,8 +45,8 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
             {isOpen && subcategories.length > 0 && (
               <ul className={styles.subsubmenu}>
                 {subcategories.map(sub => (
-                  <li key={sub.id} className={styles.submenuItem}>
-                    <a href={`/category/${sub.slug}`} className={styles.submenuLink}>
+                  <li key={sub.id}>
+                    <a href={`/category/${sub.slug}`}>
                       {sub.name}
                     </a>
                   </li>

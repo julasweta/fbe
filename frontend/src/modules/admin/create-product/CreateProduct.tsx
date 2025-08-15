@@ -47,8 +47,7 @@ const CreateProduct: React.FC = () => {
   const imagesArray = useFieldArray({ control, name: "images" });
   const translationsArray = useFieldArray({ control, name: "translations" });
   const featuresArray = useFieldArray({ control, name: "features" });
-
-  const onSubmit = (data: IProduct) => {
+  const onSubmit = async (data: IProduct) => {
     const cleanData = {
       ...data,
       translations: data.translations?.map(({ name, description, languageId }) => ({
@@ -68,9 +67,14 @@ const CreateProduct: React.FC = () => {
       categoryId: data.categoryId ? Number(data.categoryId) : undefined,
     };
 
-    productService.addProduct(cleanData);
-    reset();
+    try {
+      await productService.addProduct(cleanData);
+      reset();
+    } catch (error) {
+      console.error("Помилка при створенні продукту:", error);
+    }
   };
+
 
   return (
     <div className={styles.createProduct}>

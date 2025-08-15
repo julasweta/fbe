@@ -1,4 +1,4 @@
-// components/ImageUpload.tsx
+
 import React from "react";
 
 interface ImageUploadProps {

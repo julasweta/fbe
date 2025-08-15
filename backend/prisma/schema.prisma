@@ -126,8 +126,8 @@ model ProductTranslation {
 
 model Cart {
   id        Int        @id @default(autoincrement())
-  user      User       @relation(fields: [userId], references: [id])
-  userId    Int        @unique
+  user      User?      @relation(fields: [userId], references: [id])
+  userId    Int?       @unique
   items     CartItem[]
   updatedAt DateTime   @updatedAt
 }
@@ -138,19 +138,34 @@ model CartItem {
   cartId    Int
   product   Product @relation(fields: [productId], references: [id])
   productId Int
+  name      String   // збереження назви товару
+  image     String?  // картинка
+  color     String?
+  size      String?
+  price     Float
+  priceSale Float?
   quantity  Int     @default(1)
 
-  @@unique([cartId, productId])
+  @@unique([cartId, productId, color, size])
 }
 
+
 model Order {
-  id        Int         @id @default(autoincrement())
-  user      User        @relation(fields: [userId], references: [id])
-  userId    Int
-  status    OrderStatus @default(PENDING)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  items     OrderItem[]
+  id             Int         @id @default(autoincrement())
+  user           User?       @relation(fields: [userId], references: [id])
+  userId         Int?        // null для гостей
+
+  guestName      String?     // Ім’я гостя
+  guestPhone     String?     // Телефон
+  guestEmail     String?     // Email
+  guestAddress   String?     // Адреса доставки (якщо не через НП)
+  novaPostCity   String?     // Місто відділення НП
+  novaPostBranch String?     // Відділення НП
+
+  status         OrderStatus @default(PENDING)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  items          OrderItem[]
 }
 
 model OrderItem {
@@ -159,9 +174,12 @@ model OrderItem {
   orderId   Int
   product   Product @relation(fields: [productId], references: [id])
   productId Int
+  name      String  // Назва товару на момент покупки
+  image     String? // URL картинки на момент покупки
   quantity  Int     @default(1)
   price     Float
 }
+
 
 enum OrderStatus {
   PENDING
