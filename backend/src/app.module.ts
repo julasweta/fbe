@@ -17,6 +17,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { CartItemModule } from './modules/cart-item/cart-item.module';
 import { OrderModule } from './modules/order/order.module';
 import { OrderItemDto } from './modules/order-item/dto/order-item.dto';
+import { TelegramModule } from './modules/telegram/telegram.module';
 
 @Module({
   imports: [
@@ -56,7 +57,8 @@ import { OrderItemDto } from './modules/order-item/dto/order-item.dto';
     CartModule,
     CartItemModule,
     OrderModule,
-    OrderItemDto
+    OrderItemDto,
+    TelegramModule
   ],
   controllers: [AppController],
   providers: [AppService],
