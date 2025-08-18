@@ -1,6 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsOptional, IsPositive, IsString, IsUrl, Max, Min } from 'class-validator';
-
+import {
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateCartItemDto {
   @ApiProperty({ example: 11, description: 'ID товару' })
@@ -38,7 +46,12 @@ export class CreateCartItemDto {
   @IsNumber()
   priceSale?: number;
 
-  @ApiProperty({ example: 2, description: 'Кількість товару', minimum: 1, maximum: 99 })
+  @ApiProperty({
+    example: 2,
+    description: 'Кількість товару',
+    minimum: 1,
+    maximum: 99,
+  })
   @IsInt()
   @Min(1)
   @Max(99)
@@ -51,4 +64,3 @@ export class UpdateCartItemDto {
   @IsPositive()
   quantity?: number;
 }
-

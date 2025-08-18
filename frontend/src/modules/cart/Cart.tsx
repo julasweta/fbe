@@ -8,13 +8,23 @@ import { useNavigate } from "react-router-dom";
 const Cart: React.FC = () => {
   const [cartItems, setCartItems] = useState<ICartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   // Завантаження кошика з localStorage
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
+      try {
+        const parsed = JSON.parse(storedCart) as ICartItem[];
+        // одразу перерахуємо finalPrice
+        const withFinal = parsed.map(item => {
+          const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
+          return { ...item, finalPrice: price * item.quantity };
+        });
+        setCartItems(withFinal);
+      } catch {
+        setCartItems([]);
+      }
     }
     setIsInitialized(true);
   }, []);
@@ -28,11 +38,14 @@ const Cart: React.FC = () => {
 
   const updateQuantity = (productId: number, quantity: number) => {
     setCartItems(prev =>
-      prev.map(item =>
-        item.productId === productId
-          ? { ...item, quantity: Math.max(1, Math.min(99, quantity)) }
-          : item
-      )
+      prev.map(item => {
+        if (item.productId === productId) {
+          const newQty = Math.max(1, Math.min(99, quantity));
+          const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
+          return { ...item, quantity: newQty, finalPrice: price * newQty };
+        }
+        return item;
+      })
     );
   };
 
@@ -40,10 +53,7 @@ const Cart: React.FC = () => {
     setCartItems(prev => prev.filter(item => item.productId !== productId));
   };
 
-  const total = cartItems.reduce((sum, item) => {
-    const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
-    return sum + price * item.quantity;
-  }, 0);
+  const total = cartItems.reduce((sum, item) => sum + item.finalPrice, 0);
 
   if (cartItems.length === 0) {
     return <div className={styles.empty}>Кошик порожній</div>;
@@ -62,12 +72,11 @@ const Cart: React.FC = () => {
       <h1>Кошик</h1>
       <div className={styles.cartItems}>
         {cartItems.map(item => {
-          const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
           return (
             <CartItem
               key={item.productId}
               item={item}
-              price={price}
+              price={item.finalPrice / item.quantity}
               updateQuantity={updateQuantity}
               removeItem={removeItem}
             />
@@ -88,4 +97,5 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+
 

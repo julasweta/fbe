@@ -7,16 +7,15 @@ import { TelegramService } from '../telegram/telegram.service';
 export class OrderService {
   constructor(
     private prisma: PrismaService,
-    private telegramService: TelegramService
-  ) { }
+    private telegramService: TelegramService,
+  ) {}
 
   async getOrderById(id: number) {
     return this.prisma.order.findUnique({
       where: { id },
-      include: { items: true } // тільки OrderItem, без product
+      include: { items: true }, // тільки OrderItem, без product
     });
   }
-
 
   async createOrder(dto: CreateOrderDto) {
     // 1. Створюємо замовлення в базі
@@ -31,19 +30,21 @@ export class OrderService {
         novaPostCity: dto.novaPostCity,
         paymentMethod: dto.paymentMethod,
         items: {
-          create: dto.items.map(item => ({
+          create: dto.items.map((item) => ({
             productId: item.productId ?? null,
             quantity: item.quantity,
             price: item.price,
             finalPrice: item.finalPrice,
             name: item.name,
             image: item.image,
+            color: item.color,
+            size: item.size,
+            priceSale: Number(item.priceSale),
           })),
         },
       },
       include: { items: true }, // вертаємо одразу замовлення з товарами
     });
-
     // 2. Відправка у Telegram (якщо потрібна)
     try {
       await this.telegramService.sendOrderNotification({
@@ -60,12 +61,13 @@ export class OrderService {
         paymentMethod: order.paymentMethod,
       });
     } catch (err) {
-      console.error("❌ Не вдалось відправити замовлення у Telegram:", err.message);
+      console.error(
+        '❌ Не вдалось відправити замовлення у Telegram:',
+        err.message,
+      );
       // але саме замовлення в базі лишається
     }
 
     return order;
   }
-
-
 }

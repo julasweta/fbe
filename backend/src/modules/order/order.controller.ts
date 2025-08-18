@@ -7,7 +7,7 @@ import { CreateOrderDto } from './dto/order.dto';
 @ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) { }
+  constructor(private readonly orderService: OrderService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')

@@ -27,6 +27,21 @@ export class OrderItemDto {
   @IsOptional()
   @IsString()
   image?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  color?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  size?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  priceSale?: string;
 }
 
 export class OrderItemResponseDto {

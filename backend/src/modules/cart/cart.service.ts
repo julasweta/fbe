@@ -6,26 +6,24 @@ import { CartItem } from '@prisma/client';
 
 @Injectable()
 export class CartService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async getCartByUserId(userId: number) {
     return this.prisma.cart.findUnique({
       where: { userId },
-      include: { items: { include: { product: true } } }
+      include: { items: { include: { product: true } } },
     });
   }
 
-
-
   async addToCart(dto: AddToCartDto) {
     if (!dto.userId && !dto.sessionId) {
-      throw new BadRequestException('Потрібно передати або userId, або sessionId');
+      throw new BadRequestException(
+        'Потрібно передати або userId, або sessionId',
+      );
     }
 
     const cart = await this.prisma.cart.upsert({
-      where: dto.userId
-        ? { userId: dto.userId }
-        : { sessionId: dto.sessionId },
+      where: dto.userId ? { userId: dto.userId } : { sessionId: dto.sessionId },
       update: {},
       create: {
         userId: dto.userId ?? null,
@@ -75,13 +73,10 @@ export class CartService {
     };
   }
 
-
-
-
   async updateCartItem(id: number, dto: UpdateCartItemDto) {
     return this.prisma.cartItem.update({
       where: { id },
-      data: dto
+      data: dto,
     });
   }
 

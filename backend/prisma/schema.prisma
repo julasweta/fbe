@@ -72,7 +72,10 @@ model OrderItem {
   image      String? // Фото товару на момент покупки
   quantity   Int     @default(1)
   price      Float // Ціна оригінальна
+  priceSale  Float?
   finalPrice Float // Ціна на момент покупки
+  color      String?
+  size       String?
 }
 
 model Collection {

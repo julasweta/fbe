@@ -1,9 +1,11 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { OrderItemDto } from '../order-item/dto/order-item.dto';
 
 @Injectable()
 export class TelegramService {
-  constructor(private readonly http: HttpService) { }
+  constructor(private readonly http: HttpService) {}
 
   async sendOrderNotification(data: {
     user: any;
@@ -18,17 +20,37 @@ export class TelegramService {
 💳 Оплата: ${data.paymentMethod}
 
 🛒 Товари:
-${data.items.map(i => `• ${i.name} x${i.quantity} = ${i.finalPrice} грн`).join("\n")}
-    `;
+${data.items
+  .map(
+    (i: OrderItemDto) =>
+      `• ID: ${i.productId}
+   Назва: ${i.name}
+   Колір: ${i.color}
+   Розмір: ${i.size}
+   К-сть: ${i.quantity}
+   Ціна: ${i.price} грн
+   Ціна зі знижкою: ${i.priceSale}
+   Остаточна ціна: ${i.finalPrice} грн
+   Фото: ${i.image}`,
+  )
+  .join('\n\n')}
+  `;
 
-    await this.http.post(
-      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-      {
-        chat_id: process.env.TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: "HTML",
-      }
-    ).toPromise();
+    try {
+      const res = await firstValueFrom(
+        this.http.post(
+          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+          {
+            chat_id: process.env.TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: 'HTML',
+          },
+        ),
+      );
+
+      console.log('✅ Відправлено у Telegram:', res.data);
+    } catch (err) {
+      console.error('❌ Помилка Telegram:', err.response?.data || err.message);
+    }
   }
 }
-

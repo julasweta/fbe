@@ -7,12 +7,13 @@ import { useCartStore } from "../../store/useCartStore";
 import { orderService } from "../../services/OrderService";
 import type { CheckoutFormData } from "./CheckoutForm";
 import CheckoutForm from "./CheckoutForm";
+import { v4 as uuidv4 } from "uuid";
 
 const Checkout: React.FC = () => {
   const { user } = useAuthStore();
   const { cart, setCart, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "card">("cod");
 
   const [form, setForm] = useState<CheckoutFormData>({
     fullName: user?.first_name || "",
@@ -33,47 +34,44 @@ const Checkout: React.FC = () => {
     }
   }, [setCart]);
 
-  const handleOrder = async () => {
-    if (cart.length === 0) {
-      alert("🛒 Ваш кошик порожній");
-      return;
-    }
+ const handleOrder = async () => {
+  if (cart.length === 0) {
+    alert("🛒 Ваш кошик порожній");
+    return;
+  }
 
-    if (!form.fullName || !form.phone || !form.city || !form.novaPoshtaBranch) {
-      alert("⚠ Заповніть усі обов’язкові поля");
-      return;
-    }
+  if (!form.fullName || !form.phone || !form.city || !form.novaPoshtaBranch) {
+    alert("⚠ Заповніть усі обов’язкові поля");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      if (user) {
-        await orderService.createOrder(user?.id ?? null, cart, paymentMethod, form);
-      }
+  setLoading(true);
+  try {
+    // ✅ Виклик з правильними аргументами
+    await orderService.createOrder(
+      user?.id ?? null,
+      cart,
+      paymentMethod,
+      form
+    );
 
-      await orderService.sendTelegramOrder(
-        {
-          ...(user ? { id: user.id, email: user.email } : { guest: true }),
-          ...form
-        },
-        cart,
-        paymentMethod
-      );
+    localStorage.removeItem("cart");
+    clearCart();
+    alert("✅ Замовлення відправлено!");
+  } catch (err) {
+    console.error(err);
+    alert("❌ Сталася помилка при оформленні замовлення");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      localStorage.removeItem("cart");
-      clearCart();
-      alert("✅ Замовлення відправлено!");
-    } catch (err) {
-      console.error(err);
-      alert("❌ Сталася помилка при оформленні замовлення");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const total = cart.reduce((sum, item) => {
     const price =
-      item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
-    return sum + price * item.quantity;
+      item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
+    const qty = item?.quantity ?? 1;
+    return sum + price * qty;
   }, 0);
 
   return (
@@ -83,17 +81,19 @@ const Checkout: React.FC = () => {
       <CheckoutForm form={form} setForm={setForm} />
 
       <div className={styles.summary}>
-        {cart.map(item => (
-          <div key={item.productId} className={styles.item}>
-            <span>{item.name} x {item.quantity}</span>
-            <span>
-              ₴{(
-                (item.priceSale && item.priceSale < item.price ? item.priceSale : item.price) *
-                item.quantity
-              ).toFixed(2)}
-            </span>
-          </div>
-        ))}
+        {cart.map(item => {
+          const price =
+            item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
+          const qty = item?.quantity ?? 1;
+          return (
+            <div key={item.productId} className={styles.item}>
+              <span>
+                {item?.name} x {qty}
+              </span>
+              <span>₴{(price * qty).toFixed(2)}</span>
+            </div>
+          );
+        })}
         <div className={styles.total}>
           <strong>Загальна сума:</strong> ₴{total.toFixed(2)}
         </div>
@@ -134,3 +134,4 @@ const Checkout: React.FC = () => {
 };
 
 export default Checkout;
+

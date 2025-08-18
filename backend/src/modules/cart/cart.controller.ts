@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -8,7 +18,7 @@ import { UpdateCartItemDto } from '../cart-item/dto/cart-item.dto';
 @ApiTags('Cart')
 @Controller('cart')
 export class CartController {
-  constructor(private readonly cartService: CartService) { }
+  constructor(private readonly cartService: CartService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -17,8 +27,6 @@ export class CartController {
   getUserCart(@Query('userId') userId: number) {
     return this.cartService.getCartByUserId(userId);
   }
-
-
 
   //@UseGuards(JwtAuthGuard)
   @Post('add')
@@ -41,4 +49,3 @@ export class CartController {
     return this.cartService.removeCartItem(id);
   }
 }
-

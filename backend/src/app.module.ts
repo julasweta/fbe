@@ -58,7 +58,7 @@ import { TelegramModule } from './modules/telegram/telegram.module';
     CartItemModule,
     OrderModule,
     OrderItemDto,
-    TelegramModule
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
