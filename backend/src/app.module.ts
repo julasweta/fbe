@@ -13,6 +13,10 @@ import { CollectionModule } from './modules/collection/collection.module';
 import { EmailModule } from './modules/email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { CartModule } from './modules/cart/cart.module';
+import { CartItemModule } from './modules/cart-item/cart-item.module';
+import { OrderModule } from './modules/order/order.module';
+import { OrderItemDto } from './modules/order-item/dto/order-item.dto';
 
 @Module({
   imports: [
@@ -49,6 +53,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     CategoryModule,
     CollectionModule,
     EmailModule,
+    CartModule,
+    CartItemModule,
+    OrderModule,
+    OrderItemDto
   ],
   controllers: [AppController],
   providers: [AppService],

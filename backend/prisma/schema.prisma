@@ -30,7 +30,6 @@ model User {
   cart   Cart?
   orders Order[]
 
-   // Нові поля для відновлення пароля
   resetCode       String?
   resetCodeExpiry DateTime?
 }
@@ -42,44 +41,56 @@ enum Role {
 }
 
 model Product {
-  id            Int               @id @default(autoincrement())
-  sku           String            @unique
-  price         Float
-  priceSale     Float
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id        Int      @id @default(autoincrement())
+  sku       String   @unique
+  price     Float
+  priceSale Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  translations  ProductTranslation[]
-  cartItems     CartItem[]
-  orderItems    OrderItem[]
-  images        ProductImage[]
-  features      ProductFeature[]
-  sizes         ESize[]           @default([])
-  colors        EColor[]          @default([])
+  translations ProductTranslation[]
+  cartItems    CartItem[]
+  images       ProductImage[]
+  features     ProductFeature[]
+  sizes        ESize[]              @default([])
+  colors       EColor[]             @default([])
 
-  category      Category?         @relation(fields: [categoryId], references: [id])
-  categoryId    Int?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
 
-  collection    Collection?       @relation(fields: [collectionId], references: [id])
-  collectionId  Int?
+  collection   Collection? @relation(fields: [collectionId], references: [id])
+  collectionId Int?
+}
+
+model OrderItem {
+  id      Int   @id @default(autoincrement())
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
+
+  productId  Int?
+  name       String // Назва товару на момент покупки
+  image      String? // Фото товару на момент покупки
+  quantity   Int     @default(1)
+  price      Float // Ціна оригінальна
+  finalPrice Float // Ціна на момент покупки
 }
 
 model Collection {
-  id          Int        @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  slug        String?    @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  slug        String?  @unique
   imageUrl    String?
 
-  products    Product[]  // Одна колекція має багато продуктів
+  products Product[]
 }
 
 model Category {
   id            Int        @id @default(autoincrement())
   name          String
-  parentId      Int? 
+  parentId      Int?
   parent        Category?  @relation("CategoryToSubcategory", fields: [parentId], references: [id])
   subcategories Category[] @relation("CategoryToSubcategory")
   slug          String?    @unique
@@ -127,7 +138,9 @@ model ProductTranslation {
 model Cart {
   id        Int        @id @default(autoincrement())
   user      User?      @relation(fields: [userId], references: [id])
-  userId    Int?       @unique
+  userId    Int?       @unique // один користувач = один кошик
+  sessionId String?    @unique
+  guestId   String?    @unique // UUID для гостей
   items     CartItem[]
   updatedAt DateTime   @updatedAt
 }
@@ -138,8 +151,8 @@ model CartItem {
   cartId    Int
   product   Product @relation(fields: [productId], references: [id])
   productId Int
-  name      String   // збереження назви товару
-  image     String?  // картинка
+  name      String // назва товару на момент додавання
+  image     String? // картинка
   color     String?
   size      String?
   price     Float
@@ -149,43 +162,37 @@ model CartItem {
   @@unique([cartId, productId, color, size])
 }
 
-
 model Order {
-  id             Int         @id @default(autoincrement())
-  user           User?       @relation(fields: [userId], references: [id])
-  userId         Int?        // null для гостей
+  id     Int   @id @default(autoincrement())
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
 
-  guestName      String?     // Ім’я гостя
-  guestPhone     String?     // Телефон
-  guestEmail     String?     // Email
-  guestAddress   String?     // Адреса доставки (якщо не через НП)
-  novaPostCity   String?     // Місто відділення НП
-  novaPostBranch String?     // Відділення НП
+  guestName      String?
+  guestPhone     String?
+  guestEmail     String?
+  guestAddress   String?
+  novaPostCity   String?
+  novaPostBranch String?
 
-  status         OrderStatus @default(PENDING)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  items          OrderItem[]
+  paymentMethod PaymentMethod // 👈 Додано!
+  status        OrderStatus   @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  items         OrderItem[]
 }
-
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  order     Order   @relation(fields: [orderId], references: [id])
-  orderId   Int
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int
-  name      String  // Назва товару на момент покупки
-  image     String? // URL картинки на момент покупки
-  quantity  Int     @default(1)
-  price     Float
-}
-
 
 enum OrderStatus {
   PENDING
   PROCESSING
   COMPLETED
   CANCELED
+}
+
+enum PaymentMethod {
+  COD
+  CARD
+  APPLEPAY
+  GOOGLEPAY
 }
 
 enum ESize {
@@ -208,4 +215,3 @@ enum EColor {
   PURPLE
   PINK
 }
-
