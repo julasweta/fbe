@@ -24,8 +24,7 @@ export class AddToCartDto {
   sessionId?: string;
 
   @ApiProperty({ type: [CreateCartItemDto] })
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateCartItemDto)
-  items: CreateCartItemDto[];
+  item: CreateCartItemDto;
 }

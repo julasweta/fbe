@@ -31,45 +31,43 @@ export class CartService {
       },
     });
 
-    const results: CartItem[] = [];
+    const item = dto.item;
 
-    for (const item of dto.items) {
-      const existingItem = await this.prisma.cartItem.findFirst({
-        where: {
+    const existingItem = await this.prisma.cartItem.findFirst({
+      where: {
+        cartId: cart.id,
+        productId: item.productId,
+        color: item.color,
+        size: item.size,
+      },
+    });
+
+    let result: CartItem;
+
+    if (existingItem) {
+      result = await this.prisma.cartItem.update({
+        where: { id: existingItem.id },
+        data: { quantity: existingItem.quantity + item.quantity },
+      });
+    } else {
+      result = await this.prisma.cartItem.create({
+        data: {
           cartId: cart.id,
           productId: item.productId,
+          quantity: item.quantity,
           color: item.color,
           size: item.size,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          priceSale: item.priceSale,
         },
       });
-
-      if (existingItem) {
-        const updated = await this.prisma.cartItem.update({
-          where: { id: existingItem.id },
-          data: { quantity: existingItem.quantity + item.quantity },
-        });
-        results.push(updated);
-      } else {
-        const created = await this.prisma.cartItem.create({
-          data: {
-            cartId: cart.id,
-            productId: item.productId,
-            quantity: item.quantity,
-            color: item.color,
-            size: item.size,
-            name: item.name,
-            image: item.image,
-            price: item.price,
-            priceSale: item.priceSale,
-          },
-        });
-        results.push(created);
-      }
     }
 
     return {
       cartId: cart.id,
-      items: results,
+      item: result,
     };
   }
 

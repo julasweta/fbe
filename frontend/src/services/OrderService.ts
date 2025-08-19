@@ -23,7 +23,6 @@ export const orderService = {
       guestName: form.fullName,
       guestPhone: form.phone,
       guestEmail: form.email,
-      guestAddress: form.address ?? "",
       novaPostCity: form.city,
       novaPostBranch: form.novaPoshtaBranch,
       paymentMethod: paymentMethod.toUpperCase() as "COD" | "CARD",

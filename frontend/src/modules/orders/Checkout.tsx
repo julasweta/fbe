@@ -7,7 +7,7 @@ import { useCartStore } from "../../store/useCartStore";
 import { orderService } from "../../services/OrderService";
 import type { CheckoutFormData } from "./CheckoutForm";
 import CheckoutForm from "./CheckoutForm";
-import { v4 as uuidv4 } from "uuid";
+//import { v4 as uuidv4 } from "uuid";
 
 const Checkout: React.FC = () => {
   const { user } = useAuthStore();
