@@ -87,7 +87,7 @@ const Checkout: React.FC = () => {
             item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
           const qty = item?.quantity ?? 1;
           return (
-            <div key={item.productId} className={styles.item}>
+            <div key={item.id} className={styles.item}>
               <span>
                 {item?.name} x {qty}
               </span>

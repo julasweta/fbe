@@ -22,7 +22,6 @@ export class CartController {
   @ApiOperation({ summary: 'Отримати кошик користувача' })
   @ApiResponse({ status: 200, description: 'Повертає кошик користувача' })
   getUserCart(@Req() req: Request) {
-    console.log('user req - ', req.user);
     return this.cartService.getCartByUserId(req.user.id);
   }
 

@@ -72,13 +72,26 @@ const Cart: React.FC = () => {
     );
   };
 
-  const removeItem = (cartItemId: number) => {
-    setCartItems(prev => prev.filter(item => item.id !== cartItemId));
-
-    // викликаємо zustand
-    useCartStore.getState().deleteCartItem(cartItemId);
+  const removeItem = (cartItem: ICartItem) => {
+    console.log(cartItem);
+    if (cartItem.id) {
+      // 🟢 авторизований → видаляємо по id з бекенду
+      setCartItems(prev => prev.filter(item => item.id !== cartItem.id));
+      useCartStore.getState().deleteCartItem(cartItem.id);
+    } else {
+      // 🟢 гість → видаляємо по унікальному productId + size + color
+      setCartItems(prev =>
+        prev.filter(item =>
+          !(
+            item.productId === cartItem.productId &&
+            item.color === cartItem.color &&
+            item.size === cartItem.size
+          )
+        )
+      );
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    }
   };
-
 
 
 
@@ -101,10 +114,10 @@ const Cart: React.FC = () => {
     <div className={styles.cart}>
       <h1>Кошик</h1>
       <div className={styles.cartItems}>
-        {cartItems.map(item => {
+        {cartItems.map((item, index) => {
           return (
             <CartItem
-              key={item.productId}
+              key={index}
               item={item}
               price={item.finalPrice ? (item.finalPrice / item.quantity) : 0}
               updateQuantity={updateQuantity}

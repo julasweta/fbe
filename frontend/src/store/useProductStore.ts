@@ -17,6 +17,7 @@ interface ProductState {
   setError: (error: string | null) => void;
 
   fetchProducts: (filters?: ProductFilters) => Promise<void>;
+  appendProducts: (filters?: ProductFilters) => Promise<void>;
   createProduct: (productData: Partial<IProduct>) => Promise<void>;
   editProduct: (id: number, productData: Partial<IProduct>) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
@@ -62,6 +63,22 @@ export const useProductStore = create<ProductState>((set) => ({
       console.error('Error fetching products:', error);
       set({
         error: error instanceof Error ? error.message : 'Unknown error',
+        isLoading: false
+      });
+    }
+  },
+
+  appendProducts: async (filters?: ProductFilters) => {
+    set({ isLoading: true, error: null });
+    try {
+      const products = await productService.getAll(filters);
+      set((state) => ({
+        products: [...state.products, ...products],
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "Unknown error",
         isLoading: false
       });
     }

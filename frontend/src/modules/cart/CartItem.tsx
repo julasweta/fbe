@@ -7,9 +7,8 @@ interface CartItemProps {
   item: ICartItem;
   price: number;
   updateQuantity: (productId: number, quantity: number) => void;
-  removeItem: (cartItemId: number) => void; // 🟢 тільки число
+  removeItem: (cartItem: ICartItem) => void; // 🟢 тільки id
 }
-
 
 
 const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) => {
@@ -34,18 +33,15 @@ const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) =>
         </div>
         <Button
           className={styles.remove}
-          onClick={() => {
-            if (item.id) {
-              removeItem(item.id);
-            }
-          }}
+          onClick={() => removeItem(item)}
         >
           Видалити
         </Button>
 
 
 
- 
+
+
       </div>
     </div>
   );

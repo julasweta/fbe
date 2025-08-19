@@ -65,6 +65,6 @@ import { TelegramModule } from './modules/telegram/telegram.module';
 })
 export class AppModule {
   constructor() {
-    console.log(` pass +${process.env.SMTP_PASS}`);
+  
   }
 }

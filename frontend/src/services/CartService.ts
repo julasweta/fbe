@@ -41,7 +41,7 @@ export const cartService = {
   /** Авторизований: додаємо в БД */
   async addToCart(userId: number, item: ICartItem) {
     const res = await apiService.post(`/cart/add`, { userId: userId, item });
-    return res.data as ICartItem[];
+    return res.data.item as ICartItem;
   },
 
   async deleteTCartItem(cartItemId: number) {
@@ -55,8 +55,8 @@ export const cartService = {
   /** Отримати кошик (якщо є userId — з БД, інакше — з localStorage) */
   async getCart(userId?: number | null) {
     if (userId) {
-      const res = await apiService.get(`/api/cart/${userId}`);
-      return res.data as ICartItem[];
+      const res = await apiService.get(`/cart`);
+      return res.data.items as ICartItem[];
     }
     return readLocal();
   },

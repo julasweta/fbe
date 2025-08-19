@@ -10,10 +10,7 @@ import {
 import { productService } from "../../services/ProductService";
 import { Button } from "../../components/ui/Buttons/Button";
 import Input from "../../components/ui/Inputs/Input";
-import { cartService } from "../../services/CartService"; // сервіс для API кошика
 import { useCartStore } from "../../store/useCartStore";
-import { useAuthStore } from "../../store";
-import { useNavigate } from "react-router-dom";
 
 interface ProductProps {
   productId: string;
@@ -37,9 +34,6 @@ interface CartItem {
 }
 
 const Product: React.FC<ProductProps> = ({ productId }) => {
-  const { setCart } = useCartStore();
-  const { user } = useAuthStore();
-  const navigate = useNavigate();
 
   const [product, setProduct] = useState<IProduct | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
@@ -124,18 +118,11 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         image: product.images?.[0]?.url
       };
 
-      let updatedCart;
-      if (user?.id) {
-        // Авторизований — зберігаємо в БД
-        updatedCart = await cartService.addToCart(user.id, cartItem);
-      } else {
-        // Гість — зберігаємо в localStorage
-        updatedCart = cartService.addItem(cartItem);
-      }
+      // ⚡ Викликаємо zustand action
+      await useCartStore.getState().addCartItem(cartItem);
 
-      setCart(updatedCart);
       setAddToCartSuccess(true);
-      navigate("/cart");
+      // navigate("/cart");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Помилка додавання в кошик");
     } finally {

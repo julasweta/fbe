@@ -7,12 +7,24 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "../ui/Buttons/Button";
 import { useThemeStore } from "../../store/useThemeStore";
 import { FaRegUser } from "react-icons/fa";
+import { LuShoppingCart } from "react-icons/lu";
+import { useCartStore } from "../../store/useCartStore";
 
 const Header: React.FC = () => {
   const { logout, accessToken, user } = useAuthStore();
   const { theme } = useThemeStore();
   const [textColor, setTextColor] = useState('#333333');
   const headerRef = useRef<HTMLDivElement>(null);
+ 
+
+  const { cart, fetchCart } = useCartStore();
+
+  // Якщо хочеш підтягувати корзину при завантаженні
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+
 
   useEffect(() => {
     const checkBackgroundSimple = () => {
@@ -121,19 +133,26 @@ const Header: React.FC = () => {
         ) : (
           <Link
             to="/login"
-         
+
           >
-              <FaRegUser
-                style={{
-                  color: textColor === '#ffffff' ? '#ffffff' : '#000000',
-                  fontSize: '1.5rem',
-                  transition: 'color 0.3s ease',
-                }}
-              />
+            <FaRegUser
+              style={{
+                color: textColor === '#ffffff' ? '#ffffff' : '#000000',
+                fontSize: '1.5rem',
+                transition: 'color 0.3s ease',
+              }}
+            />
 
-
+            
           </Link>
         )}
+
+        <Link to="/cart"> <LuShoppingCart style={{
+          color: textColor === '#ffffff' ? '#ffffff' : '#000000',
+          fontSize: '1.5rem',
+          transition: 'color 0.3s ease',
+        }} /> </Link>
+        <span>{cart.length}</span>
       </div>
     </div>
   );
