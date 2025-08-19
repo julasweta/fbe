@@ -4,7 +4,7 @@ import { Button } from "../../components/ui/Buttons/Button";
 import type { ICartItem } from "../../interfaces/ICartItem";
 import CartItem from "./CartItem";
 import { useNavigate } from "react-router-dom";
-import { useCartStore } from "../../store/useCartStore";
+import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from "../../store";
 
 const Cart: React.FC = () => {
@@ -12,44 +12,44 @@ const Cart: React.FC = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const navigate = useNavigate();
   const { cart, fetchCart } = useCartStore();
-  const {user} = useAuthStore()
+  const { user } = useAuthStore()
 
   useEffect(() => {
-    if(user)
-    if (user?.id) {
-      fetchCart(user.id); // завантажуємо з бекенду
-    }
+    if (user)
+      if (user?.id) {
+        fetchCart(); // завантажуємо з бекенду
+      }
   }, [user, fetchCart]);
 
-   console.log('cart - ', cart)
+  console.log('cart - ', cart)
 
   // Завантаження кошика з localStorage
   useEffect(() => {
-  if (cart.length > 0) {
-    // ⚡ якщо дані прийшли з бекенду — використовуємо їх
-    const withFinal = cart.map(item => {
-      const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
-      return { ...item, finalPrice: price * item.quantity };
-    });
-    setCartItems(withFinal);
-  } else {
-    // ⚡ інакше пробуємо localStorage
-    const stored = localStorage.getItem("cart");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as ICartItem[];
-        const withFinal = parsed.map(item => {
-          const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
-          return { ...item, finalPrice: price * item.quantity };
-        });
-        setCartItems(withFinal);
-      } catch {
-        setCartItems([]);
+    if (cart.length > 0) {
+      // ⚡ якщо дані прийшли з бекенду — використовуємо їх
+      const withFinal = cart.map(item => {
+        const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
+        return { ...item, finalPrice: price * item.quantity };
+      });
+      setCartItems(withFinal);
+    } else {
+      // ⚡ інакше пробуємо localStorage
+      const stored = localStorage.getItem("cart");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as ICartItem[];
+          const withFinal = parsed.map(item => {
+            const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
+            return { ...item, finalPrice: price * item.quantity };
+          });
+          setCartItems(withFinal);
+        } catch {
+          setCartItems([]);
+        }
       }
     }
-  }
-  setIsInitialized(true);
-}, [cart]);
+    setIsInitialized(true);
+  }, [cart]);
 
 
   // Збереження у localStorage при зміні кошика (тільки після ініціалізації)
@@ -72,9 +72,15 @@ const Cart: React.FC = () => {
     );
   };
 
-  const removeItem = (productId: number) => {
-    setCartItems(prev => prev.filter(item => item.productId !== productId));
+  const removeItem = (cartItemId: number) => {
+    setCartItems(prev => prev.filter(item => item.id !== cartItemId));
+
+    // викликаємо zustand
+    useCartStore.getState().deleteCartItem(cartItemId);
   };
+
+
+
 
   const total = cartItems.reduce((sum, item) => sum + (item.finalPrice ?? 0), 0);
 
@@ -100,7 +106,7 @@ const Cart: React.FC = () => {
             <CartItem
               key={item.productId}
               item={item}
-              price={item.finalPrice ? (item.finalPrice / item.quantity): 0}
+              price={item.finalPrice ? (item.finalPrice / item.quantity) : 0}
               updateQuantity={updateQuantity}
               removeItem={removeItem}
             />

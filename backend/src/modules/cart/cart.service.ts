@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { AddToCartDto } from './dto/cart.dto';
-import { UpdateCartItemDto } from '../cart-item/dto/cart-item.dto';
 import { CartItem } from '@prisma/client';
 
 @Injectable()
@@ -71,14 +70,19 @@ export class CartService {
     };
   }
 
-  async updateCartItem(id: number, dto: UpdateCartItemDto) {
-    return this.prisma.cartItem.update({
-      where: { id },
-      data: dto,
+  async clearCart(userId: number) {
+    // знаходимо кошик користувача
+    const cart = await this.prisma.cart.findUnique({
+      where: { userId },
     });
-  }
 
-  async removeCartItem(id: number) {
-    return this.prisma.cartItem.delete({ where: { id } });
+    if (!cart) {
+      throw new Error('Cart not found');
+    }
+
+    // видаляємо всі товари з цього кошика
+    return this.prisma.cartItem.deleteMany({
+      where: { cartId: cart.id },
+    });
   }
 }

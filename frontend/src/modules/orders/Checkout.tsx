@@ -34,37 +34,38 @@ const Checkout: React.FC = () => {
     }
   }, [setCart]);
 
- const handleOrder = async () => {
-  if (cart.length === 0) {
-    alert("🛒 Ваш кошик порожній");
-    return;
-  }
+  const handleOrder = async () => {
+    if (cart.length === 0) {
+      alert("🛒 Ваш кошик порожній");
+      return;
+    }
 
-  if (!form.fullName || !form.phone || !form.city || !form.novaPoshtaBranch) {
-    alert("⚠ Заповніть усі обов’язкові поля");
-    return;
-  }
+    if (!form.fullName || !form.phone || !form.city || !form.novaPoshtaBranch) {
+      alert("⚠ Заповніть усі обов’язкові поля");
+      return;
+    }
 
-  setLoading(true);
-  try {
-    // ✅ Виклик з правильними аргументами
-    await orderService.createOrder(
-      user?.id ?? null,
-      cart,
-      paymentMethod,
-      form
-    );
+    setLoading(true);
+    try {
+      // ✅ Виклик з правильними аргументами
+      await orderService.createOrder(
+        user?.id ?? null,
+        cart,
+        paymentMethod,
+        form
+      );
 
-    localStorage.removeItem("cart");
-    clearCart();
-    alert("✅ Замовлення відправлено!");
-  } catch (err) {
-    console.error(err);
-    alert("❌ Сталася помилка при оформленні замовлення");
-  } finally {
-    setLoading(false);
-  }
-};
+      localStorage.removeItem("cart");
+      clearCart();
+      if (user) { useCartStore.getState().deleteCartItems(); }
+      alert("✅ Замовлення відправлено!");
+    } catch (err) {
+      console.error(err);
+      alert("❌ Сталася помилка при оформленні замовлення");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const total = cart.reduce((sum, item) => {

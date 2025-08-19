@@ -46,6 +46,7 @@ export class CreateOrderDto {
 
   @ApiPropertyOptional({ example: 'м. Київ, вул. Хрещатик, 1' })
   @ValidateIf((o) => !o.userId)
+  @IsOptional()
   @IsString()
   guestAddress?: string;
 

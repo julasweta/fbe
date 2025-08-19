@@ -7,8 +7,10 @@ interface CartItemProps {
   item: ICartItem;
   price: number;
   updateQuantity: (productId: number, quantity: number) => void;
-  removeItem: (productId: number) => void;
+  removeItem: (cartItemId: number) => void; // 🟢 тільки число
 }
+
+
 
 const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) => {
   return (
@@ -30,9 +32,20 @@ const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) =>
           />
           <Button onClick={() => updateQuantity(item.productId, item.quantity + 1)}>+</Button>
         </div>
-        <Button className={styles.remove} onClick={() => removeItem(item.productId)}>
+        <Button
+          className={styles.remove}
+          onClick={() => {
+            if (item.id) {
+              removeItem(item.id);
+            }
+          }}
+        >
           Видалити
         </Button>
+
+
+
+ 
       </div>
     </div>
   );

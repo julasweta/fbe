@@ -37,7 +37,7 @@ ${data.items
   `;
 
     try {
-      const res = await firstValueFrom(
+      await firstValueFrom(
         this.http.post(
           `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
           {
@@ -47,8 +47,6 @@ ${data.items
           },
         ),
       );
-
-      console.log('✅ Відправлено у Telegram:', res.data);
     } catch (err) {
       console.error('❌ Помилка Telegram:', err.response?.data || err.message);
     }

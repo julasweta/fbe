@@ -3,17 +3,14 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  Patch,
-  Post,
-  Query,
+  Post,  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { AddToCartDto } from './dto/cart.dto';
-import { UpdateCartItemDto } from '../cart-item/dto/cart-item.dto';
+import { Request } from 'express';
 
 @ApiTags('Cart')
 @Controller('cart')
@@ -24,11 +21,12 @@ export class CartController {
   @Get()
   @ApiOperation({ summary: 'Отримати кошик користувача' })
   @ApiResponse({ status: 200, description: 'Повертає кошик користувача' })
-  getUserCart(@Query('userId') userId: number) {
-    return this.cartService.getCartByUserId(userId);
+  getUserCart(@Req() req: Request) {
+    console.log('user req - ', req.user);
+    return this.cartService.getCartByUserId(req.user.id);
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('add')
   @ApiOperation({ summary: 'Додати товар у кошик' })
   addToCart(@Body() dto: AddToCartDto) {
@@ -36,16 +34,13 @@ export class CartController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  @ApiOperation({ summary: 'Оновити товар у кошику' })
-  updateCartItem(@Param('id') id: number, @Body() dto: UpdateCartItemDto) {
-    return this.cartService.updateCartItem(id, dto);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  @ApiOperation({ summary: 'Видалити товар з кошика' })
-  removeCartItem(@Param('id') id: number) {
-    return this.cartService.removeCartItem(id);
+  @Delete('clear')
+  @ApiOperation({ summary: 'Очистити кошик користувача' })
+  @ApiResponse({
+    status: 200,
+    description: 'Видаляє всі товари з кошика користувача',
+  })
+  clearCart(@Req() req: Request) {
+    return this.cartService.clearCart(req.user.id);
   }
 }
