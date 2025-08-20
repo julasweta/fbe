@@ -17,8 +17,8 @@ interface ProductProps {
 }
 
 interface ProductFormData {
-  color: EColor | "";
-  size: ESize | "";
+  color: EColor | null;
+  size: ESize | null;
   quantity: number;
 }
 
@@ -36,8 +36,8 @@ interface CartItem {
 const Product: React.FC<ProductProps> = ({ productId }) => {
   const [product, setProduct] = useState<IProduct | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
-    color: "",
-    size: "",
+    color: null,
+    size: null,
     quantity: 1
   });
   const [loading, setLoading] = useState(true);
@@ -115,7 +115,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     setFormData((prev) => ({
       ...prev,
       color,
-      size: newVariant?.sizes?.[0] || ""
+      size: newVariant?.sizes?.[0] || null
     }));
 
     // Знаходимо перше зображення нового кольору та переключаємося на нього
@@ -152,8 +152,9 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     }
 
     const variant = product.variants.find(
-      (v) => v.color === formData.color && v.sizes.includes(formData.size)
+      (v) => v.color === formData.color && (!!formData.size && v.sizes.includes(formData.size))
     );
+
     if (!variant) {
       setError("Обраний варіант недоступний");
       return;
@@ -203,12 +204,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     (currentVariant?.priceSale && currentVariant.priceSale < currentVariant.price
       ? currentVariant.priceSale
       : currentVariant?.price) || product.priceSale || product.price;
-  console.log('currentVariant?.priceSale', currentVariant?.priceSale);
-  console.log('currentVariant?.price', currentVariant?.price);
-  console.log('product.priceSale', product.priceSale);
-  console.log('currentVariant?.price', currentVariant?.price);
-  console.log('product.price', product.price);
-  console.log('finalPrice', finalPrice);
 
 
 
@@ -280,7 +275,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                   <Button
                     key={index}
                     className={`${styles.colorOption} ${formData.color === variant.color ? styles.selected : ""}`}
-                    onClick={() => handleColorChange(variant.color)}
+                    onClick={() => handleColorChange(variant.color ?? null)}
                     style={{
                       backgroundColor: variant.color.toLowerCase(),
                       width: '40px',

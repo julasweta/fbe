@@ -7,6 +7,7 @@ import { useCartStore } from "../../store/useCartStore";
 import { orderService } from "../../services/OrderService";
 import type { CheckoutFormData } from "./CheckoutForm";
 import CheckoutForm from "./CheckoutForm";
+import Input from "../../components/ui/Inputs/Input";
 //import { v4 as uuidv4 } from "uuid";
 
 const Checkout: React.FC = () => {
@@ -102,29 +103,27 @@ const Checkout: React.FC = () => {
 
       <div className={styles.payment}>
         <h2>Метод оплати</h2>
-        <label>
-          <input
+       
+          <Input
+            label="Оплата при отриманні"
             type="radio"
             value="cod"
             checked={paymentMethod === "cod"}
             onChange={() => setPaymentMethod("cod")}
           />
-          Оплата при отриманні
-        </label>
-        <label>
-          <input
+      
+          <Input
+            label="Оплата карткою онлайн"
             type="radio"
             value="card"
             checked={paymentMethod === "card"}
             onChange={() => setPaymentMethod("card")}
           />
-          Оплата карткою онлайн
-        </label>
       </div>
 
       <div className={styles.links}>
-        <Link to="/delivery-terms">📦 Умови доставки</Link>
-        <Link to="/return-policy">↩ Політика повернення</Link>
+        <Link to="/delivery-terms" className="link">📦 Умови доставки та повернення</Link>
+
       </div>
 
       <Button onClick={handleOrder} disabled={loading}>

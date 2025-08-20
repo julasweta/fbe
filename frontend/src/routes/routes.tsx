@@ -1,6 +1,6 @@
 import CreateProduct from "../modules/admin/create-product/CreateProduct";
 import Dashboard from "../modules/admin/dashboard/Dashboard";
-import EditProduct from "../modules/admin/edit-product/EditProduct";
+import { EditProduct } from "../modules/admin/edit-product/EditProduct";
 import Delivery from "../modules/common/Delivery";
 import Checkout from "../modules/orders/Checkout";
 import { AboutPage, AuthPage, HomePage, NotFoundPage, ProfilePage, RegisterPage } from "../pages";

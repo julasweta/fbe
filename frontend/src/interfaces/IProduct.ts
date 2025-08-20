@@ -45,6 +45,18 @@ export const colorLabels: Record<EColor, string> = {
   [EColor.PINK]: "Pink",
 };
 
+export const colorHexMap: Record<EColor, string> = {
+  [EColor.RED]: "#ff0000",
+  [EColor.GREEN]: "#008000",
+  [EColor.BLUE]: "#0000ff",
+  [EColor.BLACK]: "#000000",
+  [EColor.WHITE]: "#ffffff",
+  [EColor.YELLOW]: "#ffff00",
+  [EColor.ORANGE]: "#ffa500",
+  [EColor.PURPLE]: "#800080",
+  [EColor.PINK]: "#ffc0cb",
+};
+
 // 🟢 DTO відповідності
 
 // Трансляція
@@ -68,11 +80,12 @@ export interface ICreateProductImage {
 
 // Варіант
 export interface ICreateProductVariant {
+  productId?: number;
   id?: number;
-  color: EColor;
+  color: EColor ;
   sizes: ESize[];
   price: number;
-  priceSale?: number;
+  priceSale?: number | null;
   stock: number;
   images?: ICreateProductImage[];
 }
@@ -96,7 +109,7 @@ export interface IProduct {
   price: number;
   priceSale?: number;
   categoryId?: number;
-  collectionId?: number[];
+  collectionId?: number;
   translations: ICreateProductTranslation[];
   features: ICreateProductFeature[];
   variants: ICreateProductVariant[]; // без productId

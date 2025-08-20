@@ -2,28 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { OrderItemDto } from '../order-item/dto/order-item.dto';
+import { PaymentMethod } from '../order/dto/order.dto';
 
 @Injectable()
 export class TelegramService {
-  constructor(private readonly http: HttpService) {}
+  constructor(private readonly http: HttpService) { }
 
   async sendOrderNotification(data: {
     user: any;
     items: any[];
-    paymentMethod: string;
+    paymentMethod: PaymentMethod;
   }) {
+
+    const payment = (data.paymentMethod === PaymentMethod.COD) ? 'Оплата при отриманні' : 'Оплата онлайн карткою';
+
     const message = `
 📦 НОВЕ ЗАМОВЛЕННЯ
-👤 ${data.user.name} (${data.user.phone})
-📧 ${data.user.email}
-🏠 ${data.user.address}, ${data.user.novaPostCity}, ${data.user.novaPostBranch}
-💳 Оплата: ${data.paymentMethod}
+👤 name:    ${data.user.name} 
+☎️ phone:   ${data.user.phone}
+📧 email:   ${data.user.email}
+🏠 ${data.user.address}, ${data.user.novaPostCity},
+ № NovaPost ${data.user.novaPostBranch}
+💳 Оплата: ${payment}
 
 🛒 Товари:
 ${data.items
-  .map(
-    (i: OrderItemDto) =>
-      `• ID: ${i.productId}
+        .map(
+          (i: OrderItemDto) =>
+            `• ID: ${i.productId}
    Назва: ${i.name}
    Колір: ${i.color}
    Розмір: ${i.size}
@@ -32,8 +38,8 @@ ${data.items
    Ціна зі знижкою: ${i.priceSale}
    Остаточна ціна: ${i.finalPrice} грн
    Фото: ${i.image}`,
-  )
-  .join('\n\n')}
+        )
+        .join('\n\n')}
   `;
 
     try {

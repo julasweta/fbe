@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import styles from "./CreateProduct.module.scss";
 import { productService } from "../../../services/ProductService";

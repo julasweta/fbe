@@ -1,6 +1,6 @@
 // useProductStore.ts
 import { create } from "zustand";
-import type { IProduct } from "../interfaces/IProduct";
+import type { ICreateProduct, IProduct } from "../interfaces/IProduct";
 import { productService } from "../services/ProductService";
 import type { ProductFilters } from '../interfaces/IProduct';
 
@@ -18,8 +18,8 @@ interface ProductState {
 
   fetchProducts: (filters?: ProductFilters) => Promise<void>;
   appendProducts: (filters?: ProductFilters) => Promise<void>;
-  createProduct: (productData: Partial<IProduct>) => Promise<void>;
-  editProduct: (id: number, productData: Partial<IProduct>) => Promise<void>;
+  createProduct: (productData: ICreateProduct) => Promise<void>;
+  editProduct: (id: number, productData: ICreateProduct) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
 }
 
