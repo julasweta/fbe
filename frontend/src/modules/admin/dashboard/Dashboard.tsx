@@ -1,3 +1,4 @@
+// Dashboard.tsx
 import { useEffect, useState } from "react";
 import { Button } from "../../../components/ui/Buttons/Button";
 import { useProductStore } from "../../../store";
@@ -84,14 +85,16 @@ const Dashboard = () => {
         {products.map((product) => (
           <div className={styles.cardWrapper} key={product.id}>
             <Card product={product} />
-            <Button onClick={() => handleDelete(product)} title="Видалити" />
+            <Button className={`${styles.deleteButton} ${styles.button}`} onClick={() => handleDelete(product)}>
+              Видалити
+            </Button>
           </div>
         ))}
       </ul>
 
       {/* Load more */}
       <div className={styles.loadMore}>
-        <Button onClick={() => setPage((p) => p + 1)} disabled={isLoading}>
+        <Button className={`${styles.loadMoreButton} ${styles.button}`} onClick={() => setPage((p) => p + 1)} disabled={isLoading}>
           Завантажити ще
         </Button>
       </div>
@@ -100,5 +103,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
 

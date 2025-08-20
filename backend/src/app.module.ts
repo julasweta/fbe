@@ -64,7 +64,5 @@ import { TelegramModule } from './modules/telegram/telegram.module';
   providers: [AppService],
 })
 export class AppModule {
-  constructor() {
-  
-  }
+  constructor() {}
 }

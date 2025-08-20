@@ -13,19 +13,22 @@ interface CartState {
   clearCart: () => Promise<void>;
 
   fetchCart: () => Promise<void>;
+  loaded: boolean;
+  isLoading: boolean; // Додаємо флаг завантаження
 }
 
-const { user } = useAuthStore.getState();
-export const useCartStore = create<CartState>((set) => ({
+export const useCartStore = create<CartState>((set, get) => ({
   cart: [],
+  loaded: false,
+  isLoading: false,
 
   setCart: (items) => set({ cart: items }),
 
   /** Додаємо товар у кошик */
   addCartItem: async (item: ICartItem) => {
-    
-
     try {
+      const { user } = useAuthStore.getState();
+
       if (user?.id) {
         // ⚡ для авторизованих
         await cartService.addToCart(user.id, item);
@@ -34,8 +37,8 @@ export const useCartStore = create<CartState>((set) => ({
       } else {
         // ⚡ для гостей
         const random = Math.floor(Math.random() * 1000);
-        const guestId = item.productId+random;
-        const itemWithId = { ...item, id: +guestId }; // 🟢 тепер item завжди має id
+        const guestId = item.productId + random;
+        const itemWithId = { ...item, id: +guestId };
 
         const updated = cartService.addItem(itemWithId);
         console.log('updated', updated);
@@ -46,11 +49,10 @@ export const useCartStore = create<CartState>((set) => ({
     }
   },
 
-
   clearCart: async () => {
     try {
       await cartService.clearLocalCart();
-      set({ cart: [] });
+      set({ cart: [], loaded: false }); // Скидаємо loaded
     } catch (error) {
       console.error("Помилка при очищенні кошика:", error);
     }
@@ -88,15 +90,42 @@ export const useCartStore = create<CartState>((set) => ({
     }
   },
 
-
   fetchCart: async () => {
+    const { loaded, isLoading } = get();
+    const { user, accessToken } = useAuthStore.getState();
+
+    // Запобігаємо множинним запитам
+    if (isLoading) {
+      console.log("Кошик вже завантажується, пропускаємо запит");
+      return;
+    }
+
+    // Якщо немає користувача або токена - завантажуємо з localStorage для гостей
+    if (!user?.id || !accessToken) {
+      try {
+        const localCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        set({ cart: localCart, loaded: true });
+      } catch (error) {
+        console.error("Помилка завантаження кошика з localStorage:", error);
+        set({ cart: [], loaded: true });
+      }
+      return;
+    }
+
+    // Якщо корзина вже завантажена для поточного користувача - не робимо запит
+    if (loaded) {
+      console.log("Кошик вже завантажений для користувача");
+      return;
+    }
+
+    set({ isLoading: true });
+
     try {
-      const { user } = useAuthStore.getState();
-      const res = await cartService.getCart(user?.id);
-      set({ cart: res });
+      const res = await cartService.getCart(user.id);
+      set({ cart: res, loaded: true, isLoading: false });
     } catch (error) {
       console.error("Помилка при завантаженні кошика:", error);
+      set({ cart: [], loaded: true, isLoading: false });
     }
   },
 }));
-

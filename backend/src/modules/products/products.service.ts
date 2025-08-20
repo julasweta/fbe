@@ -7,43 +7,89 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
+  // CREATE
   async create(dto: CreateProductDto) {
     const {
       translations,
-      images,
       features,
       categoryId,
-      collectionIds,
-      ...productData
+      collectionId,
+      variants,
+      ...rest
     } = dto;
 
-    return await this.prisma.product.create({
+    // First, create the product with variants (without images)
+    const product = await this.prisma.product.create({
       data: {
-        ...productData,
+        ...rest,
         category: categoryId ? { connect: { id: categoryId } } : undefined,
-        collection:
-          collectionIds && collectionIds.length > 0
-            ? { connect: { id: collectionIds[0] } }
-            : undefined,
-        translations: { create: translations },
-        images: { create: images },
-        features: {
-          create: features.map((f) => ({
-            text: f.text,
-            order: f.order ?? null,
-          })),
-        },
+        collection: collectionId
+          ? { connect: { id: collectionId } }
+          : undefined,
+
+        translations: translations
+          ? {
+              create: translations.map((t) => ({
+                name: t.name,
+                description: t.description ?? null,
+                language: { connect: { id: t.languageId } },
+              })),
+            }
+          : undefined,
+
+        features: features
+          ? {
+              create: features.map((f) => ({
+                text: f.text,
+                order: f.order ?? null,
+              })),
+            }
+          : undefined,
+
+        variants: variants
+          ? {
+              create: variants.map((v) => ({
+                color: v.color,
+                sizes: v.sizes,
+                price: v.price ?? null,
+                priceSale: v.priceSale ?? null,
+                stock: v.stock ?? 0,
+              })),
+            }
+          : undefined,
       },
       include: {
-        translations: { include: { language: true } },
-        images: true,
-        features: true,
-        collection: true,
-        category: true,
+        variants: true,
       },
+    });
+
+    // Then, create images for each variant if they exist
+    if (variants && product.variants) {
+      for (let i = 0; i < variants.length; i++) {
+        const variantDto = variants[i];
+        const createdVariant = product.variants[i];
+
+        if (variantDto.images && variantDto.images.length > 0) {
+          await this.prisma.productImage.createMany({
+            data: variantDto.images.map((img) => ({
+              url: img.url,
+              altText: img.altText ?? null,
+              variantId: createdVariant.id,
+              productId: product.id,
+            })),
+          });
+        }
+      }
+    }
+
+    // Finally, return the complete product with all relations
+    return this.prisma.product.findUnique({
+      where: { id: product.id },
+      include: this.defaultInclude(),
     });
   }
 
+  // LIST
   async findAll(params: {
     limit?: number;
     skip?: number;
@@ -55,71 +101,75 @@ export class ProductsService {
     const offset = params.page ? (params.page - 1) * limit : (params.skip ?? 0);
 
     const where: any = {};
+    if (params.category) where.category = { slug: params.category };
+    if (params.collection) where.collection = { slug: params.collection };
 
-    if (params.category) {
-      where.category = {
-        slug: params.category,
-      };
-    }
-
-    if (params.collection) {
-      where.collection = {
-        slug: params.collection,
-      };
-    }
-
-    const [products, count] = await this.prisma.$transaction([
+    const [data, count] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         skip: offset,
         take: limit,
         where,
-        include: {
-          translations: { include: { language: true } },
-          images: true,
-          features: true,
-          collection: true,
-          category: true,
-        },
+        include: this.defaultInclude(),
       }),
       this.prisma.product.count({ where }),
     ]);
 
     return {
-      data: products,
+      data,
       count,
       page: params.page || Math.floor(offset / limit) + 1,
       totalPages: Math.ceil(count / limit),
     };
   }
 
+  // GET ONE
   async findOne(id: number) {
     const product = await this.prisma.product.findUnique({
       where: { id },
-      include: {
-        translations: { include: { language: true } },
-        images: true,
-        features: true,
-        collection: true,
-        category: true,
-      },
+      include: this.defaultInclude(),
     });
     if (!product) throw new NotFoundException('Product not found');
     return product;
   }
 
-  async update(id: number, data: UpdateProductDto) {
-    const { features, categoryId, collectionIds, ...rest } = data;
+  // UPDATE
+  async update(id: number, dto: UpdateProductDto) {
+    const {
+      translations,
+      features,
+      categoryId,
+      collectionId,
+      variants,
+      ...rest
+    } = dto;
 
-    return await this.prisma.product.update({
+    // КРОК 1: оновлюємо сам продукт, колекцію/категорію, переклади, фічі
+    await this.prisma.product.update({
       where: { id },
       data: {
         ...rest,
-        categoryId: categoryId ?? undefined, // оновлюємо категорію (якщо передано)
+        category:
+          categoryId !== undefined
+            ? categoryId
+              ? { connect: { id: categoryId } }
+              : { disconnect: true }
+            : undefined,
+        collection: collectionId
+          ? { connect: { id: collectionId } }
+          : undefined,
 
+        ...(translations
+          ? {
+              translations: {
+                deleteMany: { productId: id },
+                create: translations,
+              },
+            }
+          : {}),
         ...(features
           ? {
               features: {
-                deleteMany: {}, // видаляємо всі старі фічі
+                deleteMany: { productId: id },
                 create: features.map((f) => ({
                   text: f.text,
                   order: f.order ?? null,
@@ -127,39 +177,71 @@ export class ProductsService {
               },
             }
           : {}),
+      },
+    });
 
-        ...(collectionIds
-          ? {
-              collections: {
-                deleteMany: {}, // очищаємо старі зв’язки з колекціями
-                create: collectionIds.map((collectionId) => ({
-                  collectionId,
-                })),
+    // КРОК 2: якщо передані variants — перебудовуємо їх заново
+    if (variants) {
+      // спочатку чистимо пов’язані зображення і варіанти
+      await this.prisma.productImage.deleteMany({ where: { productId: id } });
+      await this.prisma.productVariant.deleteMany({ where: { productId: id } });
+
+      // створюємо наново
+      if (variants.length) {
+        await Promise.all(
+          variants.map((v) =>
+            this.prisma.productVariant.create({
+              data: {
+                product: { connect: { id } },
+                color: v.color,
+                sizes: v.sizes,
+                price: v.price ?? null,
+                priceSale: v.priceSale ?? null,
+                stock: v.stock ?? 0,
+                images: v.images?.length
+                  ? {
+                      create: v.images.map((img) => ({
+                        url: img.url,
+                        altText: img.altText ?? null,
+                        product: { connect: { id } }, // обов’язково
+                      })),
+                    }
+                  : undefined,
               },
-            }
-          : {}),
-      },
-      include: {
-        translations: { include: { language: true } },
-        images: true,
-        features: true,
-        collection: true,
-        category: true,
-      },
+            }),
+          ),
+        );
+      }
+    }
+
+    return this.prisma.product.findUnique({
+      where: { id },
+      include: this.defaultInclude(),
     });
   }
 
+  // DELETE
   async remove(id: number) {
-    // Спочатку видаляємо залежності
+    // видаляємо залежності у безпечному порядку
+    await this.prisma.productImage.deleteMany({ where: { productId: id } });
     await this.prisma.productTranslation.deleteMany({
       where: { productId: id },
     });
-    await this.prisma.productImage.deleteMany({ where: { productId: id } });
     await this.prisma.productFeature.deleteMany({ where: { productId: id } });
+    await this.prisma.productVariant.deleteMany({ where: { productId: id } });
     await this.prisma.cartItem.deleteMany({ where: { productId: id } });
     await this.prisma.orderItem.deleteMany({ where: { productId: id } });
 
-    // Потім сам продукт
     return this.prisma.product.delete({ where: { id } });
+  }
+
+  private defaultInclude() {
+    return {
+      translations: { include: { language: true } },
+      features: true,
+      category: true,
+      collection: true,
+      variants: { include: { images: true } },
+    };
   }
 }

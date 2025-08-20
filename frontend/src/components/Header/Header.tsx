@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store";
 import HeaderMenu from "./HeaderMenu/HeaderMenu";
@@ -15,16 +14,25 @@ const Header: React.FC = () => {
   const { theme } = useThemeStore();
   const [textColor, setTextColor] = useState('#333333');
   const headerRef = useRef<HTMLDivElement>(null);
- 
+  const [hasInitializedCart, setHasInitializedCart] = useState(false);
 
   const { cart, fetchCart } = useCartStore();
 
-  // Якщо хочеш підтягувати корзину при завантаженні
+  // Завантажуємо кошик тільки один раз при ініціалізації або зміні користувача
   useEffect(() => {
-    fetchCart();
-  }, []);
+    // Якщо кошик ще не ініціалізований або змінився користувач
+    if (!hasInitializedCart || (user && !cart.length)) {
+      fetchCart();
+      setHasInitializedCart(true);
+    }
+  }, [user?.id]); // Залежить тільки від ID користувача
 
-
+  // Скидаємо флаг при логауті
+  useEffect(() => {
+    if (!accessToken) {
+      setHasInitializedCart(false);
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     const checkBackgroundSimple = () => {
@@ -50,7 +58,6 @@ const Header: React.FC = () => {
       setTextColor(isDark ? '#ffffff' : '#333333');
     };
 
-
     // Створюємо Intersection Observer для відстеження секцій
     const observer = new IntersectionObserver(
       (entries) => {
@@ -61,7 +68,7 @@ const Header: React.FC = () => {
         });
       },
       {
-        rootMargin: '0px 0px -80% 0px' // Спрацьовує коли секція досягає верху екрана
+        rootMargin: '0px 0px -80% 0px'
       }
     );
 
@@ -89,10 +96,6 @@ const Header: React.FC = () => {
     };
   }, [theme]);
 
-  useEffect(() => {
-    useAuthStore.getState();
-  }, [user]);
-
   return (
     <div
       ref={headerRef}
@@ -106,7 +109,6 @@ const Header: React.FC = () => {
       <HeaderMenu textColor={textColor} />
 
       <div className={styles.authBlock}>
-
         {accessToken ? (
           <>
             <span
@@ -127,14 +129,12 @@ const Header: React.FC = () => {
                 backgroundColor: 'transparent',
                 transition: 'all 0.3s ease'
               }}
-            >Logout
+            >
+              Logout
             </Button>
           </>
         ) : (
-          <Link
-            to="/login"
-
-          >
+          <Link to="/login">
             <FaRegUser
               style={{
                 color: textColor === '#ffffff' ? '#ffffff' : '#000000',
@@ -142,17 +142,19 @@ const Header: React.FC = () => {
                 transition: 'color 0.3s ease',
               }}
             />
-
-            
           </Link>
         )}
 
-        <Link to="/cart"> <LuShoppingCart style={{
-          color: textColor === '#ffffff' ? '#ffffff' : '#000000',
-          fontSize: '1.5rem',
-          transition: 'color 0.3s ease',
-        }} /> </Link>
-        <span>{cart.length}</span>
+        <Link to="/cart">
+          <LuShoppingCart
+            style={{
+              color: textColor === '#ffffff' ? '#ffffff' : '#000000',
+              fontSize: '1.5rem',
+              transition: 'color 0.3s ease',
+            }}
+          />
+        </Link>
+        <span>{(cart.length > 0)? cart.length : '' }</span>
       </div>
     </div>
   );

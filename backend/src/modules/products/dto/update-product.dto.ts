@@ -1,7 +1,9 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsArray, ValidateNested, IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateProductFeatureDto } from '../../product-feature/dto/create-product-feature.dto';
+import { CreateProductTranslationDto } from '../../product-translations/dto/product-translation.dto';
+import { CreateProductVariantDto } from '../../product-variant/dto/create-product-variant.dto';
 
 export class UpdateProductDto {
   // інші поля...
@@ -16,11 +18,18 @@ export class UpdateProductDto {
   @IsOptional()
   features?: CreateProductFeatureDto[];
 
+  @ApiProperty()
   @IsOptional()
   @IsInt()
   categoryId?: number;
 
+  @ApiProperty()
   @IsOptional()
-  @IsArray()
-  collectionIds?: number[];
+  collectionId?: number;
+
+  @ApiProperty({ type: [CreateProductTranslationDto] })
+  translations: CreateProductTranslationDto[];
+
+  @ApiProperty({ type: [CreateProductVariantDto] })
+  variants: CreateProductVariantDto[];
 }

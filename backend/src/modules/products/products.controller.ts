@@ -10,7 +10,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
@@ -29,10 +35,37 @@ export class ProductsController {
     return this.productsService.create(dto);
   }
 
-  @Get()
-  @ApiOperation({
-    summary: 'Отримати всі продукти з пагінацією та фільтром по категорії',
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Кількість елементів',
   })
+  @ApiQuery({
+    name: 'skip',
+    required: false,
+    type: Number,
+    description: 'Пропустити N елементів',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Номер сторінки',
+  })
+  @ApiQuery({
+    name: 'category',
+    required: false,
+    type: String,
+    description: 'Фільтр по категорії',
+  })
+  @ApiQuery({
+    name: 'collection',
+    required: false,
+    type: String,
+    description: 'Фільтр по колекції',
+  })
+  @Get()
   findAll(
     @Query('limit') limit?: string,
     @Query('skip') skip?: string,

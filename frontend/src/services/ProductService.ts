@@ -1,6 +1,6 @@
 // ProductService.ts
+import type { ICreateProduct, IProduct, IProductsResponse, ProductFilters } from "../interfaces/IProduct";
 import { apiService } from "./ApiServices";
-import type { IProduct, IProductsResponse, ProductFilters } from "../interfaces/IProduct";
 
 const productService = {
   async getAll(filters?: ProductFilters): Promise<IProduct[]> {
@@ -17,7 +17,7 @@ const productService = {
     return data;
   },
 
-  async addProduct(productData: Partial<IProduct>): Promise<IProduct> {
+  async addProduct(productData: ICreateProduct): Promise<IProduct> {
 
     const { data } = await apiService.post<IProduct>("products", productData);
     return data;

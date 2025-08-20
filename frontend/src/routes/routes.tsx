@@ -1,6 +1,7 @@
 import CreateProduct from "../modules/admin/create-product/CreateProduct";
 import Dashboard from "../modules/admin/dashboard/Dashboard";
 import EditProduct from "../modules/admin/edit-product/EditProduct";
+import Delivery from "../modules/common/Delivery";
 import Checkout from "../modules/orders/Checkout";
 import { AboutPage, AuthPage, HomePage, NotFoundPage, ProfilePage, RegisterPage } from "../pages";
 import AdminPage from "../pages/AdminPage";
@@ -21,6 +22,7 @@ export const publicRoutes = [
   { path: "/group/:collectionSlug", element: <CollectionPage /> },
   { path: "/cart", element: <CartPage /> },
   { path: "/checkout", element: <Checkout /> },
+  { path:"/delivery-terms", element: <Delivery/>}
 ];
 
 export const mainRoutes = [

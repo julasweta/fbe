@@ -1,80 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import styles from "./CreateProduct.module.scss";
-import ImageUpload from "../upload-img/ImageUploader";
 import { productService } from "../../../services/ProductService";
-import type { IProduct } from "../../../interfaces/IProduct";
 import {
   ESize,
   EColor,
   sizeLabels,
   colorLabels,
+  type ICreateProduct,
 } from "../../../interfaces/IProduct";
 import { CategorySelect } from "../../../components/Category/CategorySelect";
 import { CollectionSelect } from "../../../components/Collection/CollectionSelect";
-// Мапа кольорів для відображення
-const colorHexMap: Record<EColor, string> = {
-  [EColor.RED]: "#ff0000",
-  [EColor.GREEN]: "#008000",
-  [EColor.BLUE]: "#0000ff",
-  [EColor.BLACK]: "#000000",
-  [EColor.WHITE]: "#ffffff",
-  [EColor.YELLOW]: "#ffff00",
-  [EColor.ORANGE]: "#ffa500",
-  [EColor.PURPLE]: "#800080",
-  [EColor.PINK]: "#ffc0cb",
-};
+import { VariantImages } from "../../images/Images";
 
 const CreateProduct: React.FC = () => {
-  const [manualImage, setManualImage] = useState<string>("");
-
   const { register, control, handleSubmit, reset, setValue, watch } =
-    useForm<IProduct>({
+    useForm<ICreateProduct>({
       defaultValues: {
         sku: "",
         price: 0,
         priceSale: 0,
-        images: [{ url: "", altText: "" }],
+        categoryId: undefined,
+        collectionId: 1,
         translations: [{ name: "", description: "", languageId: 1 }],
         features: [{ text: "", order: 1 }],
-        sizes: [],
-        colors: [],
-        collectionIds: [],
-        categoryId: undefined,
+        variants: [], // 🔹 спочатку порожній масив
       },
     });
 
-  const imagesArray = useFieldArray({ control, name: "images" });
   const translationsArray = useFieldArray({ control, name: "translations" });
   const featuresArray = useFieldArray({ control, name: "features" });
-  const onSubmit = async (data: IProduct) => {
-    const cleanData = {
-      ...data,
-      translations: data.translations?.map(({ name, description, languageId }) => ({
-        name,
-        description,
-        languageId,
-      })),
-      features: data.features?.map(({ text, order }) => ({
-        text,
-        order,
-      })),
-      images: data.images?.map(({ url, altText }) => ({
-        url,
-        altText,
-      })),
-      collectionIds: data.collectionIds?.map((id) => Number(id)),
-      categoryId: data.categoryId ? Number(data.categoryId) : undefined,
-    };
+  const variantsArray = useFieldArray({ control, name: "variants" });
 
+  const watchPrice = watch("price");
+  const watchPriceSale = watch("priceSale");
+
+  const onSubmit = async (data: ICreateProduct) => {
     try {
-      await productService.addProduct(cleanData);
+      const payload = {
+        ...data,
+        collectionId: Number(data.collectionId),
+        variants: data.variants.map((v) => ({
+          ...v,
+          productId: 1, // тимчасово, поки бекенд сам не ставить ID
+        })),
+      };
+      await productService.addProduct(payload);
       reset();
     } catch (error) {
       console.error("Помилка при створенні продукту:", error);
     }
   };
 
+  const handleAddVariant = () => {
+    variantsArray.append({
+      color: EColor.BLACK,
+      sizes: [],
+      price: watchPrice || 0,
+      priceSale: watchPriceSale || 0,
+      stock: 0,
+      images: [{ url: "", altText: "" }],
+    });
+  };
 
   return (
     <div className={styles.createProduct}>
@@ -86,9 +73,9 @@ const CreateProduct: React.FC = () => {
           <input {...register("sku", { required: true })} />
         </div>
 
-        {/* Price */}
+        {/* Base Price */}
         <div className={styles.field}>
-          <label>Price *</label>
+          <label>Base Price *</label>
           <input
             type="number"
             step="0.01"
@@ -96,9 +83,9 @@ const CreateProduct: React.FC = () => {
           />
         </div>
 
-        {/* Sale Price */}
+        {/* Base Sale Price */}
         <div className={styles.field}>
-          <label>Sale Price</label>
+          <label>Base Sale Price</label>
           <input
             type="number"
             step="0.01"
@@ -106,67 +93,12 @@ const CreateProduct: React.FC = () => {
           />
         </div>
 
-        {/* Images */}
-        <h3>Images</h3>
-        {imagesArray.fields.map((field, index) => {
-          const currentUrl = watch(`images.${index}.url`);
-          return (
-            <div key={field.id} className={styles.group}>
-              <ImageUpload
-                onUpload={(url) => {
-                  setValue(`images.${index}.url`, url);
-                }}
-              />
-              <input
-                type="text"
-                placeholder="Встав URL вручну"
-                value={manualImage}
-                onChange={(e) => setManualImage(e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (manualImage.trim()) {
-                    setValue(`images.${index}.url`, manualImage.trim());
-                    setManualImage("");
-                  }
-                }}
-              >
-                Add URL
-              </button>
-              <input
-                placeholder="Alt text"
-                {...register(`images.${index}.altText`)}
-              />
-              {currentUrl && (
-                <img
-                  src={currentUrl}
-                  alt="preview"
-                  style={{ width: "80px", height: "80px", objectFit: "cover" }}
-                />
-              )}
-              <button type="button" onClick={() => imagesArray.remove(index)}>
-                ✕
-              </button>
-            </div>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() => imagesArray.append({ url: "", altText: "" })}
-        >
-          + Add Image
-        </button>
-
         {/* Translations */}
         <h3>Translations</h3>
         {translationsArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
             <input placeholder="Name" {...register(`translations.${index}.name`)} />
-            <input
-              placeholder="Description"
-              {...register(`translations.${index}.description`)}
-            />
+            <input placeholder="Description" {...register(`translations.${index}.description`)} />
             <input
               type="number"
               placeholder="Language ID"
@@ -180,11 +112,7 @@ const CreateProduct: React.FC = () => {
         <button
           type="button"
           onClick={() =>
-            translationsArray.append({
-              name: "",
-              description: "",
-              languageId: 1,
-            })
+            translationsArray.append({ name: "", description: "", languageId: 1 })
           }
         >
           + Add Translation
@@ -209,35 +137,87 @@ const CreateProduct: React.FC = () => {
           + Add Feature
         </button>
 
-        {/* Sizes */}
-        <div className={styles.field}>
-          <label>Sizes</label>
-          <div className={styles.checkboxGroup}>
-            {Object.values(ESize).map((size) => (
-              <label key={size} className={styles.checkboxLabel}>
-                <input type="checkbox" value={size} {...register("sizes")} />
-                {sizeLabels[size]}
-              </label>
-            ))}
-          </div>
-        </div>
+        {/* Variants */}
+        <h3>Variants</h3>
+        {variantsArray.fields.map((variant, vIndex) => (
+          <div key={variant.id} className={styles.variantBlock}>
+            <h4>Variant {vIndex + 1}</h4>
 
-        {/* Colors */}
-        <div className={styles.field}>
-          <label>Colors</label>
-          <div className={styles.colorGrid}>
-            {Object.values(EColor).map((color) => (
-              <label
-                key={color}
-                className={styles.colorLabel}
-                style={{ backgroundColor: colorHexMap[color] }}
-                title={colorLabels[color]}
-              >
-                <input type="checkbox" value={color} {...register("colors")} />
-              </label>
-            ))}
+            <input type="hidden" {...register(`variants.${vIndex}.productId`)} />
+
+            {/* Color */}
+            <div className={styles.field}>
+              <label>Color</label>
+              <select {...register(`variants.${vIndex}.color`)}>
+                {Object.values(EColor).map((color) => (
+                  <option key={color} value={color}>
+                    {colorLabels[color]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sizes */}
+            <div className={styles.field}>
+              <label>Sizes</label>
+              <div className={styles.checkboxGroup}>
+                {Object.values(ESize).map((size) => (
+                  <label key={size} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      value={size}
+                      {...register(`variants.${vIndex}.sizes`)}
+                    />
+                    {sizeLabels[size]}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className={styles.field}>
+              <label>Price *</label>
+              <input
+                type="number"
+                step="0.01"
+                {...register(`variants.${vIndex}.price`, { required: true, valueAsNumber: true })}
+              />
+            </div>
+
+            {/* Sale Price */}
+            <div className={styles.field}>
+              <label>Sale Price</label>
+              <input
+                type="number"
+                step="0.01"
+                {...register(`variants.${vIndex}.priceSale`, { valueAsNumber: true })}
+              />
+            </div>
+
+            {/* Stock */}
+            <div className={styles.field}>
+              <label>Stock</label>
+              <input type="number" {...register(`variants.${vIndex}.stock`, { valueAsNumber: true })} />
+            </div>
+
+            {/* Images */}
+            <VariantImages
+              control={control}
+              register={register}
+              setValue={setValue}
+              watch={watch}
+              variantIndex={vIndex}
+            />
+
+            <button type="button" onClick={() => variantsArray.remove(vIndex)}>
+              ✕ Remove Variant
+            </button>
           </div>
-        </div>
+        ))}
+
+        <button type="button" onClick={handleAddVariant}>
+          + Add Variant
+        </button>
 
         {/* Category */}
         <div className={styles.field}>
@@ -249,12 +229,12 @@ const CreateProduct: React.FC = () => {
           />
         </div>
 
-        {/* Collections */}
+        {/* Collection */}
         <div className={styles.field}>
           <label>Collections</label>
           <CollectionSelect
-            value={watch("collectionIds")?.[0] ?? ""}
-            onChange={(val) => setValue("collectionIds", [Number(val)])}
+            value={watch("collectionId")}
+            onChange={(val) => setValue("collectionId", Number(val))}
             valueKey="id"
           />
         </div>
@@ -268,5 +248,7 @@ const CreateProduct: React.FC = () => {
 };
 
 export default CreateProduct;
+
+
 
 
