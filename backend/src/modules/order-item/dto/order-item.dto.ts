@@ -41,7 +41,7 @@ export class OrderItemDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  priceSale?: string;
+  priceSale?: number;
 }
 
 export class OrderItemResponseDto {

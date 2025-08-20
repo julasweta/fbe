@@ -59,3 +59,14 @@ export class BaseUserDto {
   accessToken?: string | null;
   refreshToken?: string | null;
 }
+
+
+export  class UserForTelegram {
+  id?: number | null;
+  name?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  novaPostCity?: string | null;
+  novaPostBranch?: string | null;
+}

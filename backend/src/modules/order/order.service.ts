@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateOrderDto } from './dto/order.dto';
 import { TelegramService } from '../telegram/telegram.service';
+import { OrderItemDto } from '../order-item/dto/order-item.dto';
 
 @Injectable()
 export class OrderService {
@@ -46,18 +47,32 @@ export class OrderService {
       include: { items: true }, // вертаємо одразу замовлення з товарами
     });
     // 2. Відправка у Telegram (якщо потрібна)
+    // ... після create()
+    const itemsForTelegram: OrderItemDto[] = order.items.map((i) => ({
+      productId: i.productId ?? undefined,
+      quantity: +i.quantity,
+      price: +i.price,
+      finalPrice: +i.finalPrice,
+      name: i.name ?? '',
+      image: i.image ?? undefined,
+      color: i.color ?? undefined,
+      size: i.size ?? undefined,
+      priceSale: i.priceSale ?? undefined,
+    }));
+
+
     try {
       await this.telegramService.sendOrderNotification({
         user: {
-          id: order.userId,
-          name: order.guestName,
-          phone: order.guestPhone,
-          email: order.guestEmail,
-          address: order.guestAddress,
-          novaPostBranch: order.novaPostBranch,
-          novaPostCity: order.novaPostCity,
+          id: order.userId ?? undefined,
+          name: order.guestName ?? '',
+          phone: order.guestPhone ?? '',
+          email: order.guestEmail ?? '',
+          address: order.guestAddress ?? '',
+          novaPostCity: order.novaPostCity ?? '',
+          novaPostBranch: order.novaPostBranch ?? '',
         },
-        items: order.items,
+        items: itemsForTelegram,
         paymentMethod: order.paymentMethod,
       });
     } catch (err) {

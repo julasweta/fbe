@@ -1,0 +1,143 @@
+.fbeAbout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  font-family: "Inter", sans-serif;
+  color: #fff;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(39, 31, 31, 0.5)),
+    url("https://res.cloudinary.com/divhalkcr/image/upload/v1755647719/w5cvxksnemuirsyek1dl.jpg") no-repeat center/cover;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+  }
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(45deg, #583a05, #ad9b80);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.2rem;
+  }
+}
+
+.subtitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 2.5rem 0 1.5rem;
+  color: #e2e8f0;
+  position: relative;
+  display: inline-block;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50%;
+    height: 3px;
+    background: #56341f;
+    transition: width 0.3s ease;
+  }
+
+  &:hover:after {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+  }
+}
+
+.description {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  color: #d1d5db;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+}
+
+.featuresList,
+.valuesList,
+.deliveryList {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 2.5rem;
+
+  li {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    padding: 0.8rem 1.5rem;
+    position: relative;
+    color: #e5e7eb;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    transition: transform 0.3s ease, background 0.3s ease;
+
+    &:before {
+      content: "→";
+      color: #453510;
+      position: absolute;
+      left: 0.5rem;
+      font-weight: bold;
+    }
+
+    &:hover {
+      transform: translateX(10px);
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.featuresList li {
+  font-weight: 600;
+}
+
+.valuesList li {
+  font-style: normal;
+  font-weight: 500;
+  color: #141515;
+  background-color: rgba(255, 253, 250, 0.6);
+}
+
+.deliveryList li {
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+
+  .featuresList,
+  .valuesList,
+  .deliveryList {
+    li {
+      font-size: 0.95rem;
+      padding: 0.6rem 1.5rem;
+    }
+  }
+}

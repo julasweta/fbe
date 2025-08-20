@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { OrderItemDto } from '../order-item/dto/order-item.dto';
-import { PaymentMethod } from '../order/dto/order.dto';
+import { UserForTelegram } from '../users/dto/base-user.dto';
+import { PaymentMethod } from '@prisma/client';
 
 @Injectable()
 export class TelegramService {
   constructor(private readonly http: HttpService) { }
 
   async sendOrderNotification(data: {
-    user: any;
-    items: any[];
+    user: UserForTelegram;
+    items: OrderItemDto[] | undefined;
     paymentMethod: PaymentMethod;
   }) {
 
@@ -26,7 +27,7 @@ export class TelegramService {
 💳 Оплата: ${payment}
 
 🛒 Товари:
-${data.items
+${data.items && data.items
         .map(
           (i: OrderItemDto) =>
             `• ID: ${i.productId}

@@ -83,3 +83,10 @@ table {
   .link{
     color:rgb(123, 123, 170);
   }
+
+    @media (max-width: 780px){
+      .page{
+        padding-top: 50px;
+        }
+      }
+    

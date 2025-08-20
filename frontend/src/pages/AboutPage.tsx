@@ -1,7 +1,8 @@
+import About from "../modules/common/About"
 
 const AboutPage = () => {
   return (
-    <div>AboutPage</div>
+    <div className="page"><About/></div>
   )
 }
 
