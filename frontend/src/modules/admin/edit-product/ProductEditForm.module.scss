@@ -1,118 +1,270 @@
-/* ProductEditForm.module.scss */
 .editProduct {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 
-  h2 {
-    margin-bottom: 1rem;
-    font-size: 1.4rem;
+  h1 {
+    color: #333;
+    margin-bottom: 2rem;
+    text-align: center;
   }
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+
+  h3 {
+    color: #555;
+    margin: 2rem 0 1rem 0;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+  }
+
+  h4 {
+    color: #666;
+    margin: 1.5rem 0 1rem 0;
+  }
+
+  h5 {
+    color: #777;
+    margin: 1rem 0 0.5rem 0;
+  }
 }
 
 .field {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 
   label {
-    font-weight: 500;
-    margin-bottom: 0.3rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
   }
 
-  input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+  input,
+  select,
+  textarea {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
 
     &:focus {
-      border-color: #333;
       outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
     }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
   }
 }
 
 .group {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  padding: 0.8rem;
+  gap: 1rem;
+  align-items: end;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
+  background-color: #f8f9fa;
 
-  img {
-    margin-top: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  input {
+    flex: 1;
   }
 
   button {
-    align-self: flex-start;
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    min-width: 40px;
+    height: 40px;
+
+    &:hover {
+      background: #c82333;
+    }
   }
 }
 
-.checkboxGroup,
-.colorGrid {
+.variantBlock {
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  background-color: #f8f9fa;
+
+  h4 {
+    margin-top: 0;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+}
+
+.checkboxGroup {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 1rem;
+  padding: 0.5rem 0;
 }
 
 .checkboxLabel {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-}
-
-.colorLabel {
-  width: 28px;
-  height: 28px;
-  border: 2px solid #ccc;
-  border-radius: 50%;
+  gap: 0.5rem;
   cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 
-  input {
-    display: none;
+  &:hover {
+    background-color: #e9ecef;
+  }
+
+  input[type="checkbox"] {
+    margin: 0;
   }
 }
 
-.actions {
+.btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  align-self: flex-start;
+
+  &:hover:not(:disabled) {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  }
+
+  &:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.submit {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  align-self: center;
+  min-width: 200px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.delete {
+  background: #dc3545;
+  margin-top: 1rem;
+
+  &:hover {
+    background: #c82333;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  }
+}
+
+.loading {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: #666;
 }
 
-.saveBtn {
-  background-color: #2c7be5;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
+.error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #f5c6cb;
+}
 
-  &:hover {
-    background-color: #1a66d4;
+.imagesBlock {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  background-color: #ffffff;
+
+  h5 {
+    margin-top: 0;
+    color: #495057;
+  }
+
+  button {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+
+    &:hover {
+      background: #5a6268;
+    }
   }
 }
 
-.cancelBtn {
-  background-color: #eee;
-  color: #333;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
+// Responsive design
+@media (max-width: 768px) {
+  .editProduct {
+    padding: 1rem;
+  }
 
-  &:hover {
-    background-color: #ddd;
+  .group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .checkboxGroup {
+    flex-direction: column;
+  }
+
+  .variantBlock {
+    padding: 1rem;
   }
 }

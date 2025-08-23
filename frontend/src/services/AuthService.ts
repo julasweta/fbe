@@ -8,7 +8,6 @@ const authService = {
   register: (user: IUser): Promise<IRes<IUser>> =>
     apiService.post("auth/register", user),
 
-
   async login(authData: IAuth): Promise<IUser> {
     console.log("[AuthService] login() called with:", authData.email);
 
@@ -36,28 +35,46 @@ const authService = {
           // Пріоритет: message > error > стандартне повідомлення
           let message = "Неправильний email або пароль";
 
-          if (typeof responseData === 'string') {
+          if (typeof responseData === "string") {
             message = responseData;
-          } else if (responseData.message && typeof responseData.message === 'string') {
+          } else if (
+            responseData.message &&
+            typeof responseData.message === "string"
+          ) {
             message = responseData.message;
-          } else if (responseData.error && typeof responseData.error === 'string') {
+          } else if (
+            responseData.error &&
+            typeof responseData.error === "string"
+          ) {
             message = responseData.error;
-          } else if (responseData.detail && typeof responseData.detail === 'string') {
+          } else if (
+            responseData.detail &&
+            typeof responseData.detail === "string"
+          ) {
             message = responseData.detail;
           }
 
-          console.log("[AuthService] Throwing 401 error with message:", message);
+          console.log(
+            "[AuthService] Throwing 401 error with message:",
+            message,
+          );
           throw new Error(message);
         }
 
         if (status === 400) {
           let message = "Некоректні дані входу";
 
-          if (typeof responseData === 'string') {
+          if (typeof responseData === "string") {
             message = responseData;
-          } else if (responseData.message && typeof responseData.message === 'string') {
+          } else if (
+            responseData.message &&
+            typeof responseData.message === "string"
+          ) {
             message = responseData.message;
-          } else if (responseData.error && typeof responseData.error === 'string') {
+          } else if (
+            responseData.error &&
+            typeof responseData.error === "string"
+          ) {
             message = responseData.error;
           }
 
@@ -65,9 +82,12 @@ const authService = {
         }
 
         // Для інших статусів
-        if (responseData.message && typeof responseData.message === 'string') {
+        if (responseData.message && typeof responseData.message === "string") {
           throw new Error(responseData.message);
-        } else if (responseData.error && typeof responseData.error === 'string') {
+        } else if (
+          responseData.error &&
+          typeof responseData.error === "string"
+        ) {
           throw new Error(responseData.error);
         }
       }
@@ -108,9 +128,7 @@ const authService = {
       useAuthStore.getState().logout();
       throw new Error("Не вдалося отримати дані користувача");
     }
-  }
-,
-
+  },
   async refresh(): Promise<void> {
     const refreshToken = useAuthStore.getState().refreshToken;
     if (!refreshToken) throw new Error("Токен оновлення відсутній");
@@ -154,12 +172,14 @@ const authService = {
       const state = useAuthStore.getState();
 
       if (state.accessToken && state.refreshToken) {
-        useAuthStore.getState().login(state.accessToken, state.refreshToken, data);
+        useAuthStore
+          .getState()
+          .login(state.accessToken, state.refreshToken, data);
       }
       return data;
     } catch (error) {
       throw new Error(
-        error instanceof Error ? error.message : "Помилка оновлення профілю"
+        error instanceof Error ? error.message : "Помилка оновлення профілю",
       );
     }
   },
@@ -174,7 +194,7 @@ const authService = {
       }
     }
     useAuthStore.getState().logout();
-  }
+  },
 };
 
 export { authService };

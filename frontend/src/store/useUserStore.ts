@@ -16,11 +16,11 @@ export const useUserStore = create<UserState>((set) => ({
   updateUserInStore: (updatedUser) =>
     set((state) => ({
       users: state.users.map((u) =>
-        u.id === updatedUser.id ? updatedUser : u
+        u.id === updatedUser.id ? updatedUser : u,
       ),
     })),
 
-  removeUser: (id:number) =>
+  removeUser: (id: number) =>
     set((state) => ({
       users: state.users.filter((u) => u.id !== id),
     })),

@@ -7,14 +7,16 @@ export const orderService = {
     userId: number | null,
     cart: ICartItem[],
     paymentMethod: string,
-    form: CheckoutFormData
+    form: CheckoutFormData,
   ) {
     console.log("➡️ Відправка замовлення на бекенд");
 
     // підрахунок загальної суми
     const finalPrice = cart.reduce((sum, item) => {
       const price =
-        item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
+        item.priceSale && item.priceSale < item.price
+          ? item.priceSale
+          : item.price;
       return sum + price * item.quantity;
     }, 0);
 
@@ -26,10 +28,12 @@ export const orderService = {
       novaPostCity: form.city,
       novaPostBranch: form.novaPoshtaBranch,
       paymentMethod: paymentMethod.toUpperCase() as "COD" | "CARD",
-      finalPrice: Number(Math.round(finalPrice* 10) / 10),
-      items: cart.map(item => {
+      finalPrice: Number(Math.round(finalPrice * 10) / 10),
+      items: cart.map((item) => {
         const price =
-          item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
+          item.priceSale && item.priceSale < item.price
+            ? item.priceSale
+            : item.price;
         return {
           productId: item.productId,
           quantity: item.quantity,
@@ -37,12 +41,11 @@ export const orderService = {
           finalPrice: +(price * item.quantity).toFixed(1),
           name: item.name,
           image: item.image,
-          color:item.color,
+          color: item.color,
           size: item.size,
-          priceSale: item.priceSale+''
+          priceSale: item.priceSale + "",
         };
       }),
     });
   },
 };
-

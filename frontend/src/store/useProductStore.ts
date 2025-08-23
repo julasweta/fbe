@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import type { ICreateProduct, IProduct } from "../interfaces/IProduct";
 import { productService } from "../services/ProductService";
-import type { ProductFilters } from '../interfaces/IProduct';
+import type { ProductFilters } from "../interfaces/IProduct";
 
 interface ProductState {
   products: IProduct[];
@@ -19,7 +19,7 @@ interface ProductState {
   fetchProducts: (filters?: ProductFilters) => Promise<void>;
   appendProducts: (filters?: ProductFilters) => Promise<void>;
   createProduct: (productData: ICreateProduct) => Promise<void>;
-  editProduct: (id: number, productData: ICreateProduct) => Promise<void>;
+  editProduct: (id: number, productData: Partial<IProduct>) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
 }
 
@@ -39,7 +39,7 @@ export const useProductStore = create<ProductState>((set) => ({
   updateProduct: (updatedProduct) =>
     set((state) => ({
       products: state.products.map((p) =>
-        p.id === updatedProduct.id ? updatedProduct : p
+        p.id === updatedProduct.id ? updatedProduct : p,
       ),
       error: null,
     })),
@@ -60,10 +60,10 @@ export const useProductStore = create<ProductState>((set) => ({
       const products = await productService.getAll(filters);
       set({ products, isLoading: false });
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
       set({
-        error: error instanceof Error ? error.message : 'Unknown error',
-        isLoading: false
+        error: error instanceof Error ? error.message : "Unknown error",
+        isLoading: false,
       });
     }
   },
@@ -79,7 +79,7 @@ export const useProductStore = create<ProductState>((set) => ({
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Unknown error",
-        isLoading: false
+        isLoading: false,
       });
     }
   },
@@ -91,12 +91,12 @@ export const useProductStore = create<ProductState>((set) => ({
       const newProduct = await productService.addProduct(productData);
       set((state) => ({
         products: [...state.products, newProduct],
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Unknown error',
-        isLoading: false
+        error: error instanceof Error ? error.message : "Unknown error",
+        isLoading: false,
       });
       throw error;
     }
@@ -106,17 +106,18 @@ export const useProductStore = create<ProductState>((set) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const updatedProduct = await productService.updateProduct(id, productData);
+      const updatedProduct = await productService.updateProduct(
+        id,
+        productData,
+      );
       set((state) => ({
-        products: state.products.map((p) =>
-          p.id === id ? updatedProduct : p
-        ),
-        isLoading: false
+        products: state.products.map((p) => (p.id === id ? updatedProduct : p)),
+        isLoading: false,
       }));
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Unknown error',
-        isLoading: false
+        error: error instanceof Error ? error.message : "Unknown error",
+        isLoading: false,
       });
       throw error;
     }
@@ -129,12 +130,12 @@ export const useProductStore = create<ProductState>((set) => ({
       await productService.deleteProduct(id);
       set((state) => ({
         products: state.products.filter((p) => p.id !== id),
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Unknown error',
-        isLoading: false
+        error: error instanceof Error ? error.message : "Unknown error",
+        isLoading: false,
       });
       throw error;
     }

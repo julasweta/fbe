@@ -1,6 +1,6 @@
-import {create} from 'zustand';
-import { CategoryService } from '../services/CategoryService';
-import type { ICategory } from '../interfaces/ICategory';
+import { create } from "zustand";
+import { CategoryService } from "../services/CategoryService";
+import type { ICategory } from "../interfaces/ICategory";
 
 interface CategoryState {
   categories: ICategory[];
@@ -21,14 +21,19 @@ export const useCategoryStore = create<CategoryState>((set) => ({
     try {
       const categories = await CategoryService.getAll();
       set({ categories, loading: false });
-    } catch (error: any ) {
-      set({ error: error.message || 'Помилка завантаження категорій', loading: false });
+    } catch (error: any) {
+      set({
+        error: error.message || "Помилка завантаження категорій",
+        loading: false,
+      });
     }
   },
 
-  addCategory: (category) => set((state) => ({ categories: [...state.categories, category] })),
+  addCategory: (category) =>
+    set((state) => ({ categories: [...state.categories, category] })),
 
-  removeCategory: (id) => set((state) => ({
-    categories: state.categories.filter(c => c.id !== id),
-  })),
+  removeCategory: (id) =>
+    set((state) => ({
+      categories: state.categories.filter((c) => c.id !== id),
+    })),
 }));

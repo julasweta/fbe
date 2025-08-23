@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import styles from "./HeaderMenu.module.scss";
+import { ChevronDown } from "lucide-react";
+import styles from "./Categories.module.scss";
 import type { ICategory } from "../../../interfaces/ICategory";
 
 interface CategoriesSubmenuProps {
@@ -24,7 +25,6 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
 
         return (
           <li key={cat.id} className={styles.submenuItem}>
-            {/* Контейнер з категорією та стрілкою */}
             <div
               className={styles.categoryContainer}
               onClick={() => subcategories.length > 0 && toggleMenu(cat.id)}
@@ -32,23 +32,25 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
               <a
                 href={`/category/${cat.slug}`}
                 className={styles.categoryLink}
-                onClick={(e) => e.stopPropagation()} // Запобігає відкриттю підменю при кліку на посилання
+                onClick={(e) => e.stopPropagation()}
               >
                 {cat.name}
               </a>
               {subcategories.length > 0 && (
-                <span className={`${styles.arrow} ${isOpen ? styles.open : ""}`} />
+                <ChevronDown
+                  size={18}
+                  className={`${styles.chevron} ${isOpen ? styles.rotate : ""}`}
+                />
               )}
             </div>
 
-            {/* Підкатегорії */}
-            {isOpen && subcategories.length > 0 && (
-              <ul className={styles.subsubmenu}>
+            {subcategories.length > 0 && (
+              <ul
+                className={`${styles.subsubmenu} ${isOpen ? styles.open : ""}`}
+              >
                 {subcategories.map(sub => (
                   <li key={sub.id}>
-                    <a href={`/category/${sub.slug}`}>
-                      {sub.name}
-                    </a>
+                    <a href={`/category/${sub.slug}`}>{sub.name}</a>
                   </li>
                 ))}
               </ul>
@@ -61,4 +63,5 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
 };
 
 export default CategoriesSubmenu;
+
 

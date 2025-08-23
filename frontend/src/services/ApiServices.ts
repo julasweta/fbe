@@ -23,7 +23,11 @@ apiService.interceptors.request.use(
     req.headers["Accept"] = "*/*";
 
     // Виключаємо додавання токену для auth endpoints
-    if (req.url && !req.url.includes("auth/login") && !req.url.includes("auth/register")) {
+    if (
+      req.url &&
+      !req.url.includes("auth/login") &&
+      !req.url.includes("auth/register")
+    ) {
       const access = localStorage.getItem("accessToken") || null;
       if (access) {
         req.headers.Authorization = `Bearer ${access}`;

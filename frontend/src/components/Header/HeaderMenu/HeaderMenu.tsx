@@ -59,7 +59,8 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   // Стилі з динамічним кольором
   const dynamicStyles = {
     color: textColor,
-    transition: 'color 0.3s ease'
+    transition: 'color 0.3s ease',
+    backgroundColor: "transparent"
   };
 
   const arrowStyles = {
@@ -73,6 +74,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   };
 
   return (
+    
     <nav className={styles.headerMenu}>
       <Button
         className={`${styles.burger} ${mobileMenuOpen ? styles.open : ""}`}
@@ -138,7 +140,9 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
           </li>
         ))}
       </ul>
+    
     </nav>
+    
   );
 };
 

@@ -1,6 +1,6 @@
-import {create} from 'zustand';
-import { CollectionService } from '../services/CollectionService';
-import type { ICollection } from '../interfaces/IColection';
+import { create } from "zustand";
+import { CollectionService } from "../services/CollectionService";
+import type { ICollection } from "../interfaces/IColection";
 
 interface CollectionState {
   collections: ICollection[];
@@ -22,13 +22,18 @@ export const useCollectionStore = create<CollectionState>((set) => ({
       const collections = await CollectionService.getAll();
       set({ collections, loading: false });
     } catch (error: any) {
-      set({ error: error.message || 'Помилка завантаження колекцій', loading: false });
+      set({
+        error: error.message || "Помилка завантаження колекцій",
+        loading: false,
+      });
     }
   },
 
-  addCollection: (collection) => set((state) => ({ collections: [...state.collections, collection] })),
+  addCollection: (collection) =>
+    set((state) => ({ collections: [...state.collections, collection] })),
 
-  removeCollection: (id) => set((state) => ({
-    collections: state.collections.filter(c => c.id !== id),
-  })),
+  removeCollection: (id) =>
+    set((state) => ({
+      collections: state.collections.filter((c) => c.id !== id),
+    })),
 }));

@@ -1,7 +1,7 @@
 import type { ICollection } from "../interfaces/IColection";
 import { apiService } from "./ApiServices";
 
-const API_URL = '/collections';
+const API_URL = "/collections";
 
 export const CollectionService = {
   async getAll(): Promise<ICollection[]> {

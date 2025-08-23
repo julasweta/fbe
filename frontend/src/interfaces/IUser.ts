@@ -1,4 +1,3 @@
-
 export interface IUser {
   id?: number;
   first_name: string;
@@ -11,18 +10,17 @@ export interface IUser {
   country?: string;
   postalCode?: string;
   dateOfBirth?: string; // ISO-строка
-  role?: 'USER' | 'ADMIN';
+  role?: "USER" | "ADMIN";
   createdAt?: string;
   updatedAt?: string;
   accessToken?: string;
   refreshToken?: string;
 }
 
-
 export interface IUsersResponse {
   users: IUser[];
-  "total": 208,
-  "skip": 0,
-  "limit": 30
+  total: 208;
+  skip: 0;
+  limit: 30;
   // можливо, є інші поля як total, page, etc.
 }

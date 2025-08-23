@@ -3,13 +3,18 @@
 .headerMenu {
   position: relative;
   background: transparent;
-  padding: 0 1rem;
   display: flex;
+  justify-content: center;
   align-items: center;
-  height: 60px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  height: 50px;
+  
   z-index: 1000;
   width: 33%;
+}
+nav{
+  width: 50px;
+  border-radius: 10px;
+  align-self: center;
 }
 
 .menuList {
@@ -17,7 +22,9 @@
   margin: 0;
   padding: 0;
   display: flex;
+  align-items: center;
   gap: 1.5rem;
+  background-color: transparent;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -48,10 +55,14 @@
 
 .menuItem {
   position: relative;
-  width: 100%;
+  width: max-content;
+  
+  height: 50px;
 
   @media (max-width: 768px) {
     border-bottom: 1px solid #ddd;
+    width: 100%;
+    background: white;
 
     &:last-child {
       border-bottom: none;
@@ -61,7 +72,7 @@
 
 .menuLink {
   font-weight: 600;
-  color: #333;
+  
   text-decoration: none;
   cursor: pointer;
   display: flex;
@@ -72,6 +83,7 @@
   padding: 0.5rem 0;
   font-size: 1rem;
   transition: color 0.3s ease;
+  width: fit-content;
 
   &:hover,
   &:focus {
@@ -79,9 +91,9 @@
   }
 
   @media (max-width: 768px) {
-    width: 100%;
     justify-content: space-between;
     padding: 1rem;
+    color: #333 !important;
   }
 }
 
@@ -162,13 +174,12 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  margin-right: 1rem;
   z-index: 1100;
 
   span {
     width: 25px;
     height: 3px;
-    background: #333;
+    background: red;
     border-radius: 2px;
     transition: all 0.3s linear;
     position: relative;

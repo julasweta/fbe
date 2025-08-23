@@ -146,7 +146,7 @@ export class ProductsService {
       ...rest
     } = dto;
 
-    // КРОК 1: оновлюємо сам продукт, колекцію/категорію, переклади, фічі
+    // КРОК 1: оновлюємо сам продукт
     await this.prisma.product.update({
       where: { id },
       data: {
@@ -160,63 +160,98 @@ export class ProductsService {
         collection: collectionId
           ? { connect: { id: collectionId } }
           : undefined,
-
-        ...(translations
-          ? {
-              translations: {
-                deleteMany: { productId: id },
-                create: translations,
-              },
-            }
-          : {}),
-        ...(features
-          ? {
-              features: {
-                deleteMany: { productId: id },
-                create: features.map((f) => ({
-                  text: f.text,
-                  order: f.order ?? null,
-                })),
-              },
-            }
-          : {}),
       },
     });
 
-    // КРОК 2: якщо передані variants — перебудовуємо їх заново
-    if (variants) {
-      // спочатку чистимо пов’язані зображення і варіанти
-      await this.prisma.productImage.deleteMany({ where: { productId: id } });
-      await this.prisma.productVariant.deleteMany({ where: { productId: id } });
+    // КРОК 2: оновлюємо переклади якщо передані
+    if (translations && translations.length > 0) {
+      // Спочатку видаляємо старі переклади
+      await this.prisma.productTranslation.deleteMany({
+        where: { productId: id }
+      });
 
-      // створюємо наново
-      if (variants.length) {
-        await Promise.all(
-          variants.map((v) =>
-            this.prisma.productVariant.create({
-              data: {
-                product: { connect: { id } },
-                color: v.color,
-                sizes: v.sizes,
-                price: v.price ?? null,
-                priceSale: v.priceSale ?? null,
-                stock: v.stock ?? 0,
-                images: v.images?.length
-                  ? {
-                      create: v.images.map((img) => ({
-                        url: img.url,
-                        altText: img.altText ?? null,
-                        product: { connect: { id } }, // обов’язково
-                      })),
-                    }
-                  : undefined,
-              },
-            }),
-          ),
-        );
+      // Створюємо нові переклади
+      await this.prisma.productTranslation.createMany({
+        data: translations.map((t) => ({
+          name: t.name || '',
+          description: t.description ?? null,
+          languageId: t.languageId || 1,
+          productId: id,
+        })),
+      });
+    }
+
+    // КРОК 3: оновлюємо особливості якщо передані
+    if (features && features.length > 0) {
+      // Спочатку видаляємо старі особливості
+      await this.prisma.productFeature.deleteMany({
+        where: { productId: id }
+      });
+
+      // Створюємо нові особливості
+      await this.prisma.productFeature.createMany({
+        data: features.map((f) => ({
+          text: f.text || '',
+          order: f.order ?? null,
+          productId: id,
+        })),
+      });
+    }
+
+    // КРОК 4: оновлюємо варіанти якщо передані
+    if (variants) {
+      // Спочатку чистимо пов'язані зображення і варіанти
+      await this.prisma.productImage.deleteMany({
+        where: { productId: id }
+      });
+      await this.prisma.productVariant.deleteMany({
+        where: { productId: id }
+      });
+
+      // Створюємо нові варіанти (якщо є)
+      if (variants.length > 0) {
+        // Фільтруємо варіанти з обов'язковими полями
+        const validVariants = variants.filter(v => v.color);
+
+        if (validVariants.length > 0) {
+          // Створюємо варіанти без зображень спочатку
+          const createdVariants = await Promise.all(
+            validVariants.map((v) =>
+              this.prisma.productVariant.create({
+                data: {
+                  product: { connect: { id } },
+                  color: v.color!, // використовуємо ! оскільки ми відфільтрували
+                  sizes: v.sizes || [],
+                  price: v.price ?? null,
+                  priceSale: v.priceSale ?? null,
+                  stock: v.stock ?? 0,
+                  description: v.description ?? null,
+                },
+              }),
+            ),
+          );
+
+          // Тепер створюємо зображення для варіантів
+          for (let i = 0; i < validVariants.length; i++) {
+            const variantDto = validVariants[i];
+            const createdVariant = createdVariants[i];
+
+            if (variantDto.images && variantDto.images.length > 0) {
+              await this.prisma.productImage.createMany({
+                data: variantDto.images.map((img: any) => ({
+                  url: img.url || '',
+                  altText: img.altText ?? null,
+                  variantId: createdVariant.id,
+                  productId: id,
+                })),
+              });
+            }
+          }
+        }
       }
     }
 
+    // Повертаємо оновлений продукт з усіма зв'язками
     return this.prisma.product.findUnique({
       where: { id },
       include: this.defaultInclude(),

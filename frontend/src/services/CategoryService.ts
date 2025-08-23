@@ -1,7 +1,7 @@
 import type { ICategory } from "../interfaces/ICategory";
 import { apiService } from "./ApiServices";
 
-const API_URL = '/categories';
+const API_URL = "/categories";
 
 export const CategoryService = {
   async getAll(): Promise<ICategory[]> {

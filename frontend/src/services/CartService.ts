@@ -25,7 +25,7 @@ export const cartService = {
       (i) =>
         i.productId === item.productId &&
         i.color === item.color &&
-        i.size === item.size
+        i.size === item.size,
     );
 
     if (idx >= 0) {
@@ -38,7 +38,6 @@ export const cartService = {
     writeLocal(items);
     return items;
   },
-
 
   /** Авторизований: додаємо в БД */
   async addToCart(userId: number, item: ICartItem) {
@@ -73,6 +72,4 @@ export const cartService = {
   clearLocalCart() {
     writeLocal([]);
   },
-
 };
-

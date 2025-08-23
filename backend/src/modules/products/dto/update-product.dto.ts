@@ -1,35 +1,94 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsArray, ValidateNested, IsInt } from 'class-validator';
+import { IsOptional, IsString, IsNumber, ValidateNested,  IsPositive, IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateProductFeatureDto } from '../../product-feature/dto/create-product-feature.dto';
-import { CreateProductTranslationDto } from '../../product-translations/dto/product-translation.dto';
-import { CreateProductVariantDto } from '../../product-variant/dto/create-product-variant.dto';
+import { EColor, ESize } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
+import { UpdateProductTranslationDto } from '../../product-translations/dto/update-product-translation.dto';
+import { UpdateProductFeatureDto } from '../../product-feature/dto/update-product-feature.dto';
+
+class UpdateProductVariantDto {
+  @ApiProperty({ required: false, enum: EColor })
+  @IsOptional()
+  color?: EColor;
+
+  @ApiProperty({ required: false, enum: ESize, isArray: true })
+  @IsOptional()
+  sizes?: ESize[];
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  price?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  priceSale?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  stock?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  images?: any[]; // можете замінити на правильний тип для зображень
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  productId?: number;
+}
 
 export class UpdateProductDto {
-  // інші поля...
-
-  @ApiPropertyOptional({
-    type: [CreateProductFeatureDto], // замість UpdateProductFeatureDto
-    description: 'Оновлення пунктів опису продукту (повне перезаписування)',
-  })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateProductFeatureDto)
+  @ApiProperty({ required: false })
   @IsOptional()
-  features?: CreateProductFeatureDto[];
+  @IsString()
+  sku?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  price?: number;
+
+  @ApiProperty({ required: false, example: 80.0, description: 'Ціна зі знижкою' })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  priceSale?: number;
+
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsInt()
   categoryId?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
+  @IsInt()
   collectionId?: number;
 
-  @ApiProperty({ type: [CreateProductTranslationDto] })
-  translations: CreateProductTranslationDto[];
+  @ApiProperty({ type: [UpdateProductTranslationDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateProductTranslationDto)
+  translations?: UpdateProductTranslationDto[];
 
-  @ApiProperty({ type: [CreateProductVariantDto] })
-  variants: CreateProductVariantDto[];
+  @ApiProperty({ type: [UpdateProductFeatureDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateProductFeatureDto)
+  features?: UpdateProductFeatureDto[];
+
+  @ApiProperty({ type: [UpdateProductVariantDto], required: false })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateProductVariantDto)
+  variants?: UpdateProductVariantDto[];
 }
