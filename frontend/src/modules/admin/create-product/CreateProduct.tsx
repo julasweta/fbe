@@ -12,6 +12,8 @@ import {
 import { CategorySelect } from "../../../components/Category/CategorySelect";
 import { CollectionSelect } from "../../../components/Collection/CollectionSelect";
 import { VariantImages } from "../../images/Images";
+import Input from "../../../components/ui/Inputs/Input";
+import { Button } from "../../../components/ui/Buttons/Button";
 
 const CreateProduct: React.FC = () => {
   const { register, control, handleSubmit, reset, setValue, watch } =
@@ -19,7 +21,7 @@ const CreateProduct: React.FC = () => {
       defaultValues: {
         sku: "",
         price: 0,
-        priceSale: 0,
+        priceSale: null,
         categoryId: undefined,
         collectionId: 1,
         translations: [{ name: "", description: "", languageId: 1 }],
@@ -45,8 +47,9 @@ const CreateProduct: React.FC = () => {
           productId: 1, // тимчасово, поки бекенд сам не ставить ID
         })),
       };
-      await productService.addProduct(payload);
+      const res = await productService.addProduct(payload);
       reset();
+      alert(`Товар додано - ${res.translations[0].name}`)
     } catch (error) {
       console.error("Помилка при створенні продукту:", error);
     }
@@ -60,6 +63,7 @@ const CreateProduct: React.FC = () => {
       priceSale: watchPriceSale || 0,
       stock: 0,
       images: [{ url: "", altText: "" }],
+      description: '',
     });
   };
 
@@ -69,16 +73,17 @@ const CreateProduct: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         {/* SKU */}
         <div className={styles.field}>
-          <label>SKU *</label>
+          <label>SKU * номер товару, ідентифікатор </label>
           <input {...register("sku", { required: true })} />
         </div>
 
         {/* Base Price */}
         <div className={styles.field}>
           <label>Base Price *</label>
-          <input
+          <Input
             type="number"
-            step="0.01"
+            step="1"
+            min="1"
             {...register("price", { required: true, valueAsNumber: true })}
           />
         </div>
@@ -88,7 +93,8 @@ const CreateProduct: React.FC = () => {
           <label>Base Sale Price</label>
           <input
             type="number"
-            step="0.01"
+            step="1"
+            min='1'
             {...register("priceSale", { valueAsNumber: true })}
           />
         </div>
@@ -99,9 +105,11 @@ const CreateProduct: React.FC = () => {
           <div key={field.id} className={styles.group}>
             <input placeholder="Name" {...register(`translations.${index}.name`)} />
             <input placeholder="Description" {...register(`translations.${index}.description`)} />
-            <input
+            <Input
               type="number"
               placeholder="Language ID"
+              label="language: UA"
+            disabled={true}
               {...register(`translations.${index}.languageId`, { valueAsNumber: true })}
             />
             <button type="button" onClick={() => translationsArray.remove(index)}>
@@ -109,23 +117,26 @@ const CreateProduct: React.FC = () => {
             </button>
           </div>
         ))}
-        <button
+        <Button
           type="button"
+          className={styles.btn}
+          disabled={true}
           onClick={() =>
             translationsArray.append({ name: "", description: "", languageId: 1 })
           }
         >
           + Add Translation
-        </button>
+        </Button>
 
         {/* Features */}
-        <h3>Features</h3>
+        <h3>Опис товару</h3>
         {featuresArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
-            <input placeholder="Feature text" {...register(`features.${index}.text`)} />
-            <input
+            <Input placeholder="приклад: Тканина: кашемір" {...register(`features.${index}.text`)} />
+            <Input
               type="number"
               placeholder="Order"
+            min="1"
               {...register(`features.${index}.order`, { valueAsNumber: true })}
             />
             <button type="button" onClick={() => featuresArray.remove(index)}>
@@ -133,9 +144,9 @@ const CreateProduct: React.FC = () => {
             </button>
           </div>
         ))}
-        <button type="button" onClick={() => featuresArray.append({ text: "", order: 1 })}>
+        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length+1 })} className={styles.btn}>
           + Add Feature
-        </button>
+        </Button>
 
         {/* Variants */}
         <h3>Variants</h3>
@@ -179,7 +190,7 @@ const CreateProduct: React.FC = () => {
               <label>Price *</label>
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 {...register(`variants.${vIndex}.price`, { required: true, valueAsNumber: true })}
               />
             </div>
@@ -189,7 +200,7 @@ const CreateProduct: React.FC = () => {
               <label>Sale Price</label>
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 {...register(`variants.${vIndex}.priceSale`, { valueAsNumber: true })}
               />
             </div>
@@ -198,6 +209,10 @@ const CreateProduct: React.FC = () => {
             <div className={styles.field}>
               <label>Stock</label>
               <input type="number" {...register(`variants.${vIndex}.stock`, { valueAsNumber: true })} />
+            </div>
+
+            <div className={styles.field}>
+              <Input type="text" {...register(`variants.${vIndex}.description`)} label="Description" />
             </div>
 
             {/* Images */}
@@ -209,15 +224,15 @@ const CreateProduct: React.FC = () => {
               variantIndex={vIndex}
             />
 
-            <button type="button" onClick={() => variantsArray.remove(vIndex)}>
+            <Button type="button" onClick={() => variantsArray.remove(vIndex)} className={styles.delete}>
               ✕ Remove Variant
-            </button>
+            </Button>
           </div>
         ))}
 
-        <button type="button" onClick={handleAddVariant}>
+        <Button type="button" onClick={handleAddVariant} className={styles.btn}>
           + Add Variant
-        </button>
+        </Button>
 
         {/* Category */}
         <div className={styles.field}>
@@ -239,7 +254,8 @@ const CreateProduct: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className={styles.submit}>
+        <button type="submit" className={`${styles.submit} ${styles.btn}`}>
+
           Create Product
         </button>
       </form>

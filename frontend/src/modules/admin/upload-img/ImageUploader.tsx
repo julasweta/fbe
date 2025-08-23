@@ -1,5 +1,6 @@
 
 import React from "react";
+import Input from "../../../components/ui/Inputs/Input";
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -30,7 +31,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onUpload }) => {
     }
   };
 
-  return <input type="file" accept="image/*" onChange={handleUpload} />;
+  return <Input type="file" accept="image/*" onChange={handleUpload} />;
 };
 
 export default ImageUpload;

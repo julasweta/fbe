@@ -23,7 +23,10 @@ const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) =>
         <div className={styles.quantity}>
           <Button onClick={() => updateQuantity(item.productId, item.quantity - 1)}>-</Button>
           <Input
+            className={styles.input}
             type="number"
+            id="quantity"
+            name="quantity"
             min="1"
             max="99"
             value={item.quantity}

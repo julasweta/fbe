@@ -5,6 +5,9 @@ import styles from "./Input.module.scss";
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  id?: string;
+  name?: string;
+
 }
 
 // Create the component with forwardRef and give it a display name 
@@ -15,6 +18,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   placeholder,
   disabled = false,
   required = false,
+  id,
+  name,
+
   ...rest
 }, ref) => {
   const isRadio = type === "radio";
@@ -30,6 +36,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             type={type}
             disabled={disabled}
             required={required}
+            id={id}
+            name={name}
             className={`${styles.radioCheckboxInput} ${error ? styles.errorBorder : ""}`}
             {...rest}
           />
@@ -50,7 +58,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             type={type}
             placeholder={placeholder}
             disabled={disabled}
-            required={required}
+              required={required}
+              id={id}
+              name={name}
             className={`${styles.input} ${error ? styles.errorBorder : ""}`}
             {...rest}
           />

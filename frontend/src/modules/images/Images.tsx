@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { useFieldArray, type Control, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
 import type { ICreateProduct } from "../../interfaces/IProduct";
 import ImageUpload from "../admin/upload-img/ImageUploader";
+import { Button } from "../../components/ui/Buttons/Button";
+import Input from "../../components/ui/Inputs/Input";
+import styles from "./Images.module.scss"
 
 type VariantImagesProps = {
   control: Control<ICreateProduct>;
@@ -28,14 +31,17 @@ const VariantImages: React.FC<VariantImagesProps> = ({
   const [manualImage, setManualImage] = useState("");
 
   return (
-    <div>
+    <div className={ styles.imagesBlock}>
+     
       <h5>Images</h5>
       {fields.map((field, iIndex) => {
         const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
         return (
-          <div key={field.id} style={{ marginBottom: "1rem" }}>
-            <input
-              placeholder="Alt text"
+          <div key={field.id} style={{ margin: "1rem" }}>
+            
+            <Input
+              placeholder="опис фото"
+              style={{ margin: "0.5rem" }}
               {...register(`variants.${variantIndex}.images.${iIndex}.altText` as const)}
             />
 
@@ -46,13 +52,14 @@ const VariantImages: React.FC<VariantImagesProps> = ({
 
             {/* Поле для ручного вставлення URL */}
             <div style={{ display: "flex", marginTop: "0.5rem", gap: "0.5rem" }}>
-              <input
+              <Input
                 type="text"
                 placeholder="Встав URL вручну"
                 value={manualImage}
                 onChange={(e) => setManualImage(e.target.value)}
+                id="urlhandle"
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   if (manualImage.trim()) {
@@ -61,8 +68,8 @@ const VariantImages: React.FC<VariantImagesProps> = ({
                   }
                 }}
               >
-                Add URL
-              </button>
+                Завантажити фото
+              </Button>
             </div>
 
             {currentUrl && (
@@ -74,7 +81,7 @@ const VariantImages: React.FC<VariantImagesProps> = ({
             )}
 
             <button type="button" onClick={() => remove(iIndex)}>
-              ✕
+              ✕ Видалити фото
             </button>
           </div>
         );
@@ -83,6 +90,7 @@ const VariantImages: React.FC<VariantImagesProps> = ({
       <button type="button" onClick={() => append({ url: "", altText: "" })}>
         + Add Image
       </button>
+      
     </div>
   );
 };

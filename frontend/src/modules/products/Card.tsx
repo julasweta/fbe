@@ -1,25 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Card.module.scss";
-import { type EColor, type IProduct, sizeLabels } from "../../interfaces/IProduct";
+import { colorHexMap,  type IProduct, sizeLabels } from "../../interfaces/IProduct";
 
 interface CardProps {
   product: IProduct;
+  isMainPage?: boolean;
 }
 
-const colorMap: Record<EColor, string> = {
-  RED: "#ff0000",
-  GREEN: "#008000",
-  BLUE: "#0000ff",
-  BLACK: "#000000",
-  WHITE: "#ffffff",
-  YELLOW: "#ffff00",
-  ORANGE: "#ffa500",
-  PURPLE: "#800080",
-  PINK: "#ffc0cb",
-};
 
-const Card: React.FC<CardProps> = ({ product }) => {
+
+const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const { id, translations, variants, price, priceSale } = product;
 
   const name =
@@ -58,15 +49,15 @@ const Card: React.FC<CardProps> = ({ product }) => {
         )}
       </Link>
 
-      <p className={styles.name}>
+      <p className={`${styles.name} ${isMainPage ? styles.mainFont : ''}`}>
         <Link to={`/product/${id}`}>{name}</Link>
       </p>
 
-      <p className={styles.price}>
+      <p className={`${styles.price} ${isMainPage ? styles.mainFont : ''}`}>
         {finalPrice ? (
           finalSalePrice && finalSalePrice < finalPrice ? (
             <>
-              <span className={styles.priceSale}>₴{finalSalePrice.toFixed(2)}</span>
+              <span className={!isMainPage ? styles.priceSale:'' }>₴{finalSalePrice.toFixed(2)} </span>
               <span className={styles.priceOriginal}>₴{finalPrice.toFixed(2)}</span>
             </>
           ) : (
@@ -78,17 +69,21 @@ const Card: React.FC<CardProps> = ({ product }) => {
       </p>
 
       <div className={styles.features}>
-        {allSizes.length > 0
-          ? allSizes.map((size) => sizeLabels[size]).join(", ")
-          : "Немає"}
-        <br />
+        {!isMainPage ? (
+          allSizes.length > 0
+            ? allSizes.map((size) => sizeLabels[size]).join(", ")
+            
+            : "Немає"
+        ) : ''}
+
+      {!isMainPage && <br></br>}
         {allColors.length > 0 ? (
           <div className={styles.colorDots}>
             {allColors.map((color) => (
               <span
                 key={color}
                 className={styles.colorDot}
-                style={{ backgroundColor: colorMap[color] || "#ccc" }}
+                style={{ backgroundColor: colorHexMap[color] || "#ccc" }}
                 title={color}
               />
             ))}

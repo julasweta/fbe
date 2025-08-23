@@ -36,6 +36,7 @@ button,
 textarea,
 select {
   font: inherit;
+  
 }
 
 button {
@@ -75,10 +76,13 @@ table {
   padding-top: 60px;
   /* Відступ для хедера */
   min-height: 100vh;
+  background-color: #d9cfcf;
 }
 
 .page {
-  padding-top: 120px;}
+  padding-top: 120px;
+}
+  
 
   .link{
     color:rgb(123, 123, 170);

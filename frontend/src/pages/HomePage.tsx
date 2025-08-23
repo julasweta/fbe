@@ -64,7 +64,7 @@ const HomePage = () => {
 
 
   return (
-    <div>
+    <div className="pages">
       <div style={{ padding: "20px 0" }}>
         <Swiper
           modules={[Navigation]}
@@ -75,7 +75,7 @@ const HomePage = () => {
         >
           {products.map((product) => (
             <SwiperSlide key={product.id} style={{ width: "250px" }}>
-              <Card product={product} />
+              <Card product={product} isMainPage={true} />
             </SwiperSlide>
           ))}
         </Swiper>

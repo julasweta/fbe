@@ -8,6 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import {
@@ -16,9 +18,11 @@ import {
   ApiResponse,
   ApiBody,
   ApiQuery,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Products')
 @Controller('products')
@@ -99,5 +103,27 @@ export class ProductsController {
   @ApiOperation({ summary: 'Видалити продукт' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
+  }
+
+  @Post('import')
+  @ApiOperation({ summary: 'Імпорт продуктів з Excel файлу' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Excel файл для імпорту продуктів',
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary', // для завантаження файлу у Swagger
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async importProducts(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('Файл не передано');
+    return this.productsService.importProductsFromFile(file);
   }
 }

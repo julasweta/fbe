@@ -21,6 +21,8 @@ export enum EColor {
   ORANGE = "ORANGE",
   PURPLE = "PURPLE",
   PINK = "PINK",
+  GREY = "GREY",
+  BROWN = "BROWN"
 }
 
 // Мапи для відображення
@@ -43,19 +45,25 @@ export const colorLabels: Record<EColor, string> = {
   [EColor.ORANGE]: "Orange",
   [EColor.PURPLE]: "Purple",
   [EColor.PINK]: "Pink",
+  [EColor.GREY]: "Grey",
+  [EColor.BROWN]: "Brown",
 };
 
 export const colorHexMap: Record<EColor, string> = {
-  [EColor.RED]: "#ff0000",
-  [EColor.GREEN]: "#008000",
-  [EColor.BLUE]: "#0000ff",
-  [EColor.BLACK]: "#000000",
-  [EColor.WHITE]: "#ffffff",
-  [EColor.YELLOW]: "#ffff00",
-  [EColor.ORANGE]: "#ffa500",
-  [EColor.PURPLE]: "#800080",
-  [EColor.PINK]: "#ffc0cb",
+  [EColor.RED]: "#b34a4a",     // приглушений червоний, винний відтінок
+  [EColor.GREEN]: "#4a7c59",   // м'який зелений, із легким сірим підтоном
+  [EColor.BLUE]: "#4a6fa5",    // сіро-блакитний, приглушений синій
+  [EColor.BLACK]: "#1e1e1e",   // глибокий графіт, не чисто чорний
+  [EColor.WHITE]: "#f5f5f5",   // теплий білий, майже молочний
+  [EColor.YELLOW]: "#d4c35b",  // золотаво-жовтий, теплий
+  [EColor.ORANGE]: "#d87a4a",  // теракотовий, мідно-оранжевий
+  [EColor.PURPLE]: "#6a4a7c",  // фіолетовий з сірим підтоном
+  [EColor.PINK]: "#ff99bb",    // пудрово-рожевий, ніжний
+  [EColor.GREY]: "#808080",    // класичний сірий, нейтральний
+  [EColor.BROWN]: "#8b5e3c",   // теплий коричневий, кавовий
 };
+
+
 
 // 🟢 DTO відповідності
 
@@ -88,13 +96,14 @@ export interface ICreateProductVariant {
   priceSale?: number | null;
   stock: number;
   images?: ICreateProductImage[];
+  description?: string;
 }
 
 // Продукт
 export interface ICreateProduct {
   sku: string;
   price: number;
-  priceSale?: number;
+  priceSale?: number | null;
   categoryId?: number;
   collectionId?: number;
   translations: ICreateProductTranslation[];

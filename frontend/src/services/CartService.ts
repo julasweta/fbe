@@ -29,6 +29,7 @@ export const cartService = {
     );
 
     if (idx >= 0) {
+      // додаємо кількість, максимум 99
       items[idx].quantity = Math.min(99, items[idx].quantity + item.quantity);
     } else {
       items.push(item);
@@ -37,6 +38,7 @@ export const cartService = {
     writeLocal(items);
     return items;
   },
+
 
   /** Авторизований: додаємо в БД */
   async addToCart(userId: number, item: ICartItem) {

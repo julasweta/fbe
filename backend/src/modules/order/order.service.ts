@@ -60,7 +60,6 @@ export class OrderService {
       priceSale: i.priceSale ?? undefined,
     }));
 
-
     try {
       await this.telegramService.sendOrderNotification({
         user: {

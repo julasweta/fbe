@@ -71,6 +71,7 @@ model ProductVariant {
   price     Float?
   priceSale Float?
   stock     Int       @default(0) // 👈 один загальний stock
+  description String?
 
   product   Product   @relation(fields: [productId], references: [id])
   productId Int
@@ -236,4 +237,6 @@ enum EColor {
   ORANGE
   PURPLE
   PINK
+  GREY
+  BROWN
 }

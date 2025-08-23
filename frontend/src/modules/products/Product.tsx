@@ -17,7 +17,7 @@ interface ProductProps {
 }
 
 interface ProductFormData {
-  color: EColor | null;
+  variantId: number | null; // Змінено з color на variantId
   size: ESize | null;
   quantity: number;
 }
@@ -36,7 +36,7 @@ interface CartItem {
 const Product: React.FC<ProductProps> = ({ productId }) => {
   const [product, setProduct] = useState<IProduct | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
-    color: null,
+    variantId: null, // Змінено з color на variantId
     size: null,
     quantity: 1
   });
@@ -60,8 +60,8 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         if (data?.variants?.length) {
           setFormData((prev) => ({
             ...prev,
-            color: data.variants[0].color as EColor,
-            size: (data.variants[0].sizes?.[0] as ESize) || ""
+            variantId: data.variants[0].id || null, // Використовуємо ID варіанта
+            size: (data.variants[0].sizes?.[0] as ESize) || null
           }));
         }
       } catch (e) {
@@ -73,9 +73,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     loadProduct();
   }, [productId]);
 
-
-
-
   // Отримуємо всі зображення з усіх варіантів для мініатюр
   const getAllImages = () => {
     if (!product?.variants) return [];
@@ -83,6 +80,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     return product.variants.flatMap(variant =>
       (variant.images || []).map(image => ({
         ...image,
+        variantId: variant.id,
         variantColor: variant.color,
         variantSizes: variant.sizes
       }))
@@ -98,30 +96,30 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
 
     setSelectedImageIndex(index);
 
-    // Переключаємо колір та розмір відповідного варіанту
-    const newColor = selectedImage.variantColor as EColor;
-    const newSize = selectedImage.variantSizes?.[0] as ESize || "";
+    // Переключаємо на відповідний варіант
+    const newVariantId = selectedImage.variantId;
+    const newSize = (selectedImage.variantSizes?.[0] as ESize) || null;
 
     setFormData(prev => ({
       ...prev,
-      color: newColor,
+      variantId: newVariantId || null,
       size: newSize
     }));
   };
 
-  // Обробка зміни кольору
-  const handleColorChange = (color: EColor) => {
-    const newVariant = product?.variants.find((v) => v.color === color);
+  // Обробка зміни варіанта (тепер по ID, а не по кольору)
+  const handleVariantChange = (variantId: number) => {
+    const newVariant = product?.variants.find((v) => v.id === variantId);
     setFormData((prev) => ({
       ...prev,
-      color,
-      size: newVariant?.sizes?.[0] || null
+      variantId,
+      size: (newVariant?.sizes?.[0] as ESize) || null
     }));
 
-    // Знаходимо перше зображення нового кольору та переключаємося на нього
-    const newColorImageIndex = allImages.findIndex(img => img.variantColor === color);
-    if (newColorImageIndex !== -1) {
-      setSelectedImageIndex(newColorImageIndex);
+    // Знаходимо перше зображення нового варіанта та переключаємося на нього
+    const newVariantImageIndex = allImages.findIndex(img => img.variantId === variantId);
+    if (newVariantImageIndex !== -1) {
+      setSelectedImageIndex(newVariantImageIndex);
     }
   };
 
@@ -142,8 +140,8 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   const handleAddToCart = async () => {
     if (!product) return;
 
-    if (!formData.color) {
-      setError("Будь ласка, оберіть колір");
+    if (!formData.variantId) {
+      setError("Будь ласка, оберіть варіант");
       return;
     }
     if (!formData.size) {
@@ -152,15 +150,13 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     }
 
     const variant = product.variants.find(
-      (v) => v.color === formData.color && (!!formData.size && v.sizes.includes(formData.size))
+      (v) => v.id === formData.variantId && (!!formData.size && v.sizes.includes(formData.size))
     );
 
     if (!variant) {
       setError("Обраний варіант недоступний");
       return;
     }
-
-
 
     setIsAddingToCart(true);
     setError(null);
@@ -176,7 +172,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         productId: product.id,
         name: translation?.name || "Без назви",
         price: finalPrice,
-        color: formData.color,
+        color: variant.color, // Отримуємо колір з варіанта
         size: formData.size,
         quantity: formData.quantity,
         image: variant.images?.[0]?.url
@@ -184,6 +180,10 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
 
       await useCartStore.getState().addCartItem(cartItem);
       setAddToCartSuccess(true);
+
+      setTimeout(() => {
+        setAddToCartSuccess(false);
+      }, 2000);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Помилка додавання в кошик");
     } finally {
@@ -196,7 +196,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   if (!product) return <div className={styles.noProduct}>Продукт не знайдено</div>;
 
   const translation = product.translations?.[0];
-  const currentVariant = product.variants.find((v) => v.color === formData.color);
+  const currentVariant = product.variants.find((v) => v.id === formData.variantId);
   const availableSizes = currentVariant?.sizes || [];
   const currentImage = allImages[selectedImageIndex];
 
@@ -205,10 +205,19 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
       ? currentVariant.priceSale
       : currentVariant?.price) || product.priceSale || product.price;
 
-
-
   const totalPrice = finalPrice * formData.quantity;
 
+  // Функція для генерації унікального ключа та назви варіанта
+  const getVariantDisplayInfo = (variant: any) => {
+    // Можна додати логіку для відображення назви варіанта
+    // Наприклад, якщо є поле description або name в варіанті
+    const displayName = variant.description || variant.name || variant.color;
+    return {
+      key: variant.id,
+      displayName,
+      color: variant.color
+    };
+  };
 
   return (
     <div className={styles.product}>
@@ -231,7 +240,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
           <div className={styles.thumbnailContainer}>
             {allImages.map((image, index) => (
               <div
-                key={`${image.url}-${index}`}
+                key={`${image.variantId}-${image.url}-${index}`}
                 className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.activeThumbnail : ""}`}
                 onClick={() => handleThumbnailClick(index)}
               >
@@ -251,11 +260,17 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         {translation?.description && (
           <p className={styles.description}>{translation.description}</p>
         )}
-        
-        {/* ціна варіанта */}
+        <div className={styles.nameBlock}>
+          {/* опис варіанту */}
+          <div className={styles.priceWrapper}>{currentVariant?.description}</div>
+        </div>
+
+       
+
+        {/* ціна варіанта або ціна продукту */}
         <div className={styles.priceWrapper}>
           <span className={(+product.price > +finalPrice.toFixed(2)) ? styles.priceOriginal : styles.price}>
-            ₴{currentVariant && currentVariant.price.toFixed(2)}
+            {currentVariant && currentVariant.price ? '₴ ' + currentVariant.price.toFixed(2) : '₴ ' + product.price}
           </span>
         </div>
 
@@ -269,23 +284,28 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         <div className={styles.productForm}>
           {product.variants.length > 0 && (
             <div className={styles.formGroup}>
-              <h4>Колір:</h4>
+              <h4>Варіант:</h4>
               <div className={styles.colorOptions}>
-                {product.variants.map((variant, index) => (
-                  <Button
-                    key={index}
-                    className={`${styles.colorOption} ${formData.color === variant.color ? styles.selected : ""}`}
-                    onClick={() => handleColorChange(variant.color ?? null)}
-                    style={{
-                      backgroundColor: variant.color.toLowerCase(),
-                      width: '40px',
-                      height: '40px',
-                      minWidth: '40px',
-                      padding: '0'
-                    }}
-                  >
-                  </Button>
-                ))}
+                {product.variants.map((variant) => {
+                  const variantInfo = getVariantDisplayInfo(variant);
+                  return (
+                    <Button
+                      key={variantInfo.key}
+                      className={`${styles.colorOption} ${formData.variantId === variant.id ? styles.selected : ""}`}
+                      onClick={() => {if(variant.id)  handleVariantChange(variant.id)}}
+                      style={{
+                        backgroundColor: variantInfo.color.toLowerCase(),
+                        width: '40px',
+                        height: '40px',
+                        minWidth: '40px',
+                        padding: '0',
+                        border: formData.variantId === variant.id ? '3px solid #000' : '1px solid #ccc'
+                      }}
+                      // Показуємо назву варіанта при наведенні
+                    >
+                    </Button>
+                  );
+                })}
               </div>
             </div>
           )}

@@ -41,7 +41,6 @@ export const useCartStore = create<CartState>((set, get) => ({
         const itemWithId = { ...item, id: +guestId };
 
         const updated = cartService.addItem(itemWithId);
-        console.log('updated', updated);
         set({ cart: updated });
       }
     } catch (error) {

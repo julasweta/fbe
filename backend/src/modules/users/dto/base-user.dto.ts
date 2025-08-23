@@ -60,8 +60,7 @@ export class BaseUserDto {
   refreshToken?: string | null;
 }
 
-
-export  class UserForTelegram {
+export class UserForTelegram {
   id?: number | null;
   name?: string | null;
   phone?: string | null;

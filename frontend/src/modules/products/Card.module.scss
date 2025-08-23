@@ -72,12 +72,14 @@
 }
 
 .colorDot {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 1px solid #ccc;
   cursor: default;
 }
+
+
 
 /* Адаптивні стилі */
 @media (max-width: 1024px) {
@@ -172,4 +174,7 @@
     width: 14px;
     height: 14px;
   }
+}
+.mainFont {
+  font-size: 0.8rem !important;
 }

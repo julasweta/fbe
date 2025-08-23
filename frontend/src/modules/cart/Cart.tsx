@@ -21,7 +21,7 @@ const Cart: React.FC = () => {
       }
   }, [user, fetchCart]);
 
-  console.log('cart - ', cart)
+
 
   // Завантаження кошика з localStorage
   useEffect(() => {
@@ -59,10 +59,14 @@ const Cart: React.FC = () => {
     }
   }, [cartItems, isInitialized]);
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: number, quantity: number, color?: string, size?: string, id?: number) => {
     setCartItems(prev =>
       prev.map(item => {
-        if (item.productId === productId) {
+        const isSameItem = id
+          ? item.id === id // якщо є id з бекенду
+          : item.productId === productId && item.color === color && item.size === size;
+
+        if (isSameItem) {
           const newQty = Math.max(1, Math.min(99, quantity));
           const price = item.priceSale && item.priceSale < item.price ? item.priceSale : item.price;
           return { ...item, quantity: newQty, finalPrice: price * newQty };
@@ -71,6 +75,7 @@ const Cart: React.FC = () => {
       })
     );
   };
+
 
   const removeItem = (cartItem: ICartItem) => {
     console.log(cartItem);
@@ -114,17 +119,21 @@ const Cart: React.FC = () => {
     <div className={styles.cart}>
       <h1>Кошик</h1>
       <div className={styles.cartItems}>
-        {cartItems.map((item, index) => {
+        {cartItems.map((item) => {
           return (
             <CartItem
-              key={index}
+              key={item.id ?? `${item.productId}-${item.color}-${item.size}`}
               item={item}
               price={item.finalPrice ? (item.finalPrice / item.quantity) : 0}
-              updateQuantity={updateQuantity}
+              updateQuantity={(productId, quantity) =>
+                updateQuantity(productId, quantity, item.color, item.size, item.id)
+              }
               removeItem={removeItem}
             />
+
           );
         })}
+
       </div>
       <div className={styles.total}>
         <h2>Загальна сума: ₴{total.toFixed(2)}</h2>
