@@ -18,11 +18,10 @@ export function CategorySelect<T extends string | number>({
   const { categories } = useCategoryStore();
 
   const renderCategories = (
-    cats: typeof categories,
     parentId: number | null = null,
     level = 0
   ) =>
-    cats
+    categories
       .filter((cat) => cat.parentId === parentId)
       .map((cat) => (
         <React.Fragment key={cat.id}>
@@ -30,7 +29,7 @@ export function CategorySelect<T extends string | number>({
             {"— ".repeat(level)}
             {cat.name}
           </option>
-          {renderCategories(cats, cat.id, level + 1)}
+          {renderCategories(cat.id, level + 1)}
         </React.Fragment>
       ));
 
@@ -45,7 +44,7 @@ export function CategorySelect<T extends string | number>({
       className={styles.select}
     >
       {includeEmpty && <option value="">Виберіть категорію</option>}
-      {renderCategories(categories)}
+      {renderCategories(null, 0)}
     </select>
   );
 }

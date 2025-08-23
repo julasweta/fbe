@@ -22,4 +22,9 @@ export const CollectionService = {
   async remove(id: number): Promise<void> {
     await apiService.delete(`${API_URL}/${id}`);
   },
+
+   async update(id: number, data: Partial<ICollection>): Promise<ICollection> {
+      const response = await apiService.patch(`${API_URL}/${id}`, data);
+      return response.data;
+    },
 };

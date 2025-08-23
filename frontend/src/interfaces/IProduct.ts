@@ -99,6 +99,7 @@ export interface ICreateProductVariant {
 
 // Продукт
 export interface ICreateProduct {
+  id?: number | null | undefined;
   sku: string;
   price: number;
   priceSale?: number | null;

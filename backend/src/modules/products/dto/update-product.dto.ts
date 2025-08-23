@@ -1,4 +1,11 @@
-import { IsOptional, IsString, IsNumber, ValidateNested,  IsPositive, IsInt } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  ValidateNested,
+  IsPositive,
+  IsInt,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { EColor, ESize } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
@@ -58,7 +65,11 @@ export class UpdateProductDto {
   @IsPositive()
   price?: number;
 
-  @ApiProperty({ required: false, example: 80.0, description: 'Ціна зі знижкою' })
+  @ApiProperty({
+    required: false,
+    example: 80.0,
+    description: 'Ціна зі знижкою',
+  })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()

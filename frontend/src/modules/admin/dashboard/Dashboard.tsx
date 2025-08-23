@@ -7,8 +7,10 @@ import styles from "./Dashboard.module.scss";
 import type { IProduct, ProductFilters } from "../../../interfaces/IProduct";
 import { CategorySelect } from "../../../components/Category/CategorySelect";
 import { CollectionSelect } from "../../../components/Collection/CollectionSelect";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { products, fetchProducts, appendProducts, deleteProduct } = useProductStore();
 
   const [categorySlug, setCategorySlug] = useState<string>("");
@@ -87,6 +89,9 @@ const Dashboard = () => {
             <Card product={product} />
             <Button className={`${styles.deleteButton} ${styles.button}`} onClick={() => handleDelete(product)}>
               Видалити
+            </Button>
+            <Button className={` ${styles.button}`} onClick={() => navigate(`/admin/edit-product/${product.id}`)}>
+              Редагувати
             </Button>
           </div>
         ))}

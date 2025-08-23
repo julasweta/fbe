@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, MinLength, IsOptional, IsNumber, IsPositive } from 'class-validator';
+import {
+  IsString,
+  MinLength,
+  IsOptional,
+  IsNumber,
+  IsPositive,
+} from 'class-validator';
 
 export class UpdateProductTranslationDto {
   @ApiPropertyOptional({

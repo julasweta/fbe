@@ -56,7 +56,6 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
     setOpenSubmenuIndex(openSubmenuIndex === index ? null : index);
   };
 
-  // Стилі з динамічним кольором
   const dynamicStyles = {
     color: textColor,
     transition: 'color 0.3s ease',
@@ -74,7 +73,6 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   };
 
   return (
-    
     <nav className={styles.headerMenu}>
       <Button
         className={`${styles.burger} ${mobileMenuOpen ? styles.open : ""}`}
@@ -97,9 +95,9 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
           >
             {item.submenu ? (
               <>
-                <Button
+                <button
                   type="button"
-                  className={styles.menuLink}
+                  className={styles.btnLink}
                   onClick={() => toggleSubmenu(index)}
                   aria-expanded={openSubmenuIndex === index}
                   style={dynamicStyles}
@@ -109,22 +107,18 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
                     className={`${styles.arrow} ${openSubmenuIndex === index ? styles.open : ""}`}
                     style={arrowStyles}
                   />
-                </Button>
+                </button>
 
                 {(activeIndex === index || openSubmenuIndex === index) && (
                   <ul className={styles.submenu}>
-                    <li className={styles.submenuItem}>
-                      <span className={styles.submenuLink}>Категорії</span>
-                      
-                        <CategoriesSubmenu categories={categories} />
-                      
-                    </li>
-                    <li className={styles.submenuItem}>
-                      <span className={styles.submenuLink}>Колекції</span>
-                      <ul className={styles.subsubmenu}>
-                        <CollectionsSubmenu collections={collections} />
-                      </ul>
-                    </li>
+                    <div className={styles.block}>
+                      <li className={styles.submenuTitle}>Категорії</li>
+                      <CategoriesSubmenu categories={categories} />
+                    </div>
+                    <div className={styles.block}>
+                      <li className={styles.submenuTitle}>Колекції</li>
+                      <CollectionsSubmenu collections={collections} />
+                    </div>
                   </ul>
                 )}
               </>
@@ -140,9 +134,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
           </li>
         ))}
       </ul>
-    
     </nav>
-    
   );
 };
 

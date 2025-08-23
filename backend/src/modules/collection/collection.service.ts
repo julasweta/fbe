@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
+import { UpdateCollectionDto } from './dto/update-collection.dto';
 
 @Injectable()
 export class CollectionService {
@@ -27,6 +28,15 @@ export class CollectionService {
     });
     if (!collection) throw new NotFoundException('Collection not found');
     return collection;
+  }
+
+  async update(id: number, data: UpdateCollectionDto) {
+    const category = await this.prisma.collection.update({
+      where: { id },
+      data,
+    });
+    if (!category) throw new NotFoundException('Collection not found');
+    return category;
   }
 
   async remove(id: number) {

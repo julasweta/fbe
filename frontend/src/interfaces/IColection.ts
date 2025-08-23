@@ -3,4 +3,5 @@ export interface ICollection {
   name: string;
   description?: string;
   slug?: string;
+  imageUrl: string;
 }

@@ -167,7 +167,7 @@ export class ProductsService {
     if (translations && translations.length > 0) {
       // Спочатку видаляємо старі переклади
       await this.prisma.productTranslation.deleteMany({
-        where: { productId: id }
+        where: { productId: id },
       });
 
       // Створюємо нові переклади
@@ -185,7 +185,7 @@ export class ProductsService {
     if (features && features.length > 0) {
       // Спочатку видаляємо старі особливості
       await this.prisma.productFeature.deleteMany({
-        where: { productId: id }
+        where: { productId: id },
       });
 
       // Створюємо нові особливості
@@ -202,16 +202,16 @@ export class ProductsService {
     if (variants) {
       // Спочатку чистимо пов'язані зображення і варіанти
       await this.prisma.productImage.deleteMany({
-        where: { productId: id }
+        where: { productId: id },
       });
       await this.prisma.productVariant.deleteMany({
-        where: { productId: id }
+        where: { productId: id },
       });
 
       // Створюємо нові варіанти (якщо є)
       if (variants.length > 0) {
         // Фільтруємо варіанти з обов'язковими полями
-        const validVariants = variants.filter(v => v.color);
+        const validVariants = variants.filter((v) => v.color);
 
         if (validVariants.length > 0) {
           // Створюємо варіанти без зображень спочатку

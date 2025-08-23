@@ -11,7 +11,8 @@ const AdminPage = () => {
   const menuItems = [
     { href: 'dashboard', label: 'Dashboard' },
     { href: 'createproduct', label: 'Create Product' },
-    { href: 'edit-product/1', label: 'Edit Product' },
+    { href: 'create-category', label: 'Create/Update Category' },
+    { href: 'create-collection', label: 'Create/Update Collection' },
   ];
 
   const toggleSidebar = () => {

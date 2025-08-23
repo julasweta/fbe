@@ -1,3 +1,25 @@
+.submenu,
+.subsubmenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.submenu {
+  margin-left: 0;
+}
+
+.subsubmenu {
+  margin-left: 1.5rem;
+  max-height: 0;
+}
+
+.subsubmenu.open {
+  max-height: 1000px; // достатньо для показу всіх підкатегорій
+}
+
 .submenuItem {
   display: flex;
   flex-direction: column;
@@ -6,11 +28,12 @@
 
 .categoryContainer {
   display: flex;
-  justify-content: space-between;
+    flex-direction: row;
+  justify-content: center;
   align-items: center;
   cursor: pointer;
   border-radius: 6px;
-  transition: background 0.3s;
+  padding: 0.25rem 0.5rem;
   width: fit-content;
 
   &:hover {
@@ -29,40 +52,11 @@
   }
 }
 
-.chevron {
-  transition: transform 0.3s ease;
+.btnLink{
+  display: contents;
+  width: 10px;
 }
 
-.rotate {
-  transform: rotate(180deg);
-}
-
-.subsubmenu {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease;
-  list-style: none;
-  margin-left: 2rem;
-
-  li {
-    margin: 0.3rem 0;
-
-    a {
-      display: block;
-      padding: 0.4rem 0.6rem;
-      font-size: 0.9rem;
-      color: #555;
-      border-radius: 4px;
-      text-decoration: none;
-
-      &:hover {
-        background: #f0f0f0;
-        color: #0070f3;
-      }
-    }
-  }
-}
-
-.subsubmenu.open {
-  max-height: 500px;
+.spacer {
+  width: 16px;
 }

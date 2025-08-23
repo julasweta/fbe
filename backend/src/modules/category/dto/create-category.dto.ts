@@ -24,3 +24,28 @@ export class CreateCategoryDto {
   @IsString()
   imageUrl?: string;
 }
+
+export class UpdateCategoryDto {
+  @ApiProperty({ example: 'Dress', description: 'Name Category' })
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsInt()
+  parentId?: number;
+
+  @ApiProperty({ example: 'dress', description: 'Slug for SEO' })
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @ApiProperty({
+    example: 'https://example.com/image.jpg',
+    description: 'Image URL',
+  })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+}

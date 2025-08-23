@@ -6,9 +6,13 @@ import {
   Delete,
   Body,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import {
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from './dto/create-category.dto';
 
 import {
   ApiTags,
@@ -54,6 +58,22 @@ export class CategoryController {
   @ApiResponse({ status: 404, description: 'Категорія не знайдена' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoryService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Edit category by id' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID категорії' })
+  @ApiResponse({
+    status: 200,
+    description: 'Категорія знайдена',
+    type: CreateCategoryDto, // або окремий CategoryDto якщо є
+  })
+  @ApiResponse({ status: 404, description: 'Категорія не знайдена' })
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: UpdateCategoryDto,
+  ) {
+    return this.categoryService.update(id, data);
   }
 
   @Delete(':id')

@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
 import styles from "./ProductEditForm.module.scss";
 import { productService } from "../../../services/ProductService";
 import {
@@ -9,14 +9,13 @@ import {
   sizeLabels,
   colorLabels,
   type IProduct,
-  type ICreateProduct,
 } from "../../../interfaces/IProduct";
 import { CategorySelect } from "../../../components/Category/CategorySelect";
 import { CollectionSelect } from "../../../components/Collection/CollectionSelect";
-import { VariantImages } from "../../images/Images";
 import Input from "../../../components/ui/Inputs/Input";
 import { Button } from "../../../components/ui/Buttons/Button";
 import { useProductStore } from "../../../store";
+import { VariantImagesForUpdate } from "../../images/ImagesForUpdate";
 
 // Глибоке порівняння об'єктів
 function deepEqual(a: any, b: any): boolean {
@@ -24,45 +23,36 @@ function deepEqual(a: any, b: any): boolean {
   if (a == null || b == null) return false;
 
   if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    return a.every((v, i) => deepEqual(v, b[i]));
+    return a.length === b.length && a.every((v, i) => deepEqual(v, b[i]));
   }
 
   if (typeof a === "object" && typeof b === "object") {
     const keysA = Object.keys(a);
     const keysB = Object.keys(b);
-    if (keysA.length !== keysB.length) return false;
-    return keysA.every((k) => keysB.includes(k) && deepEqual(a[k], b[k]));
+    return keysA.length === keysB.length && keysA.every(k => keysB.includes(k) && deepEqual(a[k], b[k]));
   }
 
   return false;
 }
 
-// Повертає лише змінені поля
-function getChangedFields(original: IProduct, current: IProduct) {
+// Повертає тільки змінені поля для бекенду
+function getChangedFields(original: IProduct, current: IProduct): Partial<IProduct> {
   const changes: Partial<IProduct> = {};
-  const basicFields: (keyof IProduct)[] = [
-    "sku",
-    "price",
-    "priceSale",
-    "categoryId",
-    "collectionId",
-  ];
+  const basicFields: (keyof IProduct)[] = ["sku", "price", "priceSale", "categoryId", "collectionId"];
 
   basicFields.forEach((field) => {
     const value = current[field];
     if (!deepEqual(original[field], value)) {
-      // Якщо value null, робимо undefined
-      (changes as any)[field] = value === null ? undefined : value;
+      // TS не знає, який тип value, тому приводимо через any
+      (changes as any)[field] = value ?? undefined;
     }
   });
 
-
   if (!deepEqual(original.translations, current.translations)) {
-    changes.translations = current.translations?.map(t => ({
+    changes.translations = current.translations?.map((t) => ({
       name: t.name,
-      description: t.description ?? undefined, // замінюємо null на undefined
-      languageId: t.languageId
+      description: t.description ?? undefined,
+      languageId: t.languageId,
     }));
   }
 
@@ -91,30 +81,29 @@ function getChangedFields(original: IProduct, current: IProduct) {
   return changes;
 }
 
+
 export function EditProduct() {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
-
   const originalDataRef = useRef<IProduct | null>(null);
 
   const { editProduct, isLoading: storeLoading } = useProductStore();
 
-  const { register, control, handleSubmit, reset, setValue, watch } =
-    useForm<IProduct | ICreateProduct>({
-      defaultValues: {
-        id: 0,
-        sku: "",
-        price: 0,
-        priceSale: undefined,
-        categoryId: undefined,
-        collectionId: undefined,
-        translations: [{ name: "", description: undefined, languageId: 1 }],
-        features: [],
-        variants: [],
-      },
-    });
+  const { register, control, handleSubmit, reset, setValue, watch } = useForm<IProduct>({
+    defaultValues: {
+      id: 0,
+      sku: "",
+      price: 0,
+      priceSale: undefined,
+      categoryId: undefined,
+      collectionId: undefined,
+      translations: [{ name: "", description: undefined, languageId: 1 }],
+      features: [],
+      variants: [],
+    },
+  });
 
   const translationsArray = useFieldArray({ control, name: "translations" });
   const featuresArray = useFieldArray({ control, name: "features" });
@@ -122,6 +111,7 @@ export function EditProduct() {
 
   const watchedData = watch();
 
+  // Перевіряємо зміни
   useEffect(() => {
     if (originalDataRef.current && watchedData) {
       const changes = getChangedFields(originalDataRef.current, watchedData);
@@ -129,6 +119,7 @@ export function EditProduct() {
     }
   }, [watchedData]);
 
+  // Завантаження продукту
   useEffect(() => {
     async function fetchProduct() {
       if (!id) {
@@ -153,7 +144,7 @@ export function EditProduct() {
     fetchProduct();
   }, [id, reset]);
 
-  const onSubmit = async (data: IProduct) => {
+  const onSubmit: SubmitHandler<IProduct> = async (data) => {
     if (!id || !originalDataRef.current) return;
 
     const changes = getChangedFields(originalDataRef.current, data);
@@ -178,11 +169,11 @@ export function EditProduct() {
     variantsArray.append({
       color: EColor.BLACK,
       sizes: [],
-      price: watchedData.price || 0,
-      priceSale: watchedData.priceSale || undefined,
+      price: watchedData.price ?? 0,
+      priceSale: watchedData.priceSale ?? undefined,
       stock: 0,
-      images: [{ url: "", altText: undefined }],
       description: "",
+      images: [{ url: "", altText: undefined }],
     });
   };
 
@@ -214,82 +205,63 @@ export function EditProduct() {
         {/* SKU */}
         <div className={styles.field}>
           <label>SKU *</label>
-          <input {...register("sku", { required: true })} />
+          <Input {...register("sku", { required: true })} />
         </div>
 
-        {/* Base Price */}
+        {/* Price */}
         <div className={styles.field}>
-          <label>Base Price *</label>
+          <label>Price *</label>
           <Input type="number" {...register("price", { required: true, valueAsNumber: true })} />
         </div>
 
         {/* Sale Price */}
         <div className={styles.field}>
           <label>Sale Price</label>
-          <input type="number" {...register("priceSale", { valueAsNumber: true })} />
+          <Input type="number" {...register("priceSale", { valueAsNumber: true })} />
         </div>
 
         {/* Category */}
         <div className={styles.field}>
           <label>Category</label>
-          <CategorySelect
-            value={watch("categoryId")}
-            onChange={(val) => setValue("categoryId", val as number)}
-            valueKey="id"
-          />
+          <CategorySelect value={watch("categoryId")} onChange={(val) => setValue("categoryId", val as number)} valueKey="id" />
         </div>
 
         {/* Collection */}
         <div className={styles.field}>
-          <label>Collections</label>
-          <CollectionSelect
-            value={watch("collectionId")}
-            onChange={(val) => setValue("collectionId", Number(val))}
-            valueKey="id"
-          />
+          <label>Collection</label>
+          <CollectionSelect value={watch("collectionId")} onChange={(val) => setValue("collectionId", Number(val))} valueKey="id" />
         </div>
 
         {/* Translations */}
         <h3>Translations</h3>
         {translationsArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
-            <input placeholder="Name" {...register(`translations.${index}.name`)} />
-            <input placeholder="Description" {...register(`translations.${index}.description`)} />
-            <Input
-              type="number"
-              label="language: UA"
-              disabled
-              {...register(`translations.${index}.languageId`, { valueAsNumber: true })}
-            />
+            <Input placeholder="Name" {...register(`translations.${index}.name`)} />
+            <Input placeholder="Description" {...register(`translations.${index}.description`)} />
+            <Input type="number" label="Language: UA" disabled {...register(`translations.${index}.languageId`)} />
           </div>
         ))}
 
         {/* Features */}
-        <h3>Опис товару</h3>
+        <h3>Features</h3>
         {featuresArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
-            <Input placeholder="Текст" {...register(`features.${index}.text`)} />
+            <Input placeholder="Text" {...register(`features.${index}.text`)} />
             <Input type="number" placeholder="Order" {...register(`features.${index}.order`, { valueAsNumber: true })} />
           </div>
         ))}
-
-        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length + 1 })}>
-          + Add Feature
-        </Button>
+        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length + 1 })}>+ Add Feature</Button>
 
         {/* Variants */}
         <h3>Variants</h3>
         {variantsArray.fields.map((variant, vIndex) => (
           <div key={variant.id} className={styles.variantBlock}>
             <h4>Variant {vIndex + 1}</h4>
-
             <div className={styles.field}>
               <label>Color</label>
               <select {...register(`variants.${vIndex}.color`)}>
                 {Object.values(EColor).map((color) => (
-                  <option key={color} value={color}>
-                    {colorLabels[color]}
-                  </option>
+                  <option key={color} value={color}>{colorLabels[color]}</option>
                 ))}
               </select>
             </div>
@@ -308,40 +280,37 @@ export function EditProduct() {
 
             <div className={styles.field}>
               <label>Price *</label>
-              <input type="number" {...register(`variants.${vIndex}.price`, { required: true, valueAsNumber: true })} />
+              <Input type="number" {...register(`variants.${vIndex}.price`, { required: true, valueAsNumber: true })} />
             </div>
 
             <div className={styles.field}>
               <label>Sale Price</label>
-              <input type="number" {...register(`variants.${vIndex}.priceSale`, { valueAsNumber: true })} />
+              <Input type="number" {...register(`variants.${vIndex}.priceSale`, { valueAsNumber: true })} />
             </div>
 
             <div className={styles.field}>
               <label>Stock</label>
-              <input type="number" {...register(`variants.${vIndex}.stock`, { valueAsNumber: true })} />
+              <Input type="number" {...register(`variants.${vIndex}.stock`, { valueAsNumber: true })} />
             </div>
 
-            <VariantImages control={control} register={register} setValue={setValue} watch={watch} variantIndex={vIndex} />
+            <div className={styles.field}>
+              <label>Description</label>
+              <Input placeholder="Variant description" {...register(`variants.${vIndex}.description`)} />
+            </div>
 
-            <Button type="button" onClick={() => variantsArray.remove(vIndex)} className={styles.delete}>
-              ✕ Remove Variant
-            </Button>
+            <VariantImagesForUpdate control={control} register={register} setValue={setValue} watch={watch} variantIndex={vIndex} />
+
+            <Button type="button" onClick={() => variantsArray.remove(vIndex)} className={styles.delete}>✕ Remove Variant</Button>
           </div>
         ))}
 
-        <Button type="button" onClick={handleAddVariant}>
-          + Add Variant
-        </Button>
+        <Button type="button" onClick={handleAddVariant}>+ Add Variant</Button>
 
         <div className={styles.formActions}>
           <button type="submit" className={`${styles.submit} ${styles.btn}`} disabled={!hasChanges}>
             {hasChanges ? "Зберегти зміни" : "Немає змін"}
           </button>
-          {hasChanges && (
-            <Button type="button" onClick={handleReset} className={styles.cancelBtn}>
-              Скинути
-            </Button>
-          )}
+          {hasChanges && <Button type="button" onClick={handleReset} className={styles.cancelBtn}>Скинути</Button>}
         </div>
       </form>
     </div>

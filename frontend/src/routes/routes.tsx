@@ -1,3 +1,5 @@
+import CreateCategory from "../modules/admin/create-categories/CreateCategory";
+import CreateCollection from "../modules/admin/create-categories/CreateCollection";
 import CreateProduct from "../modules/admin/create-product/CreateProduct";
 import Dashboard from "../modules/admin/dashboard/Dashboard";
 import { EditProduct } from "../modules/admin/edit-product/EditProduct";
@@ -39,6 +41,8 @@ export const privateRoutes = [
       { index: true, element: <Dashboard /> },
       { path: "createproduct", element: <CreateProduct /> },
       { path: "edit-product/:id", element: <EditProduct /> },
+      { path: "create-category", element: <CreateCategory /> },
+      { path: "create-collection", element: <CreateCollection /> },
       { path: "dashboard", element: <Dashboard /> },
     ],
   }
