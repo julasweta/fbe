@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: fbe-backend
+    runtime: node
+    plan: starter # або starter plus для більше пам'яті
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0

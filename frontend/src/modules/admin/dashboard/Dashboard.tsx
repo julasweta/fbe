@@ -39,7 +39,7 @@ const Dashboard = () => {
     };
 
     loadProducts();
-  }, [page, categorySlug, collectionSlug]);
+  }, [page, categorySlug, collectionSlug, fetchProducts, appendProducts]);
 
   const handleDelete = (product: IProduct) => {
     if (window.confirm(`Видалити продукт ${product.translations?.[0]?.name}?`)) {

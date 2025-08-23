@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Product.module.scss";
 import {
-  EColor,
   ESize,
   sizeLabels,
   type IProduct
