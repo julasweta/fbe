@@ -87,20 +87,41 @@ const CreateCategory: React.FC = () => {
   };
 
   const handleSaveEdit = async () => {
-    if (!editingId || !editData.name?.trim()) return;
+    if (!editData.name?.trim()) return;
 
     try {
-      const updated = await CategoryService.update
-        ? await CategoryService.update(editingId, editData)
-        : await CategoryService.create({ ...editData, id: editingId });
+      if (editingId) {
+        // Оновлення існуючої категорії
+        const updated = await CategoryService.update(editingId, {
+          name: editData.name,
+          parentId: editData.parentId,
+          slug: editData.slug,
+          imageUrl: editData.imageUrl
+        });
 
-      removeCategory(editingId);
-      addCategory(updated);
+        // Оновлюємо категорію в стейті
+        if (editData.id)
+        updateCategory(editData.id, updated); // припускаючи, що у вас є така функція
+        // або
+        // removeCategory(editingId);
+        // addCategory(updated);
+
+      } else {
+        // Створення нової категорії
+        const newCategory = {
+          name: editData.name,
+          parentId: editData.parentId || null,
+          slug: editData.slug || editData.name.toLowerCase().replace(/\s+/g, '-'),
+          imageUrl: editData.imageUrl || ''}
+
+        addCategory(newCategory);
+      }
 
       setEditingId(null);
       setEditData({});
+
     } catch (err: any) {
-      alert(err.message || "Помилка при оновленні категорії");
+      alert(err.message || "Помилка при збереженні категорії");
     }
   };
 
@@ -156,6 +177,8 @@ const CreateCategory: React.FC = () => {
                   <Input
                     value={editData.slug || ""}
                     onChange={e => setEditData({ ...editData, slug: e.target.value })}
+                    required
+                    placeholder="Введіть slug"
                   />
                 </div>
                 <div className={styles.inputWrapper}>

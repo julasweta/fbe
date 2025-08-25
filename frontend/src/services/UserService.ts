@@ -1,4 +1,4 @@
-import type { IUser, IUsersResponse } from "../interfaces/IUser";
+import type { IUser, IUsersResponse, sendMessage } from "../interfaces/IUser";
 import { apiService } from "./ApiServices";
 import { useUserStore } from "../store/useUserStore";
 
@@ -39,6 +39,17 @@ const userService = {
     } catch (error) {
       throw new Error(
         "Не вдалося оновити користувача: " + (error as Error).message,
+      );
+    }
+  },
+
+  async sendMessageFromContact(data: sendMessage ): Promise<void> {
+    try {
+       await apiService.post<sendMessage>(`telegram/message`, data);
+      
+    } catch (error) {
+      throw new Error(
+        "Не вдалося відправити повідомлення: " + (error as Error).message,
       );
     }
   },

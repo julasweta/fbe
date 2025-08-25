@@ -8,6 +8,7 @@ import Card from "../modules/products/Card";
 import { useProductStore } from "../store";
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/Buttons/Button";
+import CategoryCarusel from "../components/Category/CategoryCarusel";
 
 
 const HomePage = () => {
@@ -80,6 +81,8 @@ const HomePage = () => {
           ))}
         </Swiper>
       </div>
+
+      <CategoryCarusel/>
     </div>
   )
 }

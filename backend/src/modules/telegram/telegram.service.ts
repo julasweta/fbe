@@ -115,4 +115,15 @@ ${data.message}
       );
     }
   }
+
+  async messagesFromCustomer(data: any) {
+    const text = `
+👤 Ім’я: ${data.name}
+📧 Email: ${data.email}
+📝 Повідомлення:
+${data.message}
+    `;
+
+    await this.sendMessage(text);
+  }
 }

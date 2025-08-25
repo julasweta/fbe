@@ -1,5 +1,9 @@
-.page{
+.page {
   padding-top: 120px;
+
+  @media (max-width: 768px) {
+    padding-top: 0;
+  }
 }
 
 .title {

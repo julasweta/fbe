@@ -52,3 +52,51 @@
     padding: 6px;
   }
 }
+
+
+/* CARUSEL */
+.caruselBox{
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+width: 100%;
+padding: 0px 0 40px 0;
+}
+
+.categoryBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+
+  h3 {
+    position: absolute;
+    bottom: 10px; // відступ від верху
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    text-align: center;
+    background: rgba(236, 236, 238, 0.3); 
+    padding: 0;
+    width: 50%;
+    border: none;
+  }
+}
+.imgBox {
+      height: 250px;// 🔹 фіксована висота для всіх картинок (змінюй під себе)
+ 
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // 🔹 обрізає картинку під контейнер
+    // object-fit: contain; // 🔹 варіант, якщо хочеш без обрізання (з відступами)
+  }
+}
+
+ 
+  
+ 

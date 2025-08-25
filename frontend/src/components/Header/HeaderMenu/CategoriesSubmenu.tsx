@@ -8,18 +8,29 @@ interface CategoriesSubmenuProps {
 }
 
 const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => {
-  // Множина id категорій, які розгорнуті
   const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
 
-  const handleMouseEnter = (categoryId: number) => {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  const toggleCategory = (categoryId: number) => {
     setExpandedCategories(prev => {
       const newSet = new Set(prev);
-      newSet.add(categoryId);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
       return newSet;
     });
   };
 
+  const handleMouseEnter = (categoryId: number) => {
+    if (isMobile) return; // на мобільних ігноруємо hover
+    setExpandedCategories(prev => new Set(prev).add(categoryId));
+  };
+
   const handleMouseLeave = (categoryId: number) => {
+    if (isMobile) return; // на мобільних ігноруємо hover
     setExpandedCategories(prev => {
       const newSet = new Set(prev);
       newSet.delete(categoryId);
@@ -27,9 +38,7 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
     });
   };
 
-  // Рекурсивний рендер меню
   const renderMenu = (parentId: number | null = null) => {
-    // Фільтруємо дочірні елементи
     const items = categories.filter(cat =>
       parentId === null ? !cat.parentId : cat.parentId === parentId
     );
@@ -51,7 +60,12 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
               onMouseEnter={hasChildren ? () => handleMouseEnter(cat.id) : undefined}
               onMouseLeave={hasChildren ? () => handleMouseLeave(cat.id) : undefined}
             >
-              <div className={styles.categoryContainer}>
+              <div
+                className={styles.categoryContainer}
+                onClick={
+                  isMobile && hasChildren ? () => toggleCategory(cat.id) : undefined
+                }
+              >
                 {hasChildren ? (
                   <span className={styles.iconContainer}>
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}

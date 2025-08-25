@@ -24,3 +24,10 @@ export interface IUsersResponse {
   limit: 30;
   // можливо, є інші поля як total, page, etc.
 }
+
+
+export interface sendMessage{
+  name: string;
+  email: string;
+  message: string;
+}

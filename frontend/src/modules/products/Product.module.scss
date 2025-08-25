@@ -11,6 +11,9 @@
     grid-template-columns: 1fr;
     gap: 1rem;
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
@@ -60,7 +63,7 @@
   width: 100%;
   height: auto;
   max-height: 500px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -461,7 +464,7 @@
 .mainImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
   cursor: zoom-in;
   transition: transform 0.3s ease;
@@ -532,7 +535,7 @@
 .thumbnailImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .noImage {

@@ -118,13 +118,13 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
 
     set({ isLoading: true });
-
-    try {
+    if (user?.id && accessToken)
+   { try {
       const res = await cartService.getCart(user.id);
       set({ cart: res, loaded: true, isLoading: false });
     } catch (error) {
       console.error("Помилка при завантаженні кошика:", error);
       set({ cart: [], loaded: true, isLoading: false });
-    }
+    }}
   },
 }));
