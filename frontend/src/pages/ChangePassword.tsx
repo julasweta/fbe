@@ -39,7 +39,7 @@ const ChangePassword = () => {
         <Input
           type="password"
           placeholder="Поточний пароль"
-          {...register("currentPassword", { requierror: "Поточний пароль обов'язковий" })}
+          {...register("currentPassword", { required: "Поточний пароль обов'язковий" })}
         />
         {errors.currentPassword && <p className="error">{errors.currentPassword.message}</p>}
 
@@ -47,7 +47,7 @@ const ChangePassword = () => {
           type="password"
           placeholder="Новий пароль"
           {...register("newPassword", {
-            requierror: "Новий пароль обов'язковий",
+            required: "Новий пароль обов'язковий",
             pattern: {
               value: /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
               message: "Мін. 8 символів, 1 велика і 1 мала літера"
@@ -59,7 +59,7 @@ const ChangePassword = () => {
         <Input
           type="password"
           placeholder="Підтвердження нового пароля"
-          {...register("confirmPassword", { requierror: "Підтвердження пароля обов'язкове" })}
+          {...register("confirmPassword", { required: "Підтвердження пароля обов'язкове" })}
         />
         {errors.confirmPassword && <p className="text-error-600">{errors.confirmPassword.message}</p>}
 

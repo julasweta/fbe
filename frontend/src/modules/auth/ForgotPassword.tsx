@@ -3,7 +3,6 @@ import Input from "../../components/ui/Inputs/Input";
 import { Button } from "../../components/ui/Buttons/Button";
 import { authService } from "../../services/AuthService";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 interface IForgotPasswordForm {
   email: string;
@@ -43,7 +42,7 @@ const ForgotPassword = () => {
             }
           })}
         />
-        {errors.email && <p className={styles.error}>{errors.email.message}</p>}
+        {errors.email && <p className="error">{errors.email.message}</p>}
 
         <Button type="submit">Надіслати посилання</Button>
       </form>

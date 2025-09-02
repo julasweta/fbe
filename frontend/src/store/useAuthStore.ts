@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken: null, refreshToken: null, user: null });
   },
 
-  forgotPassword: (email:string) => {
+  forgotPassword: (email: string) => {
     authService.forgotPassword(email);
-  }
+  },
 }));

@@ -12,7 +12,7 @@ export class EmailService {
     await this.mailerService
       .sendMail({
         to: email,
-        from: 'fbe.info.store@gmail.com',
+        from: '"FBE" <fbe.info.store@gmail.com>',
         subject: 'Відновлення пароля',
         text: `Для скидання пароля перейдіть за посиланням: ${resetLink}`,
         html: ` <p>Для скидання пароля натисніть на посилання:</p>

@@ -166,9 +166,12 @@ const authService = {
     }
   },
 
-  async updateUser(userData: Partial<IUser>, id:number): Promise<IUser> {
+  async updateUser(userData: Partial<IUser>, id: number): Promise<IUser> {
     try {
-      const { data } = await apiService.patch<IUser>(`users/update/${id}`, userData);
+      const { data } = await apiService.patch<IUser>(
+        `users/update/${id}`,
+        userData,
+      );
       const state = useAuthStore.getState();
 
       if (state.accessToken && state.refreshToken) {
@@ -177,9 +180,9 @@ const authService = {
           .login(state.accessToken, state.refreshToken, data);
       }
       return data;
-    } catch (error:any) {
+    } catch (error: any) {
       throw new Error(
-        error ? error.response.data.error.message: "Помилка оновлення профілю",
+        error ? error.response.data.error.message : "Помилка оновлення профілю",
       );
     }
   },
@@ -208,8 +211,10 @@ const authService = {
 
   async resetPassword(email: string, resetCode: string, password: string) {
     const data = {
-      email, resetCode, newPassword: password
-    }
+      email,
+      resetCode,
+      newPassword: password,
+    };
     try {
       await apiService.post("auth/reset-password", data);
     } catch (error) {
@@ -222,20 +227,17 @@ const authService = {
   async changePassword(currentPassword: string, newPassword: string) {
     const data = {
       currentPassword,
-      newPassword
-      }
-    
+      newPassword,
+    };
+
     try {
       await apiService.post("auth/change-password", data);
     } catch (error: any) {
       throw new Error(
         error ? error.response.data.error.message : "Помилка оновлення",
       );
-   
     }
-  }
-
-
+  },
 };
 
 export { authService };
