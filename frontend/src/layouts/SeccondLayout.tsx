@@ -1,4 +1,5 @@
 
+import Futter from "../components/Footter/Footer";
 import Header from "../components/Header/Header";
 import styles from "./MainLayout/MainLayout.module.scss";
 
@@ -19,6 +20,7 @@ export default function SeccondLayout({ children }: { children: React.ReactNode 
           {children}
         </main>
       </section >
+      <Futter />
     </div>
 
 

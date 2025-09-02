@@ -16,7 +16,7 @@
   justify-content: center;
 }
 .title {
-  font-size: 5.8rem;
+  font-size: 7.8rem;
   margin-bottom: 1rem;
 }
 .description {
@@ -67,11 +67,11 @@
 .layout {
   display: flex;
   flex-direction: column;
-  background-color: #21395f; // темний фон для всього лейауту
+  // темний фон для всього лейауту
 }
 
 .heroSection {
-  background-color: #21395f; //// Відступ для фіксованого хедера
+ //// Відступ для фіксованого хедера
   
   // Планшети
   @media (max-width: 768px) {
@@ -152,3 +152,13 @@
   background-color: #f0f4f8 !important;
   color: #333333;
 }
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh; // займає всю висоту вікна
+}
+
+
+

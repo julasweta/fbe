@@ -89,22 +89,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('change-password')
   async changePassword(@Body() body: ChangePasswordDto, @Req() req: Request) {
-    try {
-      await this.authService.changePassword(
-        req.user.id,
-        body.currentPassword,
-        body.newPassword,
-      );
-      return { message: 'Пароль успішно змінено' };
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-      console.error('[AuthController] Change password error:', error);
-      throw new UnauthorizedException(
-        'Помилка зміни пароля. Спробуйте пізніше',
-      );
-    }
+    await this.authService.changePassword(
+      req.user.id,
+      body.currentPassword,
+      body.newPassword,
+    );
+    return { message: 'Пароль успішно змінено' };
   }
 
   @ApiOperation({ summary: 'Request password reset' })
@@ -117,8 +107,7 @@ export class AuthController {
       return { message: 'Код для відновлення пароля відправлено на ваш email' };
     } catch (error) {
       console.error('[AuthController] Forgot password error:', error);
-      // Не розкриваємо, чи існує користувач з таким email
-      return { message: 'Код для відновлення пароля відправлено на ваш email' };
+      throw error; // важливо: прокидаємо далі, щоб NestJS сформував помилку
     }
   }
 
@@ -127,6 +116,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid reset code or expired' })
   @Post('reset-password')
   async resetPassword(@Body() body: ResetPasswordDto) {
+    console.log('body - ', body);
     try {
       await this.authService.resetPassword(
         body.email,

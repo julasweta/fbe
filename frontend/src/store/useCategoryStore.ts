@@ -30,15 +30,14 @@ export const useCategoryStore = create<CategoryState>((set) => ({
     }
   },
 
-  addCategory: async(data) =>
-  {
+  addCategory: async (data) => {
     try {
       const category = await CategoryService.create(data);
       if (!category) {
         throw new Error("Категорія не була оновлена");
       }
-      set((state) => ({ categories: [...state.categories, category] }))
-     
+      set((state) => ({ categories: [...state.categories, category] }));
+
       return category;
     } catch (error: any) {
       set({
@@ -47,7 +46,6 @@ export const useCategoryStore = create<CategoryState>((set) => ({
       });
       throw error; // Перекидаємо помилку, щоб компонент міг її обробити
     }
-  
   },
 
   updateCategory: async (id: number, data: Partial<ICategory>) => {
@@ -58,9 +56,9 @@ export const useCategoryStore = create<CategoryState>((set) => ({
       }
       // Оновлюємо категорію в стейті, замінюючи існуючу
       set((state) => ({
-        categories: state.categories.map(cat =>
-          cat.id === id ? category : cat
-        )
+        categories: state.categories.map((cat) =>
+          cat.id === id ? category : cat,
+        ),
       }));
 
       return category;

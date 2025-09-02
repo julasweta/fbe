@@ -43,10 +43,9 @@ const userService = {
     }
   },
 
-  async sendMessageFromContact(data: sendMessage ): Promise<void> {
+  async sendMessageFromContact(data: sendMessage): Promise<void> {
     try {
-       await apiService.post<sendMessage>(`telegram/message`, data);
-      
+      await apiService.post<sendMessage>(`telegram/message`, data);
     } catch (error) {
       throw new Error(
         "Не вдалося відправити повідомлення: " + (error as Error).message,

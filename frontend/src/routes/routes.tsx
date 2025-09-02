@@ -1,24 +1,22 @@
-import CreateCategory from "../modules/admin/create-categories/CreateCategory";
-import CreateCollection from "../modules/admin/create-categories/CreateCollection";
-import CreateProduct from "../modules/admin/create-product/CreateProduct";
-import Dashboard from "../modules/admin/dashboard/Dashboard";
-import { EditProduct } from "../modules/admin/edit-product/EditProduct";
+
+import { EditProduct, CreateCategory, CreateProduct, Dashboard, CreateCollection } from "../modules";
+import ForgotPassword from "../modules/auth/ForgotPassword";
+import ResetPassword from "../modules/auth/ResetPassword";
 import Delivery from "../modules/common/Delivery";
 import Checkout from "../modules/orders/Checkout";
-import { AboutPage, AuthPage, HomePage, NotFoundPage, ProfilePage, RegisterPage } from "../pages";
-import AdminPage from "../pages/AdminPage";
-import CartPage from "../pages/CartPage";
-import CategoryPage from "../pages/CategoryPage";
-import CollectionPage from "../pages/CollectionPage";
-import ContactPage from "../pages/ContactPage";
-import ProductPage from "../pages/ProductPage";
+import { AboutPage, AdminPage, AuthPage, CartPage, CategoryPage, ChangePassword, CollectionPage, ContactPage, HomePage, NotFoundPage, PrivacyPage, ProductPage, ProfilePage, RegisterPage } from "../pages";
+
 
 export const publicRoutes = [
  
   { path: "/login", element: <AuthPage /> },
   { path: "/register", element: <RegisterPage /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/reset-password", element: <ResetPassword /> },
+  { path: "/change-password", element: <ChangePassword /> },
   { path: "/about", element: <AboutPage /> },
   { path: "/contact", element: <ContactPage /> },
+  { path: "/privacy", element: <PrivacyPage /> },
   { path: "/product/:id", element: <ProductPage /> },
   { path: "/category/:categorySlug", element: <CategoryPage /> },
   { path: "/group/:collectionSlug", element: <CollectionPage /> },

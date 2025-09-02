@@ -8,13 +8,16 @@ export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async sendResetCode(email: string, resetCode: string): Promise<void> {
+    const resetLink = `http://localhost:5173/reset-password?code=${resetCode}&email=${email}`;
     await this.mailerService
       .sendMail({
-        to: email, // List of receivers email address
-        from: 'stugarka@gmail.com', // Senders email address
-        subject: 'Testing Nest MailerModule ✔', // Subject line
-        text: `welcome ${resetCode}`, // plaintext body
-        html: '<b>welcome</b>', // HTML body content
+        to: email,
+        from: 'fbe.info.store@gmail.com',
+        subject: 'Відновлення пароля',
+        text: `Для скидання пароля перейдіть за посиланням: ${resetLink}`,
+        html: ` <p>Для скидання пароля натисніть на посилання:</p>
+                <a href="${resetLink}">${resetLink}</a>
+  `,
       })
       .then((success) => {
         console.log(success);

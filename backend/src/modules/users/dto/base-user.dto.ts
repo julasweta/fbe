@@ -5,7 +5,6 @@ import {
   IsOptional,
   IsString,
   MinLength,
-  IsDateString,
 } from 'class-validator';
 import { Role } from '@prisma/client';
 
@@ -49,8 +48,7 @@ export class BaseUserDto {
   postalCode?: string | null;
 
   @IsOptional()
-  @IsDateString()
-  dateOfBirth?: Date | null;
+  dateOfBirth?: null | Date;
 
   @IsOptional()
   @IsEnum(Role)

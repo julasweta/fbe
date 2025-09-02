@@ -35,6 +35,9 @@
   border-radius: 6px;
   padding: 0.25rem 0.5rem;
   width: fit-content;
+  span{
+    margin-left: 5px;
+  }
 
   &:hover {
     background: #f7f9fb;
@@ -44,7 +47,7 @@
 .categoryLink {
   font-weight: 500;
   font-size: 0.95rem;
-  color: #222;
+/*  color: #222;*/
   text-decoration: none;
 
   &:hover {

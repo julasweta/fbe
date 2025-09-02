@@ -53,7 +53,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Update user data by ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
-  @Patch('byid/:id')
+  @Patch('update/:id')
   update(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateUserDto) {
     if (data.role === Role.ADMIN) {
       throw new ForbiddenException('Role ADMIN cannot be assigned directly');

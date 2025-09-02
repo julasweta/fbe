@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import styles from "./ContactForm.module.scss";
 import Input from "../ui/Inputs/Input";
 import { Button } from "../ui/Buttons/Button";

@@ -1,3 +1,4 @@
+import Footer from "../../components/Footter/Footer";
 import Header from "../../components/Header/Header";
 import styles from "./MainLayout.module.scss";
 
@@ -12,7 +13,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <section data-bg="dark" className={`hero-section ${styles.headerSection}`}>
           <div className={styles.dark}>
             <div className={styles.darkContent}>
-              <h1 className={styles.title}>FBE</h1>
+              <h1 className={styles.title}>fbe</h1>
               <p className={styles.description}>Для тих, хто грає красиво</p>
             </div>
           </div>
@@ -21,6 +22,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           {children}
         </section>
       </main>
+
+      <Footer/>
     </div>
   );
 }

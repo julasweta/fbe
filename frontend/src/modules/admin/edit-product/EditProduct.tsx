@@ -82,7 +82,7 @@ function getChangedFields(original: IProduct, current: IProduct): Partial<IProdu
 }
 
 
-export function EditProduct() {
+const EditProduct: React.FC = () =>  {
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -316,3 +316,4 @@ export function EditProduct() {
     </div>
   );
 }
+export default EditProduct

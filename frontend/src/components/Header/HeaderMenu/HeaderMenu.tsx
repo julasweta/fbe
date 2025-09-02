@@ -100,7 +100,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
                   className={styles.btnLink}
                   onClick={() => toggleSubmenu(index)}
                   aria-expanded={openSubmenuIndex === index}
-                  style={mobileMenuOpen ? undefined : dynamicStyles}
+                  style={dynamicStyles}
 
                 >
                   {item.label}

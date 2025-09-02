@@ -88,6 +88,9 @@ export const LoginForm = () => {
     }
   };
 
+
+
+
   return (
     <div className={classNames(styles.loginContainer)}>
       <h1 className={styles.title}>Вхід</h1>
@@ -124,11 +127,17 @@ export const LoginForm = () => {
         >
           Увійти
         </Button>
+        <p className={styles.registerPrompt}>
+           <Link to="/forgot-password">Забули пароль</Link>
+        </p>
 
         <p className={styles.registerPrompt}>
           Немає аккаунта? <Link to="/register">Зареєструйтесь тут</Link>
         </p>
+
       </form>
     </div>
   );
 };
+
+export default LoginForm

@@ -66,6 +66,11 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
                   isMobile && hasChildren ? () => toggleCategory(cat.id) : undefined
                 }
               >
+               
+
+                <a href={`/category/${cat.slug}`} className={styles.categoryLink}>
+                  {cat.name}
+                </a>
                 {hasChildren ? (
                   <span className={styles.iconContainer}>
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
@@ -73,10 +78,6 @@ const CategoriesSubmenu: React.FC<CategoriesSubmenuProps> = ({ categories }) => 
                 ) : (
                   <span className={styles.spacer} />
                 )}
-
-                <a href={`/category/${cat.slug}`} className={styles.categoryLink}>
-                  {cat.name}
-                </a>
               </div>
 
               {hasChildren && isExpanded && renderMenu(cat.id)}

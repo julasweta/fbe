@@ -94,4 +94,57 @@ table {
         }
       }
     
-   
+/* Глобальні стилі */
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+ 
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1; 
+}
+footer {
+  width: 100%;
+  background-color: #1f1f1f;
+  color: #fff;
+  padding: 2rem 1rem;
+}
+
+.form {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.error{
+  color:red;
+}
+
+.green{
+  color: green;
+}
+
+.blue{
+  color:blue;
+}

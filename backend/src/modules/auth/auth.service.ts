@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
@@ -18,7 +23,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user || !user.password) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new NotFoundException('Invalid email or password');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -122,81 +127,44 @@ export class AuthService {
     userId: number,
     currentPassword: string,
     newPassword: string,
-  ): Promise<void> {
-    try {
-      // Знаходимо користувача
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-      });
+  ) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Користувача не знайдено');
 
-      if (!user || !user.password) {
-        throw new UnauthorizedException('Користувача не знайдено');
-      }
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+    if (!isCurrentPasswordValid)
+      throw new BadRequestException('Поточний пароль неправильний');
 
-      // Перевіряємо поточний пароль
-      const isCurrentPasswordValid = await bcrypt.compare(
-        currentPassword,
-        user.password,
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword)
+      throw new BadRequestException(
+        'Новий пароль не може співпадати з поточним',
       );
-      if (!isCurrentPasswordValid) {
-        throw new UnauthorizedException('Поточний пароль неправильний');
-      }
 
-      // Перевіряємо, чи новий пароль не співпадає з поточним
-      const isSamePassword = await bcrypt.compare(newPassword, user.password);
-      if (isSamePassword) {
-        throw new UnauthorizedException(
-          'Новий пароль не може співпадати з поточним',
-        );
-      }
-
-      // Хешуємо новий пароль
-      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-
-      // Оновлюємо пароль в базі даних
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: {
-          password: hashedNewPassword,
-          // Опціонально: інвалідуємо refresh токен для додаткової безпеки
-          refreshToken: null,
-        },
-      });
-
-      console.log(`[AuthService] Password changed for user: ${userId}`);
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-      console.error('[AuthService] Change password error:', error);
-      throw new UnauthorizedException('Помилка зміни пароля');
-    }
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedNewPassword, refreshToken: null },
+    });
   }
 
   async forgotPassword(email: string): Promise<void> {
     try {
-      console.log(`[AuthService] Processing forgot password for: ${email}`);
-
       const user = await this.prisma.user.findUnique({
         where: { email },
       });
 
       if (!user) {
-        // Не розкриваємо, що користувача не існує
-        console.log(
-          `[AuthService] Forgot password request for non-existent email: ${email}`,
-        );
-        return;
+        throw new UnauthorizedException('Користувач не знайдений');
       }
 
       // Генеруємо 6-значний код
       const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
       const resetCodeExpiry = new Date();
       resetCodeExpiry.setMinutes(resetCodeExpiry.getMinutes() + 15); // Код дійсний 15 хвилин
-
-      console.log(
-        `[AuthService] Generated reset code: ${resetCode} for user: ${user.id}`,
-      );
 
       // Зберігаємо код в базі даних
       await this.prisma.user.update({
@@ -207,17 +175,8 @@ export class AuthService {
         },
       });
 
-      console.log(
-        `[AuthService] Reset code saved to database for user: ${user.id}`,
-      );
-
-      // Відправляємо email з кодом
       try {
-        console.log(`ja v servic`);
         await this.emailService.sendResetCode(email, resetCode);
-        console.log(
-          `[AuthService] Reset code email sent successfully to: ${email}`,
-        );
       } catch (emailError) {
         console.error(
           '[AuthService] Failed to send reset code email:',

@@ -52,7 +52,7 @@ export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsDateString()
-  dateOfBirth?: string;
+  dateOfBirth?: Date | null;
 
   @ApiPropertyOptional({ enum: Role })
   @IsOptional()

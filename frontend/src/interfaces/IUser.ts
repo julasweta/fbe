@@ -9,7 +9,7 @@ export interface IUser {
   city?: string;
   country?: string;
   postalCode?: string;
-  dateOfBirth?: string; // ISO-строка
+  dateOfBirth?: Date | string; // ISO-строка
   role?: "USER" | "ADMIN";
   createdAt?: string;
   updatedAt?: string;
@@ -25,8 +25,7 @@ export interface IUsersResponse {
   // можливо, є інші поля як total, page, etc.
 }
 
-
-export interface sendMessage{
+export interface sendMessage {
   name: string;
   email: string;
   message: string;

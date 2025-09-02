@@ -75,9 +75,16 @@ const RegisterForm: React.FC = () => {
       <Input
         type="password"
         placeholder="Пароль *"
-        {...register("password", { required: "Пароль обов'язковий" })}
+        {...register("password", {
+          required: "Пароль обов'язковий",
+          pattern: {
+            value: /^(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
+            message: "Пароль має містити мін. 8 символів, 1 велику і 1 малу літеру"
+          }
+        })}
       />
       {errors.password && <p className={styles.error}>{errors.password.message}</p>}
+
 
       <Input type="tel" placeholder="Телефон *" {...register("phone", {
         required: "Телефон обов'язковий",

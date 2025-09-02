@@ -3,6 +3,7 @@ import { Prisma, Role } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { UserResponseMapper } from './dto/user-resp-mapper';
 import { BaseUserDto } from './dto/base-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,14 +28,23 @@ export class UsersService {
     return UserResponseMapper.toResUserMapper(user);
   }
 
-  async update(
-    id: number,
-    data: Prisma.UserUpdateInput,
-  ): Promise<Partial<BaseUserDto>> {
+  async update(id: number, data: UpdateUserDto): Promise<Partial<BaseUserDto>> {
     const user = await this.prisma.user.update({
-      where: { id } as Prisma.UserWhereUniqueInput,
-      data,
+      where: { id },
+      data: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        city: data.city,
+        country: data.country,
+        postalCode: data.postalCode,
+        dateOfBirth: data.dateOfBirth && new Date(data.dateOfBirth), // <- конвертуємо в Date
+        role: data.role,
+      },
     });
+
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }

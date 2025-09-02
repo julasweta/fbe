@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { IUser } from "../interfaces/IUser";
+import { authService } from "../services/AuthService";
 
 interface AuthState {
   accessToken: string | null;
@@ -49,4 +50,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem("cart");
     set({ accessToken: null, refreshToken: null, user: null });
   },
+
+  forgotPassword: (email:string) => {
+    authService.forgotPassword(email);
+  }
 }));

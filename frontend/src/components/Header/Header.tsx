@@ -105,7 +105,12 @@ const Header: React.FC = () => {
         transition: 'color 0.3s ease'
       }}
     >
-      <div className={styles.logo}>FBE</div>
+      <Link to ="/home">
+        <div className={styles.logo}>
+          <span className={styles.main}>fbe</span>
+          <span className={styles.sub}>full body era</span>
+        </div>
+      </Link>
       <HeaderMenu textColor={textColor} />
 
       <div className={styles.authBlock}>
@@ -118,7 +123,7 @@ const Header: React.FC = () => {
                 transition: 'color 0.3s ease'
               }}
             >
-              {user?.first_name.toUpperCase()}
+              <Link to="/profile">{user?.first_name.toUpperCase()}</Link>
             </span>
             <Button
               className={styles.authButton}
@@ -155,7 +160,7 @@ const Header: React.FC = () => {
             }}
           />
         </Link>
-        <span>{(cart.length > 0)? cart.length : '' }</span>
+        <span>{(cart && cart.length > 0)? cart.length : '' }</span>
       </div>
     </div>
   );

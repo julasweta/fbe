@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
             disabled={disabled}
             required={required}
             id={id}
-            name={name}
+            name={name?name:id}
             className={`${styles.radioCheckboxInput} ${error ? styles.errorBorder : ""}`}
             {...rest}
           />

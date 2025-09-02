@@ -13,7 +13,7 @@
   width: 100%;
   padding: 0 1rem;
   transition: color 0.3s ease, height 0.2s ease;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 
 
   /* Планшети */
@@ -32,30 +32,80 @@
 }
 
 .logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #F3ED7D;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: left;
-  font-size: 35px;
-  font-weight: bold;
-  font-family: 'Arial', sans-serif;
-  width: 33%;
-  transition: color 0.3s ease;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  font-family: "Arial", sans-serif;
+  box-shadow: inset 0 4px 20px rgba(253, 253, 253, 0.75),
+    0 4px 20px rgba(21, 21, 21, 0.4);
+  transition: transform 0.3s ease;
+  padding: 0.2rem;
 
-  /* Планшети */
+  animation: swing 2s ease-in-out infinite;
+  transform-origin: center;
+
   @media (max-width: 768px) {
-    font-size: 32px;
-    justify-content: flex-start;
+    width: 80px;
+    height: 80px;
   }
 
-  /* Мобільні пристрої */
-  @media (max-width: 480px) {
-    font-size: 28px;
-    min-width: 0;
+  &:hover {
+    transform: scale(1.05);
   }
 
-  /* Дуже маленькі екрани */
-  @media (max-width: 360px) {
-    font-size: 24px;
+  .main {
+    font-size: 2.3rem;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+
+    @media (max-width: 768px) {
+      font-size: 2.4rem;
+    }
+  }
+
+
+
+  .sub {
+    font-size: 0.9rem;
+    color: #636669;
+    text-transform: lowercase;
+    font-weight: 700;
+
+    @media (max-width: 768px) {
+      font-size: 0.5rem;
+    }
+  }
+}
+
+/* 👇 ключові кадри винесені ОКРЕМО */
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(10deg);
+  }
+
+  50% {
+    transform: rotate(0deg);
+  }
+
+  75% {
+    transform: rotate(-10deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
   }
 }
 

@@ -93,9 +93,7 @@ export const useCartStore = create<CartState>((set, get) => ({
     const { loaded, isLoading } = get();
     const { user, accessToken } = useAuthStore.getState();
 
-    // Запобігаємо множинним запитам
     if (isLoading) {
-      console.log("Кошик вже завантажується, пропускаємо запит");
       return;
     }
 
@@ -118,13 +116,14 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
 
     set({ isLoading: true });
-    if (user?.id && accessToken)
-   { try {
-      const res = await cartService.getCart(user.id);
-      set({ cart: res, loaded: true, isLoading: false });
-    } catch (error) {
-      console.error("Помилка при завантаженні кошика:", error);
-      set({ cart: [], loaded: true, isLoading: false });
-    }}
+    if (user?.id && accessToken) {
+      try {
+        const res = await cartService.getCart(user.id);
+        set({ cart: res, loaded: true, isLoading: false });
+      } catch (error) {
+        console.error("Помилка при завантаженні кошика:", error);
+        set({ cart: [], loaded: true, isLoading: false });
+      }
+    }
   },
 }));
