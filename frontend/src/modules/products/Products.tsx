@@ -41,19 +41,19 @@ const Products = ({ categorySlug, collectionSlug }:ProductsProps) => {
 
   if (isLoading) {
     return (
-      <div className={styles.productsGrid}>
-        <h2>cATEGORY name</h2>
-        <div className={styles.loading}>
+      <div>
+        <div className="loading">
+          <div className="spinner"></div>
           <p>Завантаження продуктів...</p>
         </div>
       </div>
     );
   }
 
+
   if (error) {
     return (
       <div className={styles.productsGrid}>
-        <h2>cATEGORY name</h2>
         <div className={styles.error}>
           <p>Помилка завантаження: {error}</p>
           <Button

@@ -13,8 +13,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <section data-bg="dark" className={`hero-section ${styles.headerSection}`}>
           <div className={styles.dark}>
             <div className={styles.darkContent}>
-              <h1 className={styles.title}>fbe</h1>
-              <p className={styles.description}>Для тих, хто грає красиво</p>
+              <h1 className={styles.title}>FULL BODY ERA</h1>
+              {<p className={styles.description}>Для тих, хто грає красиво</p> }
             </div>
           </div>
         </section>

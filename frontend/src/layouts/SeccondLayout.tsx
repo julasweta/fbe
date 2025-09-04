@@ -10,7 +10,7 @@ export default function SeccondLayout({ children }: { children: React.ReactNode 
       <section data-bg="light" className={`content-section ${styles.contentSection} `}>
         <ul className={styles.headerTop}>
           <li>Швидка доставка</li>
-          <li >Доставка від 4000грн безкоштовна</li>
+          <li >Доставка від 8000грн по Україні безкоштовна</li>
           <li>Обмін і Повернення</li>
         </ul>
         <Header />

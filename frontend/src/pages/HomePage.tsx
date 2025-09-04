@@ -72,10 +72,10 @@ const HomePage = () => {
           spaceBetween={16} // відстань між карточками
           slidesPerView="auto" // автоматично по ширині
           navigation
-          style={{ paddingBottom: "20px" }}
+          className="swiper-box"
         >
           {products.map((product) => (
-            <SwiperSlide key={product.id} style={{ width: "250px" }}>
+            <SwiperSlide key={product.id}  className="slide">
               <Card product={product} isMainPage={true} />
             </SwiperSlide>
           ))}

@@ -32,10 +32,13 @@ const Footer = () => {
         </div>
 
         <div className={styles.copy}>
-          © 2025 <a href="mailto:julasweta@ukr.net" className={styles.mail}>
+          © {new Date().getFullYear()}{" "}
+          <a href="mailto:office.fly.app@gmail.com" className={styles.mail}>
             FlyApp
-          </a> Всі права захищені.
+          </a>{" "}
+          Всі права захищені.
         </div>
+
 
       </div>
     </footer>

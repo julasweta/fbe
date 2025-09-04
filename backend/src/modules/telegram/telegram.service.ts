@@ -7,7 +7,16 @@ import { PaymentMethod } from '@prisma/client';
 
 @Injectable()
 export class TelegramService {
-  constructor(private readonly http: HttpService) {}
+  private readonly chatIds: string[];
+
+  constructor(private readonly http: HttpService) {
+    console.log('Telegram chatIds:', this.chatIds);
+
+    // Беремо всі chat_id з .env (через кому)
+    this.chatIds = process.env.TELEGRAM_CHAT_IDS
+      ? process.env.TELEGRAM_CHAT_IDS.split(',').map((id) => id.trim())
+      : [];
+  }
 
   async sendOrderNotification(data: {
     user: UserForTelegram;
@@ -45,17 +54,16 @@ ${
     )
     .join('\n\n')
 }
-  `;
+    `;
 
-    await this.sendMessage(message);
+    await this.broadcastMessage(message);
   }
 
-  // ✅ Новий метод для "Зв'яжіться з нами"
   async sendContactMessage(data: {
     name: string;
     email: string;
     message: string;
-    imageUrl?: string; // опціонально
+    imageUrl?: string;
   }) {
     const text = `
 📩 НОВЕ ПОВІДОМЛЕННЯ З ФОРМИ
@@ -65,54 +73,10 @@ ${
 ${data.message}
     `;
 
-    // Відправляємо текстове повідомлення
-    await this.sendMessage(text);
+    await this.broadcastMessage(text);
 
-    // Якщо є фото — відправляємо окремо
     if (data.imageUrl) {
-      await this.sendPhoto(data.imageUrl, `Фото від ${data.name}`);
-    }
-  }
-
-  // 🔹 Хелпер для відправки тексту
-  private async sendMessage(text: string) {
-    try {
-      await firstValueFrom(
-        this.http.post(
-          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-          {
-            chat_id: process.env.TELEGRAM_CHAT_ID,
-            text,
-            parse_mode: 'HTML',
-          },
-        ),
-      );
-    } catch (err) {
-      console.error(
-        '❌ Помилка відправки повідомлення в Telegram:',
-        err.response?.data || err.message,
-      );
-    }
-  }
-
-  // 🔹 Хелпер для відправки фото
-  private async sendPhoto(photoUrl: string, caption?: string) {
-    try {
-      await firstValueFrom(
-        this.http.post(
-          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`,
-          {
-            chat_id: process.env.TELEGRAM_CHAT_ID,
-            photo: photoUrl,
-            caption,
-          },
-        ),
-      );
-    } catch (err) {
-      console.error(
-        '❌ Помилка відправки фото в Telegram:',
-        err.response?.data || err.message,
-      );
+      await this.broadcastPhoto(data.imageUrl, `Фото від ${data.name}`);
     }
   }
 
@@ -124,6 +88,52 @@ ${data.message}
 ${data.message}
     `;
 
-    await this.sendMessage(text);
+    await this.broadcastMessage(text);
+  }
+
+  // 🔹 Відправка тексту всім chat_id
+  private async broadcastMessage(text: string) {
+    for (const chatId of this.chatIds) {
+      try {
+        await firstValueFrom(
+          this.http.post(
+            `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+            {
+              chat_id: chatId,
+              text,
+              parse_mode: 'HTML',
+            },
+          ),
+        );
+      } catch (err) {
+        console.error(
+          `❌ Помилка відправки повідомлення в Telegram (chat_id=${chatId}):`,
+          err.response?.data || err.message,
+        );
+      }
+    }
+  }
+
+  // 🔹 Відправка фото всім chat_id
+  private async broadcastPhoto(photoUrl: string, caption?: string) {
+    for (const chatId of this.chatIds) {
+      try {
+        await firstValueFrom(
+          this.http.post(
+            `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendPhoto`,
+            {
+              chat_id: chatId,
+              photo: photoUrl,
+              caption,
+            },
+          ),
+        );
+      } catch (err) {
+        console.error(
+          `❌ Помилка відправки фото в Telegram (chat_id=${chatId}):`,
+          err.response?.data || err.message,
+        );
+      }
+    }
   }
 }

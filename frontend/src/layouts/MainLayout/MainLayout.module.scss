@@ -1,7 +1,7 @@
 .dark {
   color: #ffffff;
   height: 100vh;
-  background-image: url("https://res.cloudinary.com/divhalkcr/image/upload/v1755108591/c1uvyclqnix61u5gvorx.jpg");
+  background-image: url("https://res.cloudinary.com/divhalkcr/image/upload/v1757010788/3_r61yy0.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -13,33 +13,30 @@
   height: 100%;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
 }
 .title {
-  font-size: 7.8rem;
-  margin-bottom: 1rem;
+  font-size: 3.8rem;
+  top: 1rem;
 }
 .description {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 900;
   text-align: center;
   max-width: 600px;
-  color: #294550;
+  color:#f9f9f9;
+  /* color: #294550; */
   position: relative;
   background-color: rgba(255, 255, 255, 0);
-  /* Напівпрозорий фон */
-  backdrop-filter: blur(10px);
-  /* Розмитий фон */
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 8px;
+ 
 
   @media (max-width: 768px) {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
     }
   
     // Мобільні пристрої
     @media (max-width: 480px) {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
     }
 }
 

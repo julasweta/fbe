@@ -52,7 +52,7 @@ export const colorLabels: Record<EColor, string> = {
 export const colorHexMap: Record<EColor, string> = {
   [EColor.RED]: "#b34a4a", // приглушений червоний, винний відтінок
   [EColor.GREEN]: "#4a7c59", // м'який зелений, із легким сірим підтоном
-  [EColor.BLUE]: "#4a6fa5", // сіро-блакитний, приглушений синій
+  [EColor.BLUE]: "#8dc4e4", // сіро-блакитний, приглушений синій
   [EColor.BLACK]: "#1e1e1e", // глибокий графіт, не чисто чорний
   [EColor.WHITE]: "#f5f5f5", // теплий білий, майже молочний
   [EColor.YELLOW]: "#d4c35b", // золотаво-жовтий, теплий

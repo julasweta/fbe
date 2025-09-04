@@ -61,16 +61,31 @@
   flex-wrap: wrap;
   align-items: center;
 width: 100%;
-padding: 0px 0 40px 0;
+padding: 40px 0 40px 0;
+background-color: #e0e9f1;
+/* Робимо краї прозоро-розмитими */
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: cover;
+
+  mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: cover;
+}
+
+.wrapper{
+box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 }
 
 .categoryBox {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
 
   h3 {
     position: absolute;
@@ -79,21 +94,22 @@ padding: 0px 0 40px 0;
     transform: translateX(-50%);
     font-size: 1.2rem;
     text-align: center;
-    background: rgba(236, 236, 238, 0.3); 
+    background: rgba(236, 236, 238, 0.9); 
     padding: 0;
     width: 50%;
     border: none;
   }
 }
 .imgBox {
-      height: 250px;// 🔹 фіксована висота для всіх картинок (змінюй під себе)
+      height: 250px;
+  
  
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover; // 🔹 обрізає картинку під контейнер
-    // object-fit: contain; // 🔹 варіант, якщо хочеш без обрізання (з відступами)
+    object-fit: cover; 
+        box-shadow: inset -1px 3px 8px 5px #fdfeff, 2px 5px 16px 0px #0B325E, 5px 5px 15px 5px rgba(0, 0, 0, 0);
   }
 }
 

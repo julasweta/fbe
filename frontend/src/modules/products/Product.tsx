@@ -333,7 +333,11 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                 {product.features
                   .sort((a, b) => a.order - b.order)
                   .map((feature) => (
-                    <li key={feature.order + feature.text}>{feature.text}</li>
+                    <li key={feature.order + feature.text}>
+                      <strong>{feature.text.split(" ")[0]}</strong>{" "}
+                      {feature.text.split(" ").slice(1).join(" ")}
+                    </li>
+
                   ))}
               </ul>
             </div>
