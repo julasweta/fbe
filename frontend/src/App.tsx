@@ -46,7 +46,7 @@ export default function App() {
               )
             }
           >
-            {children?.map((child) => (
+            {children && children.map((child) => (
               <Route
                 key={child.path || "index"}
                 index={child.index}

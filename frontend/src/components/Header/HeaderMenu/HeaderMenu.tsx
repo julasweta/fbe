@@ -41,12 +41,12 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
       { label: "Контакти", link: "/contact" },
     ];
 
-    if (user?.role === Role.ADMIN) {
+    if (user && user.role === Role.ADMIN) {
       return [...baseMenu, { label: "Адмінка", link: "/admin" }];
     }
 
     return baseMenu;
-  }, [user?.role]);
+  }, [user && user.role]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
