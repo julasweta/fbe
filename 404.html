@@ -1,98 +1,15 @@
-<!-- public/404.html -->
 <!DOCTYPE html>
-<html lang="ua">
+<html>
 
 <head>
-  <meta charset="utf-8">
-  <title>FBE - Завантаження...</title>
-
-  <!-- Базові метатеги для всіх сторінок -->
-  <meta name="description" content="FBE - стильний та функціональний одяг для активного життя">
-  <meta property="og:site_name" content="FBE">
-  <meta property="og:type" content="website">
-  <meta name="robots" content="index, follow">
-
-  <!-- Скрипт для обробки SPA маршрутів -->
+  <meta http-equiv="refresh" content="0; url=/" />
   <script>
-    // GitHub Pages SPA fix
-    (function (l) {
-      if (l.search[1] === '/') {
-        var decoded = l.search.slice(1).split('&').map(function (s) {
-          return s.replace(/~and~/g, '&');
-        }).join('?');
-        window.history.replaceState(null, null,
-          l.pathname.slice(0, -1) + decoded + l.hash
-        );
-      }
-    }(window.location));
-
-    // Намагаємося витягти дані продукту з URL для метатегів
-    const path = window.location.pathname;
-    const productMatch = path.match(/^\/product\/(\d+)$/);
-
-    if (productMatch) {
-      const productId = productMatch[1];
-
-      // Тут можна зробити fetch до API для отримання даних продукту
-      // Але боти не виконують JS, тому це не спрацює для них
-      console.log('Product ID:', productId);
-
-      // Зберігаємо для React
-      sessionStorage.setItem('currentProductId', productId);
-    }
-  </script>
-</head>
-
-<body>
-  <div id="root"></div>
-  <script>
-    // Зберігаємо оригінальний шлях
+    // Зберігаємо шлях і передаємо його React
     sessionStorage.redirect = location.pathname + location.search + location.hash;
-    // Перенаправляємо на головну
-    window.location.replace(window.location.origin);
+    window.location.href = "/";
   </script>
-</body>
-
-</html>
-
-<!-- public/index.html - оновлений -->
-<!DOCTYPE html>
-<html lang="ua">
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="icon" type="image/svg+xml" href="/assets/logo-D1t5b_lf.svg">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FBE</title>
-
-  <!-- Базові метатеги -->
-  <meta name="description" content="FBE - стильний та функціональний одяг для активного життя">
-  <meta property="og:site_name" content="FBE">
-  <meta property="og:title" content="FBE - Fashion & Sport">
-  <meta property="og:description" content="FBE - стильний та функціональний одяг для активного життя">
-  <meta property="og:image" content="https://fbe.pp.ua/assets/og-default.jpg">
-  <meta property="og:url" content="https://fbe.pp.ua">
-  <meta property="og:type" content="website">
-  <meta name="robots" content="index, follow">
-
-  <!-- GitHub Pages SPA support -->
-  <script>
-    // Відновлюємо маршрут після редиректу з 404.html
-    (function () {
-      var redirect = sessionStorage.redirect;
-      delete sessionStorage.redirect;
-      if (redirect && redirect != location.href) {
-        history.replaceState(null, null, redirect);
-      }
-    })();
-  </script>
-
-  <script type="module" crossorigin src="/assets/index-BiVMTFbR.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CY4X1dem.css">
 </head>
 
-<body>
-  <div id="root"></div>
-</body>
+<body></body>
 
 </html>
