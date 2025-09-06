@@ -12,14 +12,6 @@
 <meta property="og:image"
       content="https://res.cloudinary.com/divhalkcr/image/upload/v1756927449/photo_2025-09-03_22-17-33_cmxy4x.jpg">
 
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-FP13307QQ7"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag() {dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-FP13307QQ7');
-        </script>
 
   <script type="module" crossorigin src="/assets/index-DPGQ8XZy.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-CY4X1dem.css">
@@ -44,6 +36,29 @@
 
   gtag('config', 'G-FP13307QQ7');
 </script>
+
+<script type="text/javascript">
+  var _iub = _iub || [];
+  _iub.csConfiguration = {
+    siteId: 4230488,
+    cookiePolicyId: 54195727,
+    lang: "en",
+    storage: {useSiteId: true},
+    enableCookies: true,
+    consentOnInteraction: true, // активує cookie після дії користувача
+    callback: function () {
+      // Цей код виконається після надання згоди
+      if (typeof gtag === "function") {
+        gtag('consent', 'update', {
+          'analytics_storage': 'granted',
+          'ad_storage': 'granted'
+        });
+      }
+    }
+  };
+</script>
+<script type="text/javascript" src="https://cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async></script>
+
 
 <body>
   <div id="root"></div>
