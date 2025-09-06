@@ -7,6 +7,7 @@ import { useCollectionStore } from "../../../store/useCollectionStore";
 import { Button } from "../../ui/Buttons/Button";
 import { useAuthStore } from "../../../store";
 import { Role } from "../../../interfaces/IRegister";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 interface MenuItem {
   label: string;
@@ -72,9 +73,14 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
     transition: 'background-color 0.3s ease'
   };
 
+  const isMobile = useMediaQuery("(max-width: 950px)");
+
+  //curl -H "User-Agent: Mozilla/5.0" https://fbe.pp.ua/product/35
+
   return (
     <nav className={styles.headerMenu}>
-      <Button
+      {isMobile &&
+        <Button
         className={`${styles.burger} ${mobileMenuOpen ? styles.open : ""}`}
         onClick={toggleMobileMenu}
         aria-label="Toggle menu"
@@ -83,7 +89,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
         <span style={burgerSpanStyles} />
         <span style={burgerSpanStyles} />
         <span style={burgerSpanStyles} />
-      </Button>
+      </Button>}
 
       <ul className={`${styles.menuList} ${mobileMenuOpen ? styles.menuListOpen : ""}`}>
         {menuItems.map((item, index) => (
@@ -113,11 +119,11 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
                 {(activeIndex === index || openSubmenuIndex === index) && (
                   <ul className={styles.submenu}>
                     <div className={styles.block}>
-                      <li className={styles.submenuTitle}>Категорії</li>
+                      <li className="submenuTitle">Категорії</li>
                       <CategoriesSubmenu categories={categories} />
                     </div>
                     <div className={styles.block}>
-                      <li className={styles.submenuTitle}>Колекції</li>
+                      <li className="submenuTitle">Колекції</li>
                       <CollectionsSubmenu collections={collections} />
                     </div>
                   </ul>

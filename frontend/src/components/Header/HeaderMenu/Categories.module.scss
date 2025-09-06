@@ -1,15 +1,14 @@
-.submenu,
+
 .subsubmenu {
   list-style: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
   transition: max-height 0.35s ease;
+  background-color: #959394;
 }
 
-.submenu {
-  margin-left: 0;
-}
+
 
 .subsubmenu {
   margin-left: 1.5rem;
@@ -17,13 +16,14 @@
 }
 
 .subsubmenu.open {
-  max-height: 1000px; // достатньо для показу всіх підкатегорій
+  max-height: 1000px; 
 }
 
 .submenuItem {
   display: flex;
   flex-direction: column;
   width: 100%;
+  
 }
 
 .categoryContainer {
@@ -39,9 +39,7 @@
     margin-left: 5px;
   }
 
-  &:hover {
-    background: #f7f9fb;
-  }
+ 
 }
 
 .categoryLink {
@@ -51,7 +49,7 @@
   text-decoration: none;
 
   &:hover {
-    color: #0070f3;
+    color: #e0e237;
   }
 }
 

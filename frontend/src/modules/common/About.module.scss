@@ -1,3 +1,6 @@
+.aboutWrapper{
+width: 100%;
+}
 .fbeAbout {
   max-width: 1200px;
   margin: 0 auto;
@@ -5,10 +8,11 @@
   font-family: "Inter", sans-serif;
   color: #fff;
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(39, 31, 31, 0.5)),
-    url("https://res.cloudinary.com/divhalkcr/image/upload/v1755647719/w5cvxksnemuirsyek1dl.jpg") no-repeat center/cover;
+    url("https://res.cloudinary.com/divhalkcr/image/upload/v1757016040/DSC01808_ed1zbu.jpg") no-repeat center/cover;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  background-size: cover;
 
   @media (max-width: 768px) {
     padding: 2rem 1rem;

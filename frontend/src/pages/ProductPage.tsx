@@ -9,7 +9,9 @@ function ProductPage() {
     return <div>Продукт не знайдено</div>;
   } 
   return (
-    <div className= {styles.page}><Product productId={productId } /></div>
+    <div className={styles.page}>
+      <Product productId={productId} />
+    </div>
   )
 }
 

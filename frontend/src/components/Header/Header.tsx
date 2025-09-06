@@ -113,7 +113,7 @@ const Header: React.FC = () => {
       </Link>
       <HeaderMenu textColor={textColor} />
 
-      <div className={styles.authBlock}>
+      <div className={`${styles.authBlock} ${user ? styles.authBlockUser : ""}`}>
         {accessToken ? (
           <>
             <span
@@ -150,17 +150,19 @@ const Header: React.FC = () => {
           </Link>
         )}
 
-        <Link to="/cart">
+        <Link to="/cart"
+          className={styles.shoppingCart}>
           <LuShoppingCart
             style={{
               color: textColor === '#ffffff' ? '#ffffff' : '#000000',
               fontSize: '1.5rem',
               transition: 'color 0.3s ease',
-              marginLeft: '10px'
+              marginLeft: '10px',
             }}
           />
+          <span>{(cart && cart.length > 0) ? cart.length : ''}</span>
         </Link>
-        <span>{(cart && cart.length > 0)? cart.length : '' }</span>
+       
       </div>
     </div>
   );

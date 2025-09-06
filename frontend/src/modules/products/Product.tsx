@@ -2,21 +2,25 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Product.module.scss";
 import {
+  colorHexMap,
+  EColor,
   ESize,
   sizeLabels,
+  type ICreateProductVariant,
   type IProduct
 } from "../../interfaces/IProduct";
 import { productService } from "../../services/ProductService";
 import { Button } from "../../components/ui/Buttons/Button";
 import Input from "../../components/ui/Inputs/Input";
 import { useCartStore } from "../../store/useCartStore";
-
+import { useMetaTags } from "../../hooks/useMetaTags";
+import { generateMetaData } from "../../utils/metaHelpers";
 interface ProductProps {
   productId: string;
 }
 
 interface ProductFormData {
-  variantId: number | null; // Змінено з color на variantId
+  variantId: number | null;
   size: ESize | null;
   quantity: number;
 }
@@ -46,6 +50,16 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+
+  useMetaTags(
+    (product && product.translations[0]?.description && product.variants[0]?.images) ? generateMetaData({
+      title: product.translations[0].name,
+      description: product.translations[0].description,
+      image: product.variants[0].images[0]?.url, // Видаляємо ? після image
+      path: `/product/${productId}`
+    }) : {}
+  );
+
   useEffect(() => {
     const loadProduct = async () => {
       setLoading(true);
@@ -71,6 +85,8 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     };
     loadProduct();
   }, [productId]);
+
+
 
   // Отримуємо всі зображення з усіх варіантів для мініатюр
   const getAllImages = () => {
@@ -144,7 +160,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
       return;
     }
     if (!formData.size) {
-      setError("Будь ласка, оберіть розмір");
+      setError("Будь ласка, оберіть розмір.");
       return;
     }
 
@@ -207,219 +223,219 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   const totalPrice = finalPrice * formData.quantity;
 
   // Функція для генерації унікального ключа та назви варіанта
-  const getVariantDisplayInfo = (variant: any) => {
-    // Можна додати логіку для відображення назви варіанта
-    // Наприклад, якщо є поле description або name в варіанті
-    const displayName = variant.description || variant.name || variant.color;
+  function isEColor(value: string): value is EColor {
+    return Object.values(EColor).includes(value as EColor);
+  }
+
+  const getVariantDisplayInfo = (variant: ICreateProductVariant) => {
+    const displayName = variant.description || variant.description || variant.color;
+
+    const hexColor = isEColor(variant.color)
+      ? colorHexMap[variant.color]
+      : "#cccccc";
+
     return {
       key: variant.id,
       displayName,
-      color: variant.color
+      color: hexColor,
     };
   };
 
+
+
+
   return (
-    <div className={styles.product}>
-      <div className={styles.images}>
-        {/* Основне зображення */}
-        <div className={styles.mainImageContainer}>
-          {currentImage ? (
-            <img
-              src={currentImage.url}
-              alt={currentImage.altText || translation?.name || "Product image"}
-              className={styles.mainImage}
-            />
-          ) : (
-            <div className={styles.noImage}>Фото відсутнє</div>
-          )}
-        </div>
-
-        {/* Мініатюри - всі зображення з усіх варіантів */}
-        {allImages.length > 0 && (
-          <div className={styles.thumbnailContainer}>
-            {allImages.map((image, index) => (
-              <div
-                key={`${image.variantId}-${image.url}-${index}`}
-                className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.activeThumbnail : ""}`}
-                onClick={() => handleThumbnailClick(index)}
-              >
+   
+        
+        <div className={styles.product}>
+          <div className={styles.images}>
+            {/* Основне зображення */}
+            <div className={styles.mainImageContainer}>
+              {currentImage ? (
                 <img
-                  src={image.url}
-                  alt={image.altText || `Image ${index + 1}`}
-                  className={styles.thumbnailImage}
+                  src={currentImage.url}
+                  alt={currentImage.altText || translation?.name || "Product image"}
+                  className={styles.mainImage}
                 />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className={styles.info}>
-        <h1 className={styles.title}>{translation?.name || "Без назви"}</h1>
-        {translation?.description && (
-          <p className={styles.description}>{translation.description}</p>
-        )}
-        <div className={styles.nameBlock}>
-          {/* опис варіанту */}
-          <div className={styles.priceWrapper}>{currentVariant?.description}</div>
-        </div>
-
-       
-
-        {/* ціна варіанта або ціна продукту */}
-        <div className={styles.priceWrapper}>
-          <span className={(+product.price > +finalPrice.toFixed(2)) ? styles.priceOriginal : styles.price}>
-            {currentVariant && currentVariant.price ? '₴ ' + currentVariant.price.toFixed(2) : '₴ ' + product.price}
-          </span>
-        </div>
-
-        {/* ціна зі знижкою */}
-        {(+product.price > +finalPrice.toFixed(2)) && (
-          <div className={styles.priceWrapper}>
-            <span className={styles.priceSale}>₴{finalPrice.toFixed(2)}</span>
-          </div>
-        )}
-
-        <div className={styles.productForm}>
-          {product.variants.length > 0 && (
-            <div className={styles.formGroup}>
-              <h4>Варіант:</h4>
-              <div className={styles.colorOptions}>
-                {product.variants.map((variant) => {
-                  const variantInfo = getVariantDisplayInfo(variant);
-                  return (
-                    <Button
-                      key={variantInfo.key}
-                      className={`${styles.colorOption} ${formData.variantId === variant.id ? styles.selected : ""}`}
-                      onClick={() => {if(variant.id)  handleVariantChange(variant.id)}}
-                      style={{
-                        backgroundColor: variantInfo.color.toLowerCase(),
-                        width: '40px',
-                        height: '40px',
-                        minWidth: '40px',
-                        padding: '0',
-                        border: formData.variantId === variant.id ? '3px solid #000' : '1px solid #ccc'
-                      }}
-                      // Показуємо назву варіанта при наведенні
-                    >
-                    </Button>
-                  );
-                })}
-              </div>
+              ) : (
+                <div className={styles.noImage}>Фото відсутнє</div>
+              )}
             </div>
-          )}
-
-          {availableSizes.length > 0 && (
-            <div className={styles.formGroup}>
-              <h4>Розмір:</h4>
-              <div className={styles.sizeOptions}>
-                {availableSizes.map((size) => (
-                  <Button
-                    key={size}
-                    className={`${styles.sizeOption} ${formData.size === size ? styles.selected : ""}`}
-                    onClick={() => handleSizeChange(size as ESize)}
+            {/* Мініатюри - всі зображення з усіх варіантів */}
+            {allImages.length > 0 && (
+              <div className={styles.thumbnailContainer}>
+                {allImages.map((image, index) => (
+                  <div
+                    key={`${image.variantId}-${image.url}-${index}`}
+                    className={`${styles.thumbnail} ${index === selectedImageIndex ? styles.activeThumbnail : ""}`}
+                    onClick={() => handleThumbnailClick(index)}
                   >
-                    {sizeLabels[size] || size}
-                  </Button>
+                    <img
+                      src={image.url}
+                      alt={image.altText || `Image ${index + 1}`}
+                      className={styles.thumbnailImage}
+                    />
+                  </div>
                 ))}
               </div>
+            )}
+          </div>
+          <div className={styles.info}>
+            <h1 className={styles.title}>{translation?.name || "Без назви"}</h1>
+            {translation?.description && (
+              <p className={styles.description}>{translation.description}</p>
+            )}
+            <div className={styles.nameBlock}>
+              {/* опис варіанту */}
+              <div className={styles.priceWrapper}>{currentVariant?.description}</div>
             </div>
-          )}
-
-          {product.features && product.features.length > 0 && (
-            <div className={styles.featuresSection}>
-              <h3>Особливості</h3>
-              <ul className={styles.featuresList}>
-                {product.features
-                  .sort((a, b) => a.order - b.order)
-                  .map((feature) => (
-                    <li key={feature.order + feature.text}>
-                      <strong>{feature.text.split(" ")[0]}</strong>{" "}
-                      {feature.text.split(" ").slice(1).join(" ")}
-                    </li>
-
-                  ))}
-              </ul>
+        
+            {/* ціна варіанта або ціна продукту */}
+            <div className={styles.priceWrapper}>
+              <span className={(+product.price > +finalPrice.toFixed(2)) ? styles.priceOriginal : styles.price}>
+                {currentVariant && currentVariant.price ? '₴ ' + currentVariant.price.toFixed(2) : '₴ ' + product.price}
+              </span>
             </div>
-          )}
-
-          <div className={styles.formGroup}>
-            <h4>Кількість:</h4>
-            <div className={styles.quantityWrapper}>
+            {/* ціна зі знижкою */}
+            {(+product.price > +finalPrice.toFixed(2)) && (
+              <div className={styles.priceWrapper}>
+                <span className={styles.priceSale}>₴{finalPrice.toFixed(2)}</span>
+              </div>
+            )}
+            <div className={styles.productForm}>
+              {product.variants.length > 0 && (
+                <div className={styles.formGroup}>
+                  <h4>Варіант:</h4>
+                  <div className={styles.colorOptions}>
+                    {product.variants.map((variant) => {
+                      const variantInfo = getVariantDisplayInfo(variant);
+                      return (
+                        <Button
+                          key={variantInfo.key}
+                          className={`${styles.colorOption} ${formData.variantId === variant.id ? styles.selected : ""}`}
+                          onClick={() => {if(variant.id)  handleVariantChange(variant.id)}}
+                          style={{
+                            backgroundColor: variantInfo.color.toLowerCase(),
+                            width: '40px',
+                            height: '40px',
+                            minWidth: '40px',
+                            padding: '0',
+                            border: formData.variantId === variant.id ? '3px solid #000' : '1px solid #ccc'
+                          }}
+                          // Показуємо назву варіанта при наведенні
+                        >
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {availableSizes.length > 0 && (
+                <div className={styles.formGroup}>
+                  <h4>Розмір:</h4>
+                  <div className={styles.sizeOptions}>
+                    {availableSizes.map((size) => (
+                      <Button
+                        key={size}
+                        className={`${styles.sizeOption} ${formData.size === size ? styles.selected : ""}`}
+                        onClick={() => handleSizeChange(size as ESize)}
+                      >
+                        {sizeLabels[size] || size}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {product.features && product.features.length > 0 && (
+                <div className={styles.featuresSection}>
+                  <h3>Особливості</h3>
+                  <ul className={styles.featuresList}>
+                    {product.features
+                      .sort((a, b) => a.order - b.order)
+                      .map((feature) => (
+                        <li key={feature.order + feature.text}>
+                          <strong>{feature.text.split(" ")[0]}</strong>{" "}
+                          {feature.text.split(" ").slice(1).join(" ")}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+              <div className={styles.formGroup}>
+                <h4>Кількість:</h4>
+                <div className={styles.quantityWrapper}>
+                  <Button
+                    type="button"
+                    className={styles.quantityBtn}
+                    onClick={handleQuantityDecrease}
+                    disabled={formData.quantity <= 1}
+                  >
+                    −
+                  </Button>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="99"
+                    value={formData.quantity}
+                    onChange={handleQuantityChange}
+                    className={styles.quantityInput}
+                  />
+                  <Button
+                    type="button"
+                    className={styles.quantityBtn}
+                    onClick={handleQuantityIncrease}
+                    disabled={formData.quantity >= 99}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+              <div className={styles.totalPrice}>
+                <strong>Загальна ціна: ₴{totalPrice.toFixed(2)}</strong>
+              </div>
               <Button
-                type="button"
-                className={styles.quantityBtn}
-                onClick={handleQuantityDecrease}
-                disabled={formData.quantity <= 1}
+                className={`${styles.addToCartBtn} ${addToCartSuccess ? styles.success : ""}`}
+                onClick={handleAddToCart}
+                disabled={isAddingToCart}
               >
-                −
+                {isAddingToCart
+                  ? "Додавання..."
+                  : addToCartSuccess
+                    ? "✓ Додано в кошик!"
+                    : "Додати в кошик"}
               </Button>
-              <Input
-                type="number"
-                min="1"
-                max="99"
-                value={formData.quantity}
-                onChange={handleQuantityChange}
-                className={styles.quantityInput}
-              />
-              <Button
-                type="button"
-                className={styles.quantityBtn}
-                onClick={handleQuantityIncrease}
-                disabled={formData.quantity >= 99}
+            </div>
+            <div className={styles.accordion}>
+              <button
+                className={styles.accordionBtn}
+                onClick={() => setAccordionOpen(!accordionOpen)}
               >
-                +
-              </Button>
+                Доставка та повернення {accordionOpen ? "▲" : "▼"}
+              </button>
+              {accordionOpen && (
+                <div className={styles.accordionContent}>
+                  <ul>
+                    <li>Замовлення по Україні: «Нова пошта» (2-3 робочих дні)</li>
+                    <li>Замовлення по Польщі: «Нова пошта» (3-5 робочих днів)</li>
+                    <li>Замовлення по США та Канаді: «Canada Post» (1-3 робочих дні)</li>
+                    <li>Міжнародна доставка: Meest Express (10-12 робочих днів)</li>
+                  </ul>
+                  <p>
+                    Для додаткової інформації звертайтесь у{" "}
+                    <a
+                      href="https://www.instagram.com/fbe.ua/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Instagram
+                    </a>
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-
-          <div className={styles.totalPrice}>
-            <strong>Загальна ціна: ₴{totalPrice.toFixed(2)}</strong>
-          </div>
-
-          <Button
-            className={`${styles.addToCartBtn} ${addToCartSuccess ? styles.success : ""}`}
-            onClick={handleAddToCart}
-            disabled={isAddingToCart}
-          >
-            {isAddingToCart
-              ? "Додавання..."
-              : addToCartSuccess
-                ? "✓ Додано в кошик!"
-                : "Додати в кошик"}
-          </Button>
         </div>
-
-        <div className={styles.accordion}>
-          <button
-            className={styles.accordionBtn}
-            onClick={() => setAccordionOpen(!accordionOpen)}
-          >
-            Доставка та повернення {accordionOpen ? "▲" : "▼"}
-          </button>
-          {accordionOpen && (
-            <div className={styles.accordionContent}>
-              <ul>
-                <li>Замовлення по Україні: «Нова пошта» (2-3 робочих дні)</li>
-                <li>Замовлення по Польщі: «Нова пошта» (3-5 робочих днів)</li>
-                <li>Замовлення по США та Канаді: «Canada Post» (1-3 робочих дні)</li>
-                <li>Міжнародна доставка: Meest Express (10-12 робочих днів)</li>
-              </ul>
-              <p>
-                Для додаткової інформації звертайтесь у{" "}
-                <a
-                  href="https://www.instagram.com/fbe.ua/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Instagram
-                </a>
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    
   );
 };
 

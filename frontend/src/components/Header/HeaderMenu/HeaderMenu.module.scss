@@ -4,15 +4,20 @@
   position: relative;
   background: transparent;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 50px;
-  
   z-index: 1000;
-  width: 33%;
+  width: 45%;
+
+  @media (max-width: 950px) {
+    width: 20%;
+    justify-content: center;
+  }
 }
-nav{
-  width: 50px;
+
+nav {
+
   border-radius: 10px;
   align-self: center;
 }
@@ -22,11 +27,12 @@ nav{
   margin: 0;
   padding: 0;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
-  background-color: transparent;
+  width: 100%;
 
-  @media (max-width: 768px) {
+
+  @media (max-width: 950px) {
     flex-direction: column;
     position: fixed;
     top: 60px;
@@ -36,6 +42,7 @@ nav{
     overflow: visible;
     transition: max-height 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #959394;
   }
 }
 
@@ -54,14 +61,16 @@ nav{
 
 .menuItem {
   position: relative;
-  width: max-content;
   overflow: visible;
+
   height: 50px;
+  background-color: transparent;
+  min-width: 100px;
 
   @media (max-width: 768px) {
     border-bottom: 1px solid #ddd;
     width: 100%;
-    background: rgb(139, 132, 132);
+
 
     &:last-child {
       border-bottom: none;
@@ -71,18 +80,17 @@ nav{
 
 .menuLink {
   font-weight: 600;
-  
   text-decoration: none;
   cursor: pointer;
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: 0.3rem;
   background: none;
   border: none;
   padding: 0.5rem 0;
   font-size: 1rem;
   transition: color 0.3s ease;
-  width: fit-content;
 
   &:hover,
   &:focus {
@@ -100,7 +108,7 @@ nav{
   position: absolute;
   top: 100%;
   left: 0;
-  background: rgb(227, 235, 244);
+  background-color: #7c7d78;
   /*color: #333;*/
   list-style: none;
   padding: 0.5rem 0;
@@ -113,11 +121,15 @@ nav{
   border-bottom: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
-  min-width:400px;
+  min-width: 400px;
 
   @media (max-width: 768px) {
     position: relative;
     box-shadow: none;
+    position: relative;
+    box-shadow: none;
+    background-color: #959394;
+    top:0;
   }
 }
 
@@ -134,8 +146,7 @@ nav{
 
     &:hover,
     &:focus {
-      background-color: #f0f0f0;
-      color: #0070f3;
+      color: #dded52;
     }
   }
 }
@@ -162,10 +173,11 @@ nav{
     transform: rotate(-135deg);
   }
 }
-.btnLink{
+
+.btnLink {
   display: flex;
-    flex-direction: row;
-   
+  flex-direction: row;
+
 }
 
 /* Бургер меню */
@@ -204,12 +216,14 @@ nav{
     transform: rotate(-45deg);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 950px) {
     display: flex;
   }
 }
 
 
-.block{
+.block {
   width: 50%;
+
+
 }

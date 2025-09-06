@@ -1,3 +1,4 @@
+
 import Footer from "../../components/Footter/Footer";
 import Header from "../../components/Header/Header";
 import styles from "./MainLayout.module.scss";
@@ -5,6 +6,7 @@ import styles from "./MainLayout.module.scss";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={styles.layout}>
+    
       <Header />
      
 
