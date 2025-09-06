@@ -1,11 +1,4 @@
-
-Allow: /
-
-# Блокуємо приватні файли
-Disallow: /api/
 Disallow: /admin/
-Disallow: /_next/
-Disallow: /scripts/
-
-# Sitemap
-Sitemap: https://fbe.pp.ua/sitemap.xml
+Disallow: /api/
+Allow: /product/
+Allow: /
