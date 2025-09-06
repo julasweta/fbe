@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-09-06T19:13:05.932Z",
+  "siteUrl": "https://fbe.pp.ua",
+  "pages": [
+    {
+      "url": "https://fbe.pp.ua/",
+      "timestamp": "2025-09-06T19:13:06.483Z",
+      "issues": [
+        "Відсутній title тег",
+        "Відсутній meta description",
+        "Відсутній H1 тег"
+      ],
+      "warnings": [
+        "Відсутні structured data (JSON-LD)"
+      ],
+      "hasStructuredData": false,
+      "hasOpenGraph": true
+    },
+    {
+      "url": "https://fbe.pp.ua/product/1",
+      "error": "HTTP 404",
+      "timestamp": "2025-09-06T19:13:07.625Z"
+    },
+    {
+      "url": "https://fbe.pp.ua/product/2",
+      "error": "HTTP 404",
+      "timestamp": "2025-09-06T19:13:08.768Z"
+    }
+  ],
+  "sitemap": {
+    "status": "ok",
+    "urlCount": 9
+  },
+  "robots": {
+    "status": "ok",
+    "content": "\r\nAllow: /\r\n\r\n# Блокуємо приватні файли\r\nDisallow: /api/\r\nDisallow: /admin/\r\nDisallow: /_next/\r\nDisallow: /scripts/\r\n\r\n# Sitemap\r\nSitemap: https://fbe.pp.ua/sitemap.xml\r\n"
+  },
+  "summary": {
+    "totalPages": 3,
+    "pagesWithIssues": 1,
+    "pagesWithWarnings": 1,
+    "totalIssues": 3,
+    "totalWarnings": 1
+  }
+}

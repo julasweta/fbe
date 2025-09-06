@@ -8,7 +8,7 @@ import { AboutPage, AdminPage, AuthPage, CartPage, CategoryPage, ChangePassword,
 
 
 export const publicRoutes = [
- 
+
   { path: "/login", element: <AuthPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
@@ -22,7 +22,7 @@ export const publicRoutes = [
   { path: "/group/:collectionSlug", element: <CollectionPage /> },
   { path: "/cart", element: <CartPage /> },
   { path: "/checkout", element: <Checkout /> },
-  { path:"/delivery-terms", element: <Delivery/>}
+  { path: "/delivery-terms", element: <Delivery /> },
 ];
 
 export const mainRoutes = [
@@ -44,7 +44,7 @@ export const privateRoutes = [
       { path: "dashboard", element: <Dashboard /> },
     ],
   }
-,
+  ,
 ];
 
 export const notFoundRoute = {

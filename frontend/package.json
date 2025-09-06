@@ -12,13 +12,16 @@
     "start": "npx serve -s dist -l 5173",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist --cname fbe.pp.ua",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "seo-audit": "node scripts/seo-monitor.js"
   },
   "dependencies": {
     "@types/react-helmet": "^6.1.11",
     "axios": "^1.11.0",
     "classnames": "^2.5.1",
     "lucide-react": "^0.541.0",
+    "puppeteer": "^24.19.0",
     "react": "^19.1.1",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.1.1",
