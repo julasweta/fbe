@@ -2,3 +2,5 @@ Disallow: /admin/
 Disallow: /api/
 Allow: /product/
 Allow: /
+Allow: /sitemap.xml
+Sitemap: https://fbe.pp.ua/sitemap.xml
