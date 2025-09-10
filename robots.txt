@@ -1,3 +1,10 @@
+User-agent: Googlebot
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /scripts/
+
 User-agent: *
 Allow: /
 
