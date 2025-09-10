@@ -3,7 +3,7 @@ name: Generate Sitemap
 on:
   push:
     branches:
-      - main # Or your main branch name
+      - gh-pages # Or your main branch name
 
 jobs:
   build:
