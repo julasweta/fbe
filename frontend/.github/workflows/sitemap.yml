@@ -1,0 +1,19 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main # Or your main branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Sitemap
+        uses: cicirello/generate-sitemap@v1.10.3 # Use the latest version
+        with:
+          # Optional inputs, refer to the action's documentation for more
+          # sitemap-path: sitemap.xml
+          # include-html: true
+          # include-pdf: true
