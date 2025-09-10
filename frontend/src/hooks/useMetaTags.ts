@@ -77,12 +77,7 @@ export const useMetaTags = (config: MetaTagsConfig) => {
       setMetaTag('telegram:channel', telegramChannel);
     }
 
-    // Додаткові теги для кращого відображення в Telegram
-    if (image) {
-      setMetaTag('og:image:width', '1200');
-      setMetaTag('og:image:height', '630');
-      setMetaTag('og:image:type', 'image/jpeg');
-    }
+ 
 
   }, [config]);
 };
