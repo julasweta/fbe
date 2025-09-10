@@ -1,25 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="ua">
 
 <head>
   <meta charset="utf-8">
-  <title></title>
-  <script>
-    var pathSegmentsToKeep = 0;
-    var l = window.location;
-    l.replace(
-      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') +
-      '/?/' +
-      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash
-    );
-  </script>
+  <title>404 - Сторінка не знайдена</title>
+  <meta name="description" content="Сторінка, яку ви шукаєте, не існує. Поверніться на головну." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" type="image/svg+xml" href="./logo.svg" />
 </head>
 
 <body>
-  <div>Redirecting...</div>
+  <h1>404</h1>
+  <p>Сторінка не знайдена. <a href="/fbe/">Повернутися на головну</a></p>
 </body>
 
 </html>
