@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Buttons/Button";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { IUser } from "../interfaces/IUser";
+import style from "./pages.module.scss"
 
 
 
@@ -49,6 +50,13 @@ const ProfilePage = () => {
   return (
     <div className="page">
       <h2 >Профіль користувача</h2>
+      <div className={style.boxLine}>
+        <Link to="/orders"> <Button variant="link">Мої замовлення</Button> </Link>
+        <Link to="/change-password" className="blue hover:underline">
+          <Button variant="link">Змінити пароль</Button>
+        </Link>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)} className="form">
         <Input
           placeholder="Ім’я"
@@ -120,9 +128,7 @@ const ProfilePage = () => {
         <Button type="submit">Оновити профіль</Button>
       </form>
 
-      <Link to="/change-password" className="blue hover:underline">
-        <Button>Змінити пароль</Button>
-      </Link>
+    
     </div>
   );
 };

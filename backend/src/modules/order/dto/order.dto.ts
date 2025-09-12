@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MinLength,
@@ -116,4 +117,16 @@ export class OrderResponseDto {
 
   @ApiProperty({ type: [OrderItemResponseDto] })
   items: OrderItemResponseDto[];
+}
+
+
+export class UpdateOrderStatusDto {
+  @ApiProperty({
+    description: 'Новий статус замовлення',
+    enum: OrderStatus,
+    example: OrderStatus.PROCESSING
+  })
+  @IsNotEmpty()
+  @IsEnum(OrderStatus, { message: 'Статус повинен бути одним з: PENDING, PROCESSING, COMPLETED, CANCELED' })
+  status: OrderStatus;
 }
