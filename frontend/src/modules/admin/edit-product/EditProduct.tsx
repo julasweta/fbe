@@ -167,7 +167,7 @@ const EditProduct: React.FC = () =>  {
 
   const handleAddVariant = () => {
     variantsArray.append({
-      color: EColor.BLACK,
+      color: "BLACK",
       sizes: [],
       price: watchedData.price ?? 0,
       priceSale: watchedData.priceSale ?? undefined,

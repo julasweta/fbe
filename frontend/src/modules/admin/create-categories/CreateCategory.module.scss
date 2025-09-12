@@ -105,17 +105,23 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.
   box-shadow: $shadow;
 
   &:hover {
-    background: linear-gradient(135deg, darken($primary-blue, 5%), darken($primary-blue-dark, 5%));
+    background: linear-gradient(135deg,
+          var(--success-green),
+          var(--success-green-dark));
   }
 }
 
 .btnSuccess {
-  background: linear-gradient(135deg, $success-green, $success-green-dark);
+background: linear-gradient(135deg,
+      var(--success-green),
+      var(--success-green-dark));
   color: white;
   box-shadow: $shadow;
 
   &:hover {
-    background: linear-gradient(135deg, darken($success-green, 5%), darken($success-green-dark, 5%));
+    background: linear-gradient(135deg,
+          var(--success-green),
+          var(--success-green-dark));
   }
 }
 

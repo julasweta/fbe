@@ -52,15 +52,17 @@ model Product {
   cartItems    CartItem[]
   features     ProductFeature[]
   images       ProductImage[]
-  sizes        ESize[]              @default([])
-  colors       EColor[]             @default([])
+  sizes        ESize[]  @default([])
+  colors       EColor[] @default([])
 
-  variants ProductVariant[]  // 👈 замість масиву кольорів і фоток
+  variants ProductVariant[]
 
   category     Category?   @relation(fields: [categoryId], references: [id])
   categoryId   Int?
   collection   Collection? @relation(fields: [collectionId], references: [id])
   collectionId Int?
+
+  orderItems OrderItem[]   // 👈 додаємо поле для двосторонньої реляції
 }
 
 model ProductVariant {
@@ -89,20 +91,23 @@ model ProductImage {
 
 
 model OrderItem {
-  id      Int   @id @default(autoincrement())
-  order   Order @relation(fields: [orderId], references: [id])
-  orderId Int
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
 
-  productId  Int?
-  name       String // Назва товару на момент покупки
-  image      String? // Фото товару на момент покупки
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id]) // 👈 додаємо зв’язок
+
+  name       String
+  image      String?
   quantity   Int     @default(1)
-  price      Float // Ціна оригінальна
+  price      Float
   priceSale  Float?
-  finalPrice Float // Ціна на момент покупки
+  finalPrice Float
   color      String?
   size       String?
 }
+
 
 model Collection {
   id          Int      @id @default(autoincrement())

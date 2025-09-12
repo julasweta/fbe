@@ -4,6 +4,8 @@ Disallow: /api/
 Disallow: /admin/
 Disallow: /_next/
 Disallow: /scripts/
+Disallow: /cart
+Disallow: /checkout
 
 User-agent: *
 Allow: /

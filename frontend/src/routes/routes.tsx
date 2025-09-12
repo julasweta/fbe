@@ -4,7 +4,7 @@ import ForgotPassword from "../modules/auth/ForgotPassword";
 import ResetPassword from "../modules/auth/ResetPassword";
 import Delivery from "../modules/common/Delivery";
 import Checkout from "../modules/orders/Checkout";
-import { AboutPage, AdminPage, AuthPage, CartPage, CategoryPage, ChangePassword, CollectionPage, ContactPage, HomePage, NotFoundPage, PrivacyPage, ProductPage, ProfilePage, RegisterPage } from "../pages";
+import { AboutPage, AdminPage, AuthPage, CartPage, CategoryPage, ChangePassword, CollectionPage, ContactPage, HomePage, NotFoundPage, OrdersPage, PrivacyPage, ProductPage, ProfilePage, RegisterPage } from "../pages";
 
 
 export const publicRoutes = [
@@ -32,6 +32,7 @@ export const mainRoutes = [
 
 export const privateRoutes = [
   { path: "/profile", element: <ProfilePage /> },
+  { path: "/orders", element: <OrdersPage /> },
   {
     path: "/admin",
     element: <AdminPage />,

@@ -41,6 +41,15 @@
   }
 }
 
+.link {
+  background-color: #390eb0; // red-500
+  color: #fff;
+
+  &:hover {
+    background-color: #5665c9; // red-600
+  }
+}
+
 .disabled {
   background-color: #9ca3af !important;
   cursor: not-allowed;

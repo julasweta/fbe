@@ -11,6 +11,8 @@ export interface ICartItem {
   finalPrice?: number;
 }
 
+
+
 export interface ICartResponse {
   id: number;
   userId: number | null;

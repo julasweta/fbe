@@ -13,6 +13,7 @@ import { productService } from "../../services/ProductService";
 import { Button } from "../../components/ui/Buttons/Button";
 import Input from "../../components/ui/Inputs/Input";
 import { useCartStore } from "../../store/useCartStore";
+import type { ICartItem } from "../../interfaces/ICartItem";
 /* import { useMetaTags } from "../../hooks/useMetaTags";
 import { generateMetaData } from "../../utils/metaHelpers"; */
 interface ProductProps {
@@ -25,16 +26,7 @@ interface ProductFormData {
   quantity: number;
 }
 
-interface CartItem {
-  productId: number;
-  name: string;
-  price: number;
-  priceSale?: number;
-  color: string;
-  size: string;
-  quantity: number;
-  image?: string;
-}
+
 
 const Product: React.FC<ProductProps> = ({ productId }) => {
   const [product, setProduct] = useState<IProduct | null>(null);
@@ -51,14 +43,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
 
-  /*   useMetaTags(
-      (product && product.translations[0]?.description && product.variants[0]?.images) ? generateMetaData({
-        title: product.translations[0].name,
-        description: product.translations[0].description,
-        image: product.variants[0].images[0]?.url, // Видаляємо ? після image
-        path: `/product/${productId}`
-      }) : {}
-    ); */
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -183,7 +167,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
           ? variant.priceSale
           : variant.price || product.priceSale || product.price;
 
-      const cartItem: CartItem = {
+      const cartItem: ICartItem = {
         productId: product.id,
         name: translation?.name || "Без назви",
         price: finalPrice,
@@ -247,16 +231,16 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   return (
     <>
 
-      <title>{product.translations[0].name} - My Store</title>
-      <meta name="description" content={product.translations[0].description} />
+     
+    {/*   <meta name="description" content={product.translations[0].description} />
       <meta property="og:title" content={product.translations[0].name} />
       <meta property="og:description" content={product.translations[0].description} />
       <meta property="og:image" content={product && product.variants[0].images && product.variants[0].images[0].url} />
-
+ */}
 
       <div className={styles.product}>
         <div className={styles.images}>
-          {/* Основне зображення */}
+          {/* Основне зображення -*/}
           <div className={styles.mainImageContainer}>
             {currentImage ? (
               <img

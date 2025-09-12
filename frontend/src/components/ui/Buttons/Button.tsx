@@ -7,7 +7,7 @@ interface ButtonProps {
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void | Promise<void>; // Правильная типизация
   disabled?: boolean;
   loading?: boolean;
-  variant?: "primary" | "secondary" | "danger";
+  variant?: "primary" | "secondary" | "danger" | "link";
   children?: ReactNode; // Зробили необов'язковим
   className?: string;
   style?: CSSProperties; // Добавлена поддержка style

@@ -13,6 +13,7 @@ const AdminPage = () => {
     { href: 'createproduct', label: 'Create Product' },
     { href: 'create-category', label: 'Create/Update Category' },
     { href: 'create-collection', label: 'Create/Update Collection' },
+    { href: '/orders', label: 'Замовлення' },
   ];
 
   const toggleSidebar = () => {

@@ -208,3 +208,10 @@ h2{
     .submenuTitle{
       font-size: 25px;
     }
+
+    .boxLine{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      margin: 10px;
+    }

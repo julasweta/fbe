@@ -21,12 +21,9 @@ function escapeXML(str) {
 // Функція для валідації та форматування дати
 function formatDate(dateStr) {
   if (!dateStr) return new Date().toISOString().split('T')[0];
-
   try {
     const date = new Date(dateStr);
-    if (isNaN(date.getTime())) {
-      return new Date().toISOString().split('T')[0];
-    }
+    if (isNaN(date.getTime())) return new Date().toISOString().split('T')[0];
     return date.toISOString().split('T')[0];
   } catch (error) {
     return new Date().toISOString().split('T')[0];
@@ -38,7 +35,6 @@ async function checkSitemapAvailability(sitemapUrl) {
   try {
     console.log(`🔍 Перевіряю доступність: ${sitemapUrl}`);
     const response = await fetch(sitemapUrl);
-
     if (response.ok) {
       console.log('✅ Sitemap доступний онлайн');
       return true;
@@ -52,22 +48,49 @@ async function checkSitemapAvailability(sitemapUrl) {
   }
 }
 
+// Функція для генерації окремого sitemap файлу
+function generateSitemapFile(urls, fileName, publicDir, distDir) {
+  const xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
+  const urlsetOpen = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+  const urlsetClose = '</urlset>';
+
+  const urlEntries = urls.map(url => `  <url>
+    <loc>${escapeXML(url.loc)}</loc>
+    <lastmod>${url.lastmod}</lastmod>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
+  </url>`).join('\n');
+
+  const sitemap = [xmlDeclaration, urlsetOpen, urlEntries, urlsetClose].join('\n');
+  const sitemapPath = join(publicDir, fileName);
+
+  if (!existsSync(publicDir)) mkdirSync(publicDir, {recursive: true});
+  writeFileSync(sitemapPath, sitemap, 'utf8');
+  console.log(`✅ ${fileName} створено: ${sitemapPath}`);
+
+  if (existsSync(distDir)) {
+    const distSitemapPath = join(distDir, fileName);
+    writeFileSync(distSitemapPath, sitemap, 'utf8');
+    console.log(`✅ ${fileName} створено для production: ${distSitemapPath}`);
+  }
+
+  return `https://fbe.pp.ua/${fileName}`;
+}
+
 async function generateSitemap() {
   try {
     const API_URL = 'https://fbe.onrender.com/products';
-    const SITEMAP_URL = 'https://fbe.pp.ua/sitemap.xml';
+    const SITEMAP_BASE_URL = 'https://fbe.pp.ua';
+    const publicDir = join(__dirname, '..', 'public');
+    const distDir = join(__dirname, '..', 'dist');
 
     console.log('🔄 Завантаження продуктів з API...');
-
     const response = await fetch(API_URL, {
       headers: {'User-Agent': 'Mozilla/5.0'},
-      timeout: 10000
+      timeout: 10000,
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     const products = data.data || [];
 
@@ -75,149 +98,78 @@ async function generateSitemap() {
 
     // Статичні сторінки
     const staticPages = [
-      {
-        url: 'https://fbe.pp.ua/',
-        lastmod: new Date().toISOString().split('T')[0],
-        changefreq: 'daily',
-        priority: '1.0'
-      },
-      {
-        url: 'https://fbe.pp.ua/products',
-        lastmod: new Date().toISOString().split('T')[0],
-        changefreq: 'daily',
-        priority: '0.9'
-      },
-      {
-        url: 'https://fbe.pp.ua/about',
-        lastmod: new Date().toISOString().split('T')[0],
-        changefreq: 'monthly',
-        priority: '0.7'
-      },
-      {
-        url: 'https://fbe.pp.ua/contact',
-        lastmod: new Date().toISOString().split('T')[0],
-        changefreq: 'monthly',
-        priority: '0.6'
-      }
+      {loc: `${SITEMAP_BASE_URL}/`, lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '1.0'},
+      {loc: `${SITEMAP_BASE_URL}/products`, lastmod: new Date().toISOString().split('T')[0], changefreq: 'daily', priority: '0.9'},
+      {loc: `${SITEMAP_BASE_URL}/about`, lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.7'},
+      {loc: `${SITEMAP_BASE_URL}/contact`, lastmod: new Date().toISOString().split('T')[0], changefreq: 'monthly', priority: '0.6'},
     ];
 
-    // Створюємо XML
-    const xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
-    const urlsetOpen = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-    const urlsetClose = '</urlset>';
-
-    // Статичні сторінки URLs
-    const staticUrls = staticPages.map(page => `  <url>
-    <loc>${escapeXML(page.url)}</loc>
-    <lastmod>${page.lastmod}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('\n');
-
-    // Сторінки продуктів
+    // Продуктові URL
     const productUrls = products
       .filter(product => product && (product.id || product._id))
-      .slice(0, 50000) // Обмежуємо кількість для sitemap
-      .map(product => {
-        const productId = escapeXML(product.id || product._id);
-        const lastMod = formatDate(product.updatedAt || product.updated_at);
+      .slice(0, 50000)
+      .map(product => ({
+        loc: `${SITEMAP_BASE_URL}/product/${escapeXML(product.id || product._id)}`,
+        lastmod: formatDate(product.updatedAt || product.updated_at),
+        changefreq: 'weekly',
+        priority: '0.8',
+      }));
 
-        return `  <url>
-    <loc>https://fbe.pp.ua/product/${productId}</loc>
-    <lastmod>${lastMod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-      })
-      .join('\n');
+    // Колекції (поки що порожні, додайте логіку, якщо є дані)
+    const collectionUrls = []; // Приклад: [{ loc: `${SITEMAP_BASE_URL}/collection/1`, ... }]
 
-    // Збираємо весь sitemap
-    const sitemapParts = [
-      xmlDeclaration,
-      urlsetOpen,
-      staticUrls
-    ];
+    // Генерація окремих sitemap файлів
+    const pagesSitemapUrl = generateSitemapFile(staticPages, 'sitemap_pages_1.xml', publicDir, distDir);
+    const productsSitemapUrl = generateSitemapFile(productUrls, 'sitemap_products_1.xml', publicDir, distDir);
+    const collectionsSitemapUrl = generateSitemapFile(collectionUrls, 'sitemap_collections_1.xml', publicDir, distDir);
+    const blogsSitemapUrl = generateSitemapFile([], 'sitemap_blogs_1.xml', publicDir, distDir); // Поки що порожній
 
-    if (productUrls) {
-      sitemapParts.push(productUrls);
-    }
+    // Генерація sitemapindex
+    const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap><loc>${productsSitemapUrl}</loc></sitemap>
+  <sitemap><loc>${pagesSitemapUrl}</loc></sitemap>
+  <sitemap><loc>${collectionsSitemapUrl}</loc></sitemap>
+  <sitemap><loc>${blogsSitemapUrl}</loc></sitemap>
+</sitemapindex>`;
 
-    sitemapParts.push(urlsetClose);
-    const sitemap = sitemapParts.join('\n');
+    const sitemapIndexPath = join(publicDir, 'sitemap.xml');
+    if (!existsSync(publicDir)) mkdirSync(publicDir, {recursive: true});
+    writeFileSync(sitemapIndexPath, sitemapIndex, 'utf8');
+    console.log(`✅ sitemap.xml (index) створено: ${sitemapIndexPath}`);
 
-    // Записуємо файл для Vite
-    const publicDir = join(__dirname, '..', 'public');
-    const sitemapPath = join(publicDir, 'sitemap.xml');
-
-    // Створюємо public директорію якщо не існує
-    if (!existsSync(publicDir)) {
-      mkdirSync(publicDir, {recursive: true});
-    }
-
-    writeFileSync(sitemapPath, sitemap, 'utf8');
-    console.log(`✅ Sitemap створено: ${sitemapPath}`);
-
-    // Також створюємо для dist (після build)
-    const distDir = join(__dirname, '..', 'dist');
     if (existsSync(distDir)) {
-      const distSitemapPath = join(distDir, 'sitemap.xml');
-      writeFileSync(distSitemapPath, sitemap, 'utf8');
-      console.log(`✅ Sitemap створено для production: ${distSitemapPath}`);
+      const distSitemapIndexPath = join(distDir, 'sitemap.xml');
+      writeFileSync(distSitemapIndexPath, sitemapIndex, 'utf8');
+      console.log(`✅ sitemap.xml (index) створено для production: ${distSitemapIndexPath}`);
     }
 
-    console.log(`📊 Всього URL в sitemap: ${staticPages.length + products.length}`);
-
-    // Перевірка розміру файлу
-    if (existsSync(sitemapPath)) {
-      const stats = statSync(sitemapPath);
-      const fileSizeInBytes = stats.size;
-      const fileSizeInKB = Math.round(fileSizeInBytes / 1024);
-
-      console.log(`📏 Розмір sitemap: ${fileSizeInKB} KB`);
-
-      if (fileSizeInBytes > 50 * 1024 * 1024) { // 50MB
-        console.warn('⚠️ Розмір sitemap більше 50MB');
-      }
-
-      if (staticPages.length + products.length > 50000) {
-        console.warn('⚠️ Більше 50,000 URL в sitemap');
-      }
+    console.log(`📊 Всього URL: ${staticPages.length + productUrls.length + collectionUrls.length}`);
+    if (existsSync(sitemapIndexPath)) {
+      const stats = statSync(sitemapIndexPath);
+      console.log(`📏 Розмір sitemapindex: ${Math.round(stats.size / 1024)} KB`);
     }
 
-    // Валідація створеного sitemap
-    validateSitemap(sitemapPath);
+    validateSitemap(sitemapIndexPath);
 
     console.log('⏳ Чекаю 3 секунди перед перевіркою доступності...');
     await new Promise(resolve => setTimeout(resolve, 3000));
-
-    // Перевіряємо доступність онлайн
-    await checkSitemapAvailability(SITEMAP_URL);
+    await checkSitemapAvailability(`${SITEMAP_BASE_URL}/sitemap.xml`);
 
     console.log('🎉 Генерація sitemap завершена успішно!');
-
   } catch (error) {
     console.error('❌ Помилка генерації sitemap:', error.message);
 
-    // Створюємо базовий sitemap якщо API недоступний
-    const fallbackSitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://fbe.pp.ua/</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`;
+    const fallbackSitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap><loc>https://fbe.pp.ua/sitemap_pages_1.xml</loc></sitemap>
+</sitemapindex>`;
 
     const publicDir = join(__dirname, '..', 'public');
-    const sitemapPath = join(publicDir, 'sitemap.xml');
-
-    if (!existsSync(publicDir)) {
-      mkdirSync(publicDir, {recursive: true});
-    }
-
-    writeFileSync(sitemapPath, fallbackSitemap, 'utf8');
-    console.log('✅ Створено базовий sitemap через fallback');
+    const sitemapIndexPath = join(publicDir, 'sitemap.xml');
+    if (!existsSync(publicDir)) mkdirSync(publicDir, {recursive: true});
+    writeFileSync(sitemapIndexPath, fallbackSitemapIndex, 'utf8');
+    console.log('✅ Створено базовий sitemapindex через fallback');
   }
 }
 
@@ -225,18 +177,9 @@ async function generateSitemap() {
 function validateSitemap(sitemapPath) {
   try {
     const sitemapContent = readFileSync(sitemapPath, 'utf8');
-
-    if (!sitemapContent.includes('<?xml version="1.0" encoding="UTF-8"?>')) {
-      throw new Error('Відсутня XML декларація');
-    }
-
-    if (!sitemapContent.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
-      throw new Error('Неправильний namespace');
-    }
-
-    const urlCount = (sitemapContent.match(/<url>/g) || []).length;
-    console.log(`✅ Sitemap валідний: ${urlCount} URL знайдено`);
-
+    if (!sitemapContent.includes('<?xml version="1.0" encoding="UTF-8"?>')) throw new Error('Відсутня XML декларація');
+    if (!sitemapContent.includes('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) throw new Error('Неправильний namespace');
+    console.log('✅ Sitemap валідний');
     return true;
   } catch (error) {
     console.error('❌ Помилка валідації sitemap:', error.message);
@@ -244,5 +187,4 @@ function validateSitemap(sitemapPath) {
   }
 }
 
-// Запускаємо генерацію
 generateSitemap();
