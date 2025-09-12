@@ -10,7 +10,9 @@ export class JwtAuthGuard extends AuthGuard('bearer') {
 
     // Логуємо тільки як warning, не як error
     if (err || !user) {
-      this.logger.warn(`Auth failed for ${request.method} ${request.url}: ${info?.message || err?.message || 'Unauthorized'}`);
+      this.logger.warn(
+        `Auth failed for ${request.method} ${request.url}: ${info?.message || err?.message || 'Unauthorized'}`,
+      );
     }
 
     // Повертаємо стандартну обробку (це все ще кине UnauthorizedException)

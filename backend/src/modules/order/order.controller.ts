@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, UseGuards, Req, UnauthorizedException, Query, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  Req,
+  UnauthorizedException,
+  Query,
+  Patch,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -8,14 +19,12 @@ import { Request } from 'express';
 @ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) { }
-
+  constructor(private readonly orderService: OrderService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('all')  // Другим: /orders/all
+  @Get('all') // Другим: /orders/all
   @ApiOperation({ summary: 'Отримати всі замовлення' })
   @ApiResponse({ status: 200, description: 'Список замовлень' })
-
   async getOrders(
     @Req() req: Request,
     @Query('showAll') showAll?: string,
@@ -34,16 +43,20 @@ export class OrderController {
     const pageNum = page ? +page : 1;
     const limitNum = limit ? +limit : 10;
 
-    return this.orderService.getOrders(req.user.id ? +req.user.id : undefined, isShowAll, filters, pageNum, limitNum);
+    return this.orderService.getOrders(
+      req.user.id ? +req.user.id : undefined,
+      isShowAll,
+      filters,
+      pageNum,
+      limitNum,
+    );
   }
-
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Отримати одне замовлення за ID' })
   @ApiResponse({ status: 200, description: 'Замовлення' })
   async getOrderById(@Param('id') idStr: string, @Req() req: Request) {
-
     const id = +idStr;
 
     if (req.user.id && req.user.role !== 'ADMIN') {
@@ -68,13 +81,15 @@ export class OrderController {
   async updateOrderStatus(
     @Param('id') idStr: string,
     @Body() dto: UpdateOrderStatusDto,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     const id = +idStr;
 
     // Перевіряємо права доступу - тільки адміни можуть оновлювати статус
     if (req.user.role !== 'ADMIN') {
-      throw new UnauthorizedException('Тільки адміністратори можуть оновлювати статус замовлень');
+      throw new UnauthorizedException(
+        'Тільки адміністратори можуть оновлювати статус замовлень',
+      );
     }
 
     return await this.orderService.updateOrderStatus(id, dto.status);

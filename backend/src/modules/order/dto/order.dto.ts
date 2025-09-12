@@ -119,14 +119,16 @@ export class OrderResponseDto {
   items: OrderItemResponseDto[];
 }
 
-
 export class UpdateOrderStatusDto {
   @ApiProperty({
     description: 'Новий статус замовлення',
     enum: OrderStatus,
-    example: OrderStatus.PROCESSING
+    example: OrderStatus.PROCESSING,
   })
   @IsNotEmpty()
-  @IsEnum(OrderStatus, { message: 'Статус повинен бути одним з: PENDING, PROCESSING, COMPLETED, CANCELED' })
+  @IsEnum(OrderStatus, {
+    message:
+      'Статус повинен бути одним з: PENDING, PROCESSING, COMPLETED, CANCELED',
+  })
   status: OrderStatus;
 }

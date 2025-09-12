@@ -10,7 +10,7 @@ export class OrderService {
   constructor(
     private prisma: PrismaService,
     private telegramService: TelegramService,
-  ) { }
+  ) {}
 
   async getOrderById(id: number) {
     return this.prisma.order.findUnique({
@@ -47,7 +47,9 @@ export class OrderService {
         where.createdAt.gte = new Date(filters.dateFrom).toISOString();
       }
       if (filters.dateTo) {
-        where.createdAt.lte = new Date(filters.dateTo + 'T23:59:59.999Z').toISOString();
+        where.createdAt.lte = new Date(
+          filters.dateTo + 'T23:59:59.999Z',
+        ).toISOString();
       }
     }
 
@@ -127,7 +129,10 @@ export class OrderService {
         paymentMethod: order.paymentMethod,
       });
     } catch (err) {
-      console.error('❌ Не вдалось відправити замовлення у Telegram:', err.message);
+      console.error(
+        '❌ Не вдалось відправити замовлення у Telegram:',
+        err.message,
+      );
     }
 
     return order;
@@ -137,7 +142,7 @@ export class OrderService {
     // Перевіряємо чи існує замовлення
     const existingOrder = await this.prisma.order.findUnique({
       where: { id },
-      include: { items: true }
+      include: { items: true },
     });
 
     if (!existingOrder) {
@@ -149,7 +154,7 @@ export class OrderService {
       where: { id },
       data: {
         status,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
       include: {
         items: {
@@ -165,8 +170,6 @@ export class OrderService {
         },
       },
     });
-
- 
 
     return updatedOrder;
   }
