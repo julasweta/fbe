@@ -57,7 +57,7 @@ const CreateProduct: React.FC = () => {
 
   const handleAddVariant = () => {
     variantsArray.append({
-      color: EColor.BLACK,
+      color: "BLACK",
       sizes: [],
       price: watchPrice || 0,
       priceSale: watchPriceSale || 0,

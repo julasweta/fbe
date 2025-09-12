@@ -247,16 +247,16 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   return (
     <>
 
-      <title>{product.translations[0].name} - My Store</title>
-      <meta name="description" content={product.translations[0].description} />
+     
+    {/*   <meta name="description" content={product.translations[0].description} />
       <meta property="og:title" content={product.translations[0].name} />
       <meta property="og:description" content={product.translations[0].description} />
       <meta property="og:image" content={product && product.variants[0].images && product.variants[0].images[0].url} />
-
+ */}
 
       <div className={styles.product}>
         <div className={styles.images}>
-          {/* Основне зображення */}
+          {/* Основне зображення -*/}
           <div className={styles.mainImageContainer}>
             {currentImage ? (
               <img

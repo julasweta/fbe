@@ -1,14 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Card.module.scss";
-import { colorHexMap,  type IProduct, sizeLabels } from "../../interfaces/IProduct";
+import { colorHexMap, type IProduct, sizeLabels } from "../../interfaces/IProduct";
 
 interface CardProps {
   product: IProduct;
   isMainPage?: boolean;
 }
-
-
 
 const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const { id, translations, variants, price, priceSale } = product;
@@ -39,25 +37,25 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const finalPrice = price ?? minVariantPrice;
   const finalSalePrice = priceSale ?? minVariantSalePrice;
 
+  console.log('🃏 Card rendering product:', { id, name, finalPrice, image });
+
   return (
     <div className={styles.card}>
-      <Link to={`/product/${id}`} className={styles.imageWrapper}>
+      <Link to={`/product/${id}`} className={styles.imageWrapper} rel="canonical">
         {image ? (
           <img src={image.url} alt={image.altText || name} />
         ) : (
           <div className={styles.noImage}>Фото відсутнє</div>
         )}
       </Link>
-
       <p className={`${styles.name} ${isMainPage ? styles.mainFont : ''}`}>
         <Link to={`/product/${id}`}>{name}</Link>
       </p>
-
       <p className={`${styles.price} ${isMainPage ? styles.mainFont : ''}`}>
         {finalPrice ? (
           finalSalePrice && finalSalePrice < finalPrice ? (
             <>
-              <span className={!isMainPage ? styles.priceSale:'' }>₴{finalSalePrice.toFixed(2)} </span>
+              <span className={!isMainPage ? styles.priceSale : ''}>₴{finalSalePrice.toFixed(2)} </span>
               <span className={styles.priceOriginal}>₴{finalPrice.toFixed(2)}</span>
             </>
           ) : (
@@ -67,16 +65,13 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
           "Ціна відсутня"
         )}
       </p>
-
       <div className={styles.features}>
         {!isMainPage ? (
           allSizes.length > 0
             ? allSizes.map((size) => sizeLabels[size]).join(", ")
-            
             : "Немає"
         ) : ''}
-
-      {!isMainPage && <br></br>}
+        {!isMainPage && <br />}
         {allColors.length > 0 ? (
           <div className={styles.colorDots}>
             {allColors.map((color) => (
