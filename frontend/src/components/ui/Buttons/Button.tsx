@@ -1,46 +1,54 @@
-import type { ReactNode, MouseEvent, CSSProperties } from "react";
+import {
+  forwardRef,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
 import styles from "./Button.module.scss";
 import classNames from "classnames";
 
-interface ButtonProps {
-  type?: "button" | "submit" | "reset"; // HTML button types должны быть lowercase
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void | Promise<void>; // Правильная типизация
-  disabled?: boolean;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   variant?: "primary" | "secondary" | "danger" | "link";
-  children?: ReactNode; // Зробили необов'язковим
-  className?: string;
-  style?: CSSProperties; // Добавлена поддержка style
-  title?: string; // Добавлено для поддержки title
+  children?: ReactNode;
 }
 
-export const Button = ({
-  type = "button",
-  onClick,
-  disabled = false,
-  loading = false,
-  variant = "primary",
-  children,
-  className,
-  style, // Добавляем style в деструктуризацию
-  title, // Добавляем title в деструктуризацию
-}: ButtonProps) => {
-  return (
-    <button // используем HTML button, а не компонент Button
-      type={type}
-      onClick={onClick}
-      disabled={disabled || loading}
-      style={style} // Передаем style в button
-      title={title} // Передаем title в button
-      className={classNames(
-        styles.button,
-        styles[variant],
-        { [styles.disabled]: disabled || loading },
-        className
-      )}
-    >
-      {loading && <span className={styles.loader}></span>}
-      {title || children}
-    </button>
-  );
-};
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      type = "button",
+      onClick,
+      disabled = false,
+      loading = false,
+      variant = "primary",
+      children,
+      className,
+      style,
+      title,
+      ...rest // <-- ✅ збираємо всі інші стандартні пропси
+    },
+    ref
+  ) => {
+    return (
+      <button
+        ref={ref}
+        type={type}
+        onClick={onClick}
+        disabled={disabled || loading}
+        style={style}
+        title={title}
+        className={classNames(
+          styles.button,
+          styles[variant],
+          { [styles.disabled]: disabled || loading },
+          className
+        )}
+        {...rest} // ✅ передаємо далі (наприклад, onKeyDown, aria-label тощо)
+      >
+        {loading && <span className={styles.loader}></span>}
+        {title || children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = "Button";

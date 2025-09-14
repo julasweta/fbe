@@ -12,4 +12,4 @@ export { default as PrivacyPage } from "./PrivacyPage";
 export { default as ProductPage } from "./ProductPage";
 export { default as ContactPage } from "./ContactPage";
 export { default as ChangePassword } from "./ChangePassword";
-export { default as OrdersPage } from "./OrdersPage"
+export { default as OrdersPage } from "./OrdersPage";

@@ -18,6 +18,7 @@ import { CartItemModule } from './modules/cart-item/cart-item.module';
 import { OrderModule } from './modules/order/order.module';
 import { OrderItemDto } from './modules/order-item/dto/order-item.dto';
 import { TelegramModule } from './modules/telegram/telegram.module';
+import { NovaPostModule } from './modules/nova-post/nova-poshta.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { TelegramModule } from './modules/telegram/telegram.module';
     OrderModule,
     OrderItemDto,
     TelegramModule,
+    NovaPostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

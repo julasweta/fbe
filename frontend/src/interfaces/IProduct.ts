@@ -6,8 +6,17 @@ export type ESize = (typeof ESize)[number];
 
 // Кольори
 export const EColor = [
-  "RED", "GREEN", "BLUE", "BLACK", "WHITE",
-  "YELLOW", "ORANGE", "PURPLE", "PINK", "GREY", "BROWN"
+  "RED",
+  "GREEN",
+  "BLUE",
+  "BLACK",
+  "WHITE",
+  "YELLOW",
+  "ORANGE",
+  "PURPLE",
+  "PINK",
+  "GREY",
+  "BROWN",
 ] as const;
 export type EColor = (typeof EColor)[number];
 

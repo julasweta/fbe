@@ -10,8 +10,6 @@ export class TelegramService {
   private readonly chatIds: string[];
 
   constructor(private readonly http: HttpService) {
-    console.log('Telegram chatIds:', this.chatIds);
-
     // Беремо всі chat_id з .env (через кому)
     this.chatIds = process.env.TELEGRAM_CHAT_IDS
       ? process.env.TELEGRAM_CHAT_IDS.split(',').map((id) => id.trim())
@@ -33,8 +31,7 @@ export class TelegramService {
 👤 name:    ${data.user.name} 
 ☎️ phone:   ${data.user.phone}
 📧 email:   ${data.user.email}
-🏠 ${data.user.address}, ${data.user.novaPostCity},
- № NovaPost ${data.user.novaPostBranch}
+🏠 №=${data.user.novaPostBranch}
 💳 Оплата: ${payment}
 
 🛒 Товари:

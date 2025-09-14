@@ -19,7 +19,7 @@ export const Select = ({
   placeholder = "Select...",
   onChange,
   value,
-  disabled = false,
+  disabled = false
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | undefined>(value);

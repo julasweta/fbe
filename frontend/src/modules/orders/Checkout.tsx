@@ -8,7 +8,7 @@ import { orderService } from "../../services/OrderService";
 import type { CheckoutFormData } from "./CheckoutForm";
 import CheckoutForm from "./CheckoutForm";
 import Input from "../../components/ui/Inputs/Input";
-//import { v4 as uuidv4 } from "uuid";
+import type { ICity, IBranch } from "../../interfaces/INovaPosta";
 
 const Checkout: React.FC = () => {
   const { user } = useAuthStore();
@@ -17,12 +17,22 @@ const Checkout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "card">("cod");
 
   const [form, setForm] = useState<CheckoutFormData>({
-    fullName: user?.first_name || "",
+    fullName: (user?.first_name + " " + user?.last_name) || "",
     phone: "",
     email: user?.email || "",
-    city: "",
-    novaPoshtaBranch: ""
+    areaRef: undefined,
+    cityRef: undefined,
+    cityName: undefined,
+    branchRef: undefined,
+    branchName: undefined,
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [cities, setCities] = useState<ICity[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [branches, setBranches] = useState<IBranch[]>([]); 
+
+  
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -36,29 +46,32 @@ const Checkout: React.FC = () => {
   }, [setCart]);
 
   const handleOrder = async () => {
-    if (cart.length === 0) {
-      alert("🛒 Ваш кошик порожній");
-      return;
-    }
-
-    if (!form.fullName || !form.phone || !form.city || !form.novaPoshtaBranch) {
+    if (!form.fullName || !form.phone || !form.areaRef || !form.cityRef || !form.branchRef) {
       alert("⚠ Заповніть усі обов’язкові поля");
       return;
     }
 
+  if (cart.length === 0) {
+      alert("🛒 Ваш кошик порожній");
+      return;
+    }  
+
     setLoading(true);
     try {
-      // ✅ Виклик з правильними аргументами
-      await orderService.createOrder(
-        user?.id ?? null,
-        cart,
-        paymentMethod,
-        form
-      );
+      // Використовуємо збережені назви міста та відділення
+      const orderData = {
+        ...form,
+        city: form.cityName,
+        novaPoshtaBranch: form.branchName,
+      };
+      console.log('orderdata', orderData);
+
+      await orderService.createOrder(user?.id ?? null, cart, paymentMethod, orderData);
 
       localStorage.removeItem("cart");
       clearCart();
-      if (user) { useCartStore.getState().deleteCartItems(); }
+      if (user) useCartStore.getState().deleteCartItems();
+
       alert("✅ Замовлення відправлено!");
     } catch (err) {
       console.error(err);
@@ -68,10 +81,8 @@ const Checkout: React.FC = () => {
     }
   };
 
-
   const total = cart.reduce((sum, item) => {
-    const price =
-      item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
+    const price = item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
     const qty = item?.quantity ?? 1;
     return sum + price * qty;
   }, 0);
@@ -80,18 +91,20 @@ const Checkout: React.FC = () => {
     <div className={styles.checkout}>
       <h1>Оформлення замовлення</h1>
 
-      <CheckoutForm form={form} setForm={setForm} />
+      <CheckoutForm
+        form={form}
+        setForm={setForm}
+     setCitiesList={setCities}
+        setBranchesList={setBranches} 
+      />
 
       <div className={styles.summary}>
         {cart.map(item => {
-          const price =
-            item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
+          const price = item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
           const qty = item?.quantity ?? 1;
           return (
             <div key={item.id} className={styles.item}>
-              <span>
-                {item?.name} x {qty}
-              </span>
+              <span>{item?.name} x {qty}</span>
               <span>₴{(price * qty).toFixed(2)}</span>
             </div>
           );
@@ -103,27 +116,26 @@ const Checkout: React.FC = () => {
 
       <div className={styles.payment}>
         <h2>Метод оплати</h2>
-       
-          <Input
-            label="Оплата при отриманні"
-            type="radio"
-            value="cod"
-            checked={paymentMethod === "cod"}
-            onChange={() => setPaymentMethod("cod")}
-          />
-      
-          <Input
-            label="Оплата карткою онлайн"
-            type="radio"
-            value="card"
-            checked={paymentMethod === "card"}
-            onChange={() => setPaymentMethod("card")}
-          />
+
+        <Input
+          label="Оплата при отриманні"
+          type="radio"
+          value="cod"
+          checked={paymentMethod === "cod"}
+          onChange={() => setPaymentMethod("cod")}
+        />
+
+        <Input
+          label="Оплата карткою онлайн"
+          type="radio"
+          value="card"
+          checked={paymentMethod === "card"}
+          onChange={() => setPaymentMethod("card")}
+        />
       </div>
 
       <div className={styles.links}>
         <Link to="/delivery-terms" className="link">📦 Умови доставки та повернення</Link>
-
       </div>
 
       <Button onClick={handleOrder} disabled={loading}>
@@ -134,4 +146,3 @@ const Checkout: React.FC = () => {
 };
 
 export default Checkout;
-

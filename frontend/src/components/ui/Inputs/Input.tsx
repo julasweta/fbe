@@ -33,14 +33,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
         <label className={`${styles.radioCheckboxLabel} ${disabled ? styles.disabled : ""}`}>
           <input
             ref={ref}
+            className={`${styles.input} ${error ? styles.errorBorder : ""}`}
             type={type}
+            placeholder={placeholder}
             disabled={disabled}
             required={required}
             id={id}
-            name={name?name:id}
-            className={`${styles.radioCheckboxInput} ${error ? styles.errorBorder : ""}`}
+            name={name}
             {...rest}
           />
+
           <span className={styles.radioCheckboxText}>
             {label} {required && <span className={styles.required}>*</span>}
           </span>

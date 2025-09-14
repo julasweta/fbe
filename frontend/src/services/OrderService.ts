@@ -11,7 +11,7 @@ export const orderService = {
     paymentMethod: string,
     form: CheckoutFormData,
   ) {
-    console.log("➡️ Відправка замовлення на бекенд");
+    console.log("➡️ Відправка замовлення на бекенд", form);
 
     // підрахунок загальної суми
     const finalPrice = cart.reduce((sum, item) => {
@@ -51,26 +51,38 @@ export const orderService = {
     });
   },
 
-  getOrders: async (showAll = false, filters?: Filters, page = 1, limit = 10): Promise<IOrderResponse[]> => {
+  getOrders: async (
+    showAll = false,
+    filters?: Filters,
+    page = 1,
+    limit = 10,
+  ): Promise<IOrderResponse[]> => {
     const params: any = { page, limit };
     if (filters?.orderId) params.orderId = filters.orderId;
     if (filters?.dateFrom) params.dateFrom = filters.dateFrom;
     if (filters?.dateTo) params.dateTo = filters.dateTo;
     if (showAll) params.showAll = true;
 
-    const response = await apiService.get('/orders/all', {
+    const response = await apiService.get("/orders/all", {
       params,
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return response.data;
   },
 
-  updateOrderStatus: async (orderId: number, status: string): Promise<IOrderResponse> => {
-    const response = await apiService.patch(`/orders/${orderId}/status`, {
-      status
-    }, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-    });
+  updateOrderStatus: async (
+    orderId: number,
+    status: string,
+  ): Promise<IOrderResponse> => {
+    const response = await apiService.patch(
+      `/orders/${orderId}/status`,
+      {
+        status,
+      },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      },
+    );
     return response.data;
   },
 };

@@ -55,19 +55,17 @@ export const useProductStore = create<ProductState>((set) => ({
 
   fetchProducts: async (filters?: ProductFilters) => {
     // Якщо ми на сервері - не робимо запит
-    if (typeof window === 'undefined') {
-      console.log('SSR: Skipping fetchProducts on server');
+    if (typeof window === "undefined") {
+      console.log("SSR: Skipping fetchProducts on server");
       set({ isLoading: false, error: null, products: [] });
       return;
     }
 
-    console.log('🔄 Starting fetchProducts with filters:', filters);
     set({ isLoading: true, error: null });
 
     try {
       const products = await productService.getAll(filters);
-      console.log('✅ Products fetched successfully:', products.length, 'items');
-      console.log('📦 Products data:', products);
+     
       set({ products, isLoading: false });
     } catch (error) {
       console.error("❌ Error fetching products:", error);
@@ -80,8 +78,8 @@ export const useProductStore = create<ProductState>((set) => ({
 
   appendProducts: async (filters?: ProductFilters) => {
     // Якщо ми на сервері - не робимо запит
-    if (typeof window === 'undefined') {
-      console.log('SSR: Skipping appendProducts on server');
+    if (typeof window === "undefined") {
+      console.log("SSR: Skipping appendProducts on server");
       return;
     }
 
@@ -102,8 +100,8 @@ export const useProductStore = create<ProductState>((set) => ({
 
   createProduct: async (productData) => {
     // Перевіряємо чи ми на клієнті
-    if (typeof window === 'undefined') {
-      throw new Error('createProduct can only be called on client side');
+    if (typeof window === "undefined") {
+      throw new Error("createProduct can only be called on client side");
     }
 
     set({ isLoading: true, error: null });
@@ -125,8 +123,8 @@ export const useProductStore = create<ProductState>((set) => ({
 
   editProduct: async (id, productData) => {
     // Перевіряємо чи ми на клієнті
-    if (typeof window === 'undefined') {
-      throw new Error('editProduct can only be called on client side');
+    if (typeof window === "undefined") {
+      throw new Error("editProduct can only be called on client side");
     }
 
     set({ isLoading: true, error: null });
@@ -151,8 +149,8 @@ export const useProductStore = create<ProductState>((set) => ({
 
   deleteProduct: async (id) => {
     // Перевіряємо чи ми на клієнті
-    if (typeof window === 'undefined') {
-      throw new Error('deleteProduct can only be called on client side');
+    if (typeof window === "undefined") {
+      throw new Error("deleteProduct can only be called on client side");
     }
 
     set({ isLoading: true, error: null });

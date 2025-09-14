@@ -37,7 +37,6 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const finalPrice = price ?? minVariantPrice;
   const finalSalePrice = priceSale ?? minVariantSalePrice;
 
-  console.log('🃏 Card rendering product:', { id, name, finalPrice, image });
 
   return (
     <div className={styles.card}>

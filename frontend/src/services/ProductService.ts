@@ -15,7 +15,6 @@ const productService = {
   },
 
   async getById(id: number): Promise<IProduct> {
-    console.log("ProductService: Fetching product by ID:", id);
 
     const { data } = await apiService.get<IProduct>(`products/${id}`);
     return data;
