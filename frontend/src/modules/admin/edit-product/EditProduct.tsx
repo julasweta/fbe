@@ -246,11 +246,17 @@ const EditProduct: React.FC = () =>  {
         <h3>Features</h3>
         {featuresArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
-            <Input placeholder="Text" {...register(`features.${index}.text`)} />
+            <Input
+              placeholder="Text"
+              {...register(`features.${index}.text`)}
+              className={styles.inputText}
+              title={watch(`features.${index}.text`) || ''}
+            />
+
             <Input type="number" placeholder="Order" {...register(`features.${index}.order`, { valueAsNumber: true })} />
           </div>
         ))}
-        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length + 1 })}>+ Add Feature</Button>
+        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length + 1 })} className={styles.btn}>+ Add Feature</Button>
 
         {/* Variants */}
         <h3>Variants</h3>
@@ -304,7 +310,7 @@ const EditProduct: React.FC = () =>  {
           </div>
         ))}
 
-        <Button type="button" onClick={handleAddVariant}>+ Add Variant</Button>
+        <Button type="button" onClick={handleAddVariant}> Variant</Button>
 
         <div className={styles.formActions}>
           <button type="submit" className={`${styles.submit} ${styles.btn}`} disabled={!hasChanges}>

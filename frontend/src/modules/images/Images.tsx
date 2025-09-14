@@ -85,9 +85,9 @@ const VariantImages: React.FC<VariantImagesProps> = ({
         );
       })}
 
-      <button type="button" onClick={() => append({ url: "", altText: "" })}>
+      <Button type="button" onClick={() => append({ url: "", altText: "" })} >
         + Add Image
-      </button>
+      </Button>
     </div>
   );
 };

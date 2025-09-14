@@ -10,7 +10,7 @@ import styles from "./Images.module.scss"
 type VariantImagesProps = {
   control: Control<IProduct>;
   register: UseFormRegister<IProduct>;
-  setValue: UseFormSetValue< IProduct>;
+  setValue: UseFormSetValue<IProduct>;
   watch: UseFormWatch<IProduct>;
   variantIndex: number;
 };
@@ -31,67 +31,67 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
   const [manualImage, setManualImage] = useState("");
 
   return (
-    <div className= { styles.imagesBlock } >
-    <h5>Images </h5>
-  {
-    fields.map((field, iIndex) => {
-      const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
-      return (
-        <div key= { field.id } style = {{ margin: "1rem" }
-    }>
-    <Input
-              placeholder="опис фото"
-              style = {{ margin: "0.5rem" }}
-  {...register(`variants.${variantIndex}.images.${iIndex}.altText`) }
-            />
-
-  {/* Компонент для завантаження фото */ }
-  <ImageUpload
-              onUpload={ (url) => setValue(`variants.${variantIndex}.images.${iIndex}.url`, url) }
-            />
-
-  {/* Поле для ручного вставлення URL */ }
-  <div style={ { display: "flex", marginTop: "0.5rem", gap: "0.5rem" } }>
-    <Input
-                type="text"
-  placeholder = "Встав URL вручну"
-  value = { manualImage }
-  onChange = {(e) => setManualImage(e.target.value)}
-id = "urlhandle"
-  />
-  <Button
-                type="button"
-onClick = {() => {
-  if (manualImage.trim()) {
-    setValue(`variants.${variantIndex}.images.${iIndex}.url`, manualImage.trim());
-    setManualImage("");
-  }
-}}
-              >
-  Завантажити фото
-    </Button>
-    </div>
-
-{
-  currentUrl && (
-    <img
-                src={ currentUrl }
-  alt = "preview"
-  style = {{ width: 100, height: "auto", marginTop: "0.5rem" }
-}
+    <div className={styles.imagesBlock} >
+      <h5>Images </h5>
+      {
+        fields.map((field, iIndex) => {
+          const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
+          return (
+            <div key={field.id} style={{ margin: "1rem" }
+            }>
+              <Input
+                placeholder="опис фото"
+                style={{ margin: "0.5rem" }}
+                {...register(`variants.${variantIndex}.images.${iIndex}.altText`)}
               />
-            )}
 
-<button type="button" onClick = {() => remove(iIndex)}>
-              ✕ Видалити фото
-  </button>
-  </div>
-        );
-      })}
+              {/* Компонент для завантаження фото */}
+              <ImageUpload
+                onUpload={(url) => setValue(`variants.${variantIndex}.images.${iIndex}.url`, url)}
+              />
 
-<button type="button" onClick = {() => append({ url: "", altText: "" })}>
-  + Add Image
-    </button>
+              {/* Поле для ручного вставлення URL */}
+              <div style={{ display: "flex", marginTop: "0.5rem", gap: "0.5rem" }}>
+                <Input
+                  type="text"
+                  placeholder="Встав URL вручну"
+                  value={manualImage}
+                  onChange={(e) => setManualImage(e.target.value)}
+                  id="urlhandle"
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (manualImage.trim()) {
+                      setValue(`variants.${variantIndex}.images.${iIndex}.url`, manualImage.trim());
+                      setManualImage("");
+                    }
+                  }}
+                >
+                  Завантажити фото
+                </Button>
+              </div>
+
+              {
+                currentUrl && (
+                  <img
+                    src={currentUrl}
+                    alt="preview"
+                    style={{ width: 100, height: "auto", marginTop: "0.5rem" }
+                    }
+                  />
+                )}
+
+              <button type="button" onClick={() => remove(iIndex)}>
+                ✕ Видалити фото
+              </button>
+            </div>
+          );
+        })}
+
+      <button type="button" onClick={() => append({ url: "", altText: "" })}>
+        + Add Image
+      </button>
     </div>
   );
 };

@@ -20,6 +20,9 @@
     margin: 2rem 0 1rem 0;
     border-bottom: 2px solid #e0e0e0;
     padding-bottom: 0.5rem;
+    text-align: center;
+    width: 100%;
+    background: #b9c9db;
   }
 
   h4 {
@@ -36,21 +39,20 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 
   label {
     font-weight: 600;
     color: #333;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
+    font-style: italic;
   }
 
   input,
   select,
   textarea {
-    padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     transition: border-color 0.2s;
 
     &:focus {
@@ -68,15 +70,16 @@
 
 .group {
   display: flex;
-  gap: 1rem;
   align-items: end;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: #f8f9fa;
 
-  input {
-    flex: 1;
+ 
+
+  .inputText {
+    width: 100%;
   }
 
   button {
@@ -267,4 +270,8 @@
   .variantBlock {
     padding: 1rem;
   }
+}
+
+.inputText{
+  width: 100%;
 }

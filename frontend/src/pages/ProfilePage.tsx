@@ -77,6 +77,7 @@ const ProfilePage = () => {
           type="email"
           placeholder="Email"
           autoComplete="email"
+          disabled={true}
         id="profile-email"
           {...register("email", {
             required: "Email обов'язковий",

@@ -1,4 +1,5 @@
-import type { IArea, IBranch, ICity, ITracking } from "../interfaces/INovaPosta";
+import type { INovaPoshtaOrder } from "../interfaces/INovaPoshtaOrder";
+import type { IArea, IBranch, ICity } from "../interfaces/INovaPosta";
 import { apiService } from "./ApiServices";
 
 const novaPoshtaService = {
@@ -19,10 +20,11 @@ const novaPoshtaService = {
     return response.data; // повертаємо масив відділень
   },
 
-  async getTracking(ttn: string): Promise<ITracking> {
+  async getTracking(ttn: string): Promise<INovaPoshtaOrder> {
     const response = await apiService.get(`nova-poshta/tracking?ttn=${ttn}`);
-    return response.data; // повертаємо об’єкт трекінгу
-  },
+    return response.data[0]; // одразу повертаємо об’єкт
+  }
+
 
  
 };

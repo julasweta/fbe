@@ -5,16 +5,10 @@ import { Role } from "../../interfaces/IRegister";
 import { OrderStatus } from "../../interfaces/IOrder";
 import { Button } from "../../components/ui/Buttons/Button";
 import Input from "../../components/ui/Inputs/Input";
-import { Select } from "../../components/ui/Select/Select";
 import "./Orders.scss";
+import { OrderItem } from "./OrderItem";
 
-// Статуси замовлень українською
-const statusTranslations = {
-  [OrderStatus.PENDING]: "Очікує обробки",
-  [OrderStatus.PROCESSING]: "В обробці",
-  [OrderStatus.COMPLETED]: "Виконано",
-  [OrderStatus.CANCELED]: "Скасовано"
-};
+
 
 // Дебаунс хук
 const useDebounce = (value: string, delay: number) => {
@@ -49,11 +43,6 @@ const Orders = () => {
 
   const isAdmin = user?.role === Role.ADMIN;
   const debouncedOrderId = useDebounce(orderIdFilter, 1000);
-
-  const statusOptions = Object.values(OrderStatus).map((status) => ({
-    value: status,
-    label: statusTranslations[status]
-  }));
 
   // Фокус
   const saveFocus = () => {
@@ -128,7 +117,7 @@ const Orders = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <div className="filters">
+      <div className="filters  boxLine">
         <Input
           ref={orderIdInputRef}
           type="number"
@@ -164,56 +153,15 @@ const Orders = () => {
 
       <ul className="orders-list">
         {orders.length ? orders.map(order => (
-          <li key={order.id} className="order-item">
-            <div className="order-header-section">
-              <h3>Замовлення #{order.id} — {new Date(order.createdAt).toLocaleDateString("uk-UA")}</h3>
-              <div className="order-status-section">
-                {isAdmin ? (
-                  <Select
-                    options={statusOptions}
-                    value={order.status}
-                    onChange={(v) => handleStatusChange(order.id, v as OrderStatus)}
-                    disabled={updatingOrderId === order.id}
-                  />
-                ) : (
-                  <span className={`status-badge status-${order.status.toLowerCase()}`}>
-                    {statusTranslations[order.status]}
-                  </span>
-                )}
-                {updatingOrderId === order.id && <span className="updating-status">Оновлюється...</span>}
-              </div>
-            </div>
-
-            <p className="order-details">
-              {order.guestName && <>Ім'я: {order.guestName}</>}
-              {order.guestPhone && <>, Телефон: {order.guestPhone}</>}
-              {order.guestEmail && <>, Email: {order.guestEmail}</>}
-            </p>
-
-            {order.novaPostCity && order.novaPostBranch && (
-              <p>Доставка: Нова Пошта, {order.novaPostCity}, Відділення №{order.novaPostBranch}</p>
-            )}
-
-            <p>Оплата: {order.paymentMethod === "COD" ? "Накладений платіж" : order.paymentMethod}</p>
-
-            <ul className="order-items">
-              {order.items.map(item => (
-                <li key={item.id}>
-                  <img src={item.image || ""} alt={item.name} className="item-image" />
-                  <div>
-                    <span>{item.name}</span>
-                    {item.color && <span>, Колір: {item.color}</span>}
-                    {item.size && <span>, Розмір: {item.size}</span>}
-                    <span>, Кількість: {item.quantity}</span>
-                    <span>, Ціна: {item.priceSale ? <><span className="price-old">{item.price}₴</span> <span className="price-sale">{item.priceSale}₴</span></> : <>{item.finalPrice}₴</>}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <p>Загальна сума: {order.items.reduce((sum, i) => sum + i.finalPrice * i.quantity, 0)}₴</p>
-          </li>
+          <OrderItem
+            key={order.id}
+            order={order} // це IOrderResponse
+            isAdmin={isAdmin}
+            updatingOrderId={updatingOrderId}
+            onStatusChange={handleStatusChange}
+          />
         )) : <li>Немає замовлень</li>}
+
       </ul>
 
       <div className="pagination">

@@ -101,27 +101,20 @@ const authService = {
       throw new Error("Помилка під час входу");
     }
 
-    // Якщо токени є — зберігаємо
-    console.log("[AuthService] Tokens received:", data);
+  
 
     if (!data.accessToken || !data.refreshToken) {
       console.error("[AuthService] Missing tokens in response");
       throw new Error("Сервер не повернув токени авторизації");
     }
 
-    console.log("[AuthService] Saving tokens to store");
     useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
 
     // Тепер пробуємо отримати користувача
     try {
-      console.log("[AuthService] Fetching current user with this.me()");
+    
       const { data: user } = await this.me();
-      console.log("[AuthService] User fetched successfully:", user);
-
-      console.log("[AuthService] Saving user to store");
       useAuthStore.getState().login(data.accessToken, data.refreshToken, user);
-
-      console.log("[AuthService] login() completed successfully");
       return user;
     } catch (error) {
       console.error("[AuthService] Failed to fetch user after login:", error);

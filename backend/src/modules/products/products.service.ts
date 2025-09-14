@@ -5,6 +5,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ExcelRow } from './dto/excel.dto';
 import * as XLSX from 'xlsx';
 import { EColor, ESize } from '@prisma/client';
+import { Response } from 'express';
 
 @Injectable()
 export class ProductsService {
@@ -290,8 +291,6 @@ export class ProductsService {
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows: ExcelRow[] = XLSX.utils.sheet_to_json<ExcelRow>(sheet);
 
-      console.log('Excel rows:', rows);
-
       // Функція для порівняння масивів незалежно від порядку
       const arraysEqualIgnoreOrder = (a: string[], b: string[]): boolean => {
         if (a.length !== b.length) return false;
@@ -565,4 +564,48 @@ export class ProductsService {
       throw error;
     }
   }
+  async exportProductsToExcel(res: Response) {
+    const products = await this.prisma.product.findMany({
+      include: {
+        variants: { include: { images: true } },
+        translations: true,
+        features: true,
+        category: true,
+        collection: true
+      },
+    });
+
+    const rows = products.flatMap(product =>
+      product.variants.map(variant => ({
+        sku: product.sku,
+        name: product.translations[0]?.name || '',
+        description: product.translations[0]?.description || '',
+        price: variant.price || product.price,
+        priceSale: variant.priceSale || product.priceSale,
+        nameCategory: product.category?.name || '', // підставляється як у формулі
+        categoryId: product.categoryId,
+        variantDescription: variant.description || '',
+        nameCollection: product.collection?.name || '',
+        collectionId: product.collectionId,
+        sizes: variant.sizes.join(','),
+        colors: variant.color, // якщо один колір на варіант
+        images: variant.images.map(img => img.url).join(' | '),
+        features: product.features.map(f => f.text).join(' | '),
+        variantColor: variant.color,
+        variantSizes: variant.sizes.join(','),
+        variantImages: variant.images.map(img => img.url).join(' | '),
+        stock: variant.stock,
+      }))
+    );
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
+
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Disposition', 'attachment; filename="products.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buffer);
+  }
+
 }

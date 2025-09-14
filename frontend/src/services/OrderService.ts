@@ -85,4 +85,16 @@ export const orderService = {
     );
     return response.data;
   },
+
+  updateOrderItemTracking: async (
+    orderItemId: number,
+    trackingNumber: string,
+  ): Promise<IOrderResponse> => {
+    const response = await apiService.patch(
+      `/orders/tracknumber/${orderItemId}`,
+      { trackingNumber },
+     
+    );
+    return response.data;
+  },
 };

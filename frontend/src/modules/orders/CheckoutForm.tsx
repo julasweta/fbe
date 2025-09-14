@@ -10,19 +10,19 @@ export interface CheckoutFormData {
   email: string;
   areaRef?: string;
   cityRef?: string;
-  cityName?: string;       // назва міста
+  cityName?: string;   
   branchRef?: string;
-  branchName?: string;     // назва відділення
+  branchName?: string;  
+  novaPoshtaBranch?: string;
+  city?: string;
 }
 
 interface CheckoutFormProps {
   form: CheckoutFormData;
   setForm: React.Dispatch<React.SetStateAction<CheckoutFormData>>;
-  setCitiesList: React.Dispatch<React.SetStateAction<ICity[]>>;
-  setBranchesList: React.Dispatch<React.SetStateAction<IBranch[]>>;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesList, setBranchesList }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm }) => {
   const [areas, setAreas] = useState<IArea[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
   const [branches, setBranches] = useState<IBranch[]>([]);
@@ -34,6 +34,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesLis
     const fetchAreas = async () => {
       try {
         const res = await novaPoshtaService.getAreas();
+        console.log("✅ Завантажені області:", res);
         setAreas(res);
       } catch (err) {
         console.error("❌ Помилка завантаження областей:", err);
@@ -50,7 +51,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesLis
       try {
         const res = await novaPoshtaService.getCities(form.areaRef);
         setCities(res);
-        setCitiesList(res);
       } catch (err) {
         console.error("❌ Помилка завантаження міст:", err);
       } finally {
@@ -58,7 +58,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesLis
       }
     };
     fetchCities();
-  }, [form.areaRef, setCitiesList]);
+  }, [form.areaRef]);
 
   // Завантаження відділень при зміні міста
   useEffect(() => {
@@ -66,9 +66,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesLis
     const fetchBranches = async () => {
       setLoadingBranches(true);
       try {
-        const res = await novaPoshtaService.getBranches(form.cityRef);
+        const res = await novaPoshtaService.getBranches(form.cityRef? form.cityRef:'');
         setBranches(res);
-        setBranchesList(res);
       } catch (err) {
         console.error("❌ Помилка завантаження відділень:", err);
       } finally {
@@ -76,36 +75,71 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesLis
       }
     };
     fetchBranches();
-  }, [form.cityRef, setBranchesList]);
+  }, [form.cityRef]);
 
-  // handleChange для кастомного Select
   const handleChangeValue = (name: "areaRef" | "cityRef" | "branchRef", value: string) => {
     if (name === "areaRef") {
-      setForm(prev => ({ ...prev, areaRef: value, cityRef: undefined, cityName: undefined, branchRef: undefined, branchName: undefined }));
+      setForm(prev => ({
+        ...prev,
+        areaRef: value,
+        cityRef: undefined,
+        cityName: undefined,
+        branchRef: undefined,
+        branchName: undefined
+      }));
       setCities([]);
       setBranches([]);
-      setCitiesList([]);
-      setBranchesList([]);
       return;
     }
+
     if (name === "cityRef") {
       const city = cities.find(c => c.Ref === value)?.Description || "";
-      setForm(prev => ({ ...prev, cityRef: value, cityName: city, branchRef: undefined, branchName: undefined }));
+      setForm(prev => ({
+        ...prev,
+        cityRef: value,
+        cityName: city,
+        branchRef: undefined,
+        branchName: undefined
+      }));
       setBranches([]);
-      setBranchesList([]);
       return;
     }
+
     if (name === "branchRef") {
       const branch = branches.find(b => b.Ref === value);
-      setForm(prev => ({ ...prev, branchRef: value, branchName: branch ? `${branch.Number} - ${branch.ShortAddress}` : "" }));
+      setForm(prev => ({
+        ...prev,
+        branchRef: value,
+        branchName: branch ? `${branch.Number} - ${branch.ShortAddress}` : ""
+      }));
     }
   };
 
   return (
     <div className={styles.form}>
-      <input type="text" name="fullName" placeholder="Ім’я та прізвище" value={form.fullName} onChange={e => setForm(prev => ({ ...prev, fullName: e.target.value }))} required />
-      <input type="tel" name="phone" placeholder="Телефон" value={form.phone} onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))} required />
-      <input type="email" name="email" placeholder="Email" value={form.email} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} />
+      <input
+        type="text"
+        name="fullName"
+        placeholder="Ім’я та прізвище"
+        value={form.fullName}
+        onChange={e => setForm(prev => ({ ...prev, fullName: e.target.value }))}
+        required
+      />
+      <input
+        type="tel"
+        name="phone"
+        placeholder="Телефон"
+        value={form.phone}
+        onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
+        required
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))}
+      />
 
       <Select
         value={form.areaRef || ""}
@@ -134,6 +168,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm, setCitiesLis
 };
 
 export default CheckoutForm;
+
 
 
 

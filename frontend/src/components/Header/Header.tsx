@@ -123,7 +123,18 @@ const Header: React.FC = () => {
                 transition: 'color 0.3s ease'
               }}
             >
-              <Link to="/profile">{user?.first_name.toUpperCase()}</Link>
+              <Link to="/profile" className="grey boxLine">
+                <FaRegUser
+                  style={{
+                    color: textColor === '#ffffff' ? '#ffffff' : '#000000',
+                    fontSize: '1.5rem',
+                    transition: 'color 0.3s ease',
+                  }}
+                />
+                {(user?.last_name?.[0] ?? '').toUpperCase()}
+                {(user?.first_name?.[0] ?? '').toUpperCase()}
+              </Link>
+
             </span>
             <Button
               className={styles.authButton}

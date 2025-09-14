@@ -94,6 +94,10 @@ export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @IsOptional()
   @IsString()
   novaPostBranch?: string;
+
+  @IsString()
+  @IsOptional()
+  trackingNumber?: string;
 }
 
 export class OrderResponseDto {
@@ -117,6 +121,10 @@ export class OrderResponseDto {
 
   @ApiProperty({ type: [OrderItemResponseDto] })
   items: OrderItemResponseDto[];
+
+  @IsString()
+  @IsOptional()
+  trackingNumber?: string;
 }
 
 export class UpdateOrderStatusDto {
@@ -131,4 +139,10 @@ export class UpdateOrderStatusDto {
       'Статус повинен бути одним з: PENDING, PROCESSING, COMPLETED, CANCELED',
   })
   status: OrderStatus;
+}
+
+export class UpdateOrderTrackingDto {
+  @IsString()
+  @IsOptional()
+  trackingNumber?: string;
 }

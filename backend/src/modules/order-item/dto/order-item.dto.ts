@@ -42,6 +42,9 @@ export class OrderItemDto {
   @IsOptional()
   @IsString()
   priceSale?: number;
+
+
+
 }
 
 export class OrderItemResponseDto {
@@ -51,4 +54,7 @@ export class OrderItemResponseDto {
   @ApiPropertyOptional() image?: string | null;
   @ApiProperty() price: number;
   @ApiProperty() quantity: number;
+
 }
+
+

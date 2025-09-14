@@ -8,7 +8,6 @@ import { orderService } from "../../services/OrderService";
 import type { CheckoutFormData } from "./CheckoutForm";
 import CheckoutForm from "./CheckoutForm";
 import Input from "../../components/ui/Inputs/Input";
-import type { ICity, IBranch } from "../../interfaces/INovaPosta";
 
 const Checkout: React.FC = () => {
   const { user } = useAuthStore();
@@ -27,12 +26,6 @@ const Checkout: React.FC = () => {
     branchName: undefined,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [cities, setCities] = useState<ICity[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [branches, setBranches] = useState<IBranch[]>([]); 
-
-  
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -64,7 +57,6 @@ const Checkout: React.FC = () => {
         city: form.cityName,
         novaPoshtaBranch: form.branchName,
       };
-      console.log('orderdata', orderData);
 
       await orderService.createOrder(user?.id ?? null, cart, paymentMethod, orderData);
 
@@ -94,8 +86,6 @@ const Checkout: React.FC = () => {
       <CheckoutForm
         form={form}
         setForm={setForm}
-     setCitiesList={setCities}
-        setBranchesList={setBranches} 
       />
 
       <div className={styles.summary}>

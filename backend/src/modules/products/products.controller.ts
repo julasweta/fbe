@@ -10,6 +10,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import {
@@ -23,11 +24,41 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
+  
+  @Post('import')
+  @ApiOperation({ summary: 'Імпорт продуктів з Excel файлу' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Excel файл для імпорту продуктів',
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary', // для завантаження файлу у Swagger
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async importProducts(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('Файл не передано');
+    return this.productsService.importProductsFromFile(file);
+  }
+
+
+  @Get('export')
+  @ApiOperation({ summary: 'Експорт продуктів у Excel' })
+  async exportProducts(@Res() res: Response) {
+    return this.productsService.exportProductsToExcel(res);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Створити новий продукт' })
@@ -105,25 +136,6 @@ export class ProductsController {
     return this.productsService.remove(id);
   }
 
-  @Post('import')
-  @ApiOperation({ summary: 'Імпорт продуктів з Excel файлу' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Excel файл для імпорту продуктів',
-    required: true,
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary', // для завантаження файлу у Swagger
-        },
-      },
-    },
-  })
-  @UseInterceptors(FileInterceptor('file'))
-  async importProducts(@UploadedFile() file: Express.Multer.File) {
-    if (!file) throw new Error('Файл не передано');
-    return this.productsService.importProductsFromFile(file);
-  }
+
+
 }

@@ -16,6 +16,12 @@ async function bootstrap() {
     }),
   );
 
+  // 🔹 Лог всіх запитів
+  app.use((req, res, next) => {
+    console.log('➡️ Incoming request:', req.method, req.url);
+    next();
+  });
+
   // Глобальний фільтр помилок для всієї аплікації
   app.useGlobalFilters(new AllExceptionsFilter());
 

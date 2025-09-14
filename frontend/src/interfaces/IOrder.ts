@@ -12,6 +12,7 @@ export interface IOrderItem {
   color?: EColor | null;
   size?: ESize | null;
   product?: IProduct;
+  trackingNumber?: string;
 }
 
 export interface IOrderResponse {
@@ -28,6 +29,7 @@ export interface IOrderResponse {
   createdAt: string;
   updatedAt: string;
   items: IOrderItem[];
+  trackingNumber?: string;
 }
 
 export enum OrderStatus {

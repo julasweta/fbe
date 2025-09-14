@@ -52,8 +52,8 @@ model Product {
   cartItems    CartItem[]
   features     ProductFeature[]
   images       ProductImage[]
-  sizes        ESize[]  @default([])
-  colors       EColor[] @default([])
+  sizes        ESize[]              @default([])
+  colors       EColor[]             @default([])
 
   variants ProductVariant[]
 
@@ -62,20 +62,20 @@ model Product {
   collection   Collection? @relation(fields: [collectionId], references: [id])
   collectionId Int?
 
-  orderItems OrderItem[]   // 👈 додаємо поле для двосторонньої реляції
+  orderItems OrderItem[] // 👈 додаємо поле для двосторонньої реляції
 }
 
 model ProductVariant {
-  id        Int       @id @default(autoincrement())
-  color     EColor
-  sizes     ESize[]   // 👈 доступні розміри
-  images    ProductImage[]
-  price     Float?
-  priceSale Float?
-  stock     Int       @default(0) // 👈 один загальний stock
+  id          Int            @id @default(autoincrement())
+  color       EColor
+  sizes       ESize[] // 👈 доступні розміри
+  images      ProductImage[]
+  price       Float?
+  priceSale   Float?
+  stock       Int            @default(0) // 👈 один загальний stock
   description String?
 
-  product   Product   @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
   productId Int
 }
 
@@ -85,29 +85,27 @@ model ProductImage {
   altText   String?
   variant   ProductVariant? @relation(fields: [variantId], references: [id])
   variantId Int?
-   product   Product @relation(fields: [productId], references: [id])
+  product   Product         @relation(fields: [productId], references: [id])
   productId Int
 }
 
-
 model OrderItem {
-  id        Int     @id @default(autoincrement())
-  order     Order   @relation(fields: [orderId], references: [id])
-  orderId   Int
+  id      Int   @id @default(autoincrement())
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
 
   productId Int?
   product   Product? @relation(fields: [productId], references: [id]) // 👈 додаємо зв’язок
 
-  name       String
-  image      String?
-  quantity   Int     @default(1)
-  price      Float
-  priceSale  Float?
-  finalPrice Float
-  color      String?
-  size       String?
+  name           String
+  image          String?
+  quantity       Int     @default(1)
+  price          Float
+  priceSale      Float?
+  finalPrice     Float
+  color          String?
+  size           String?
 }
-
 
 model Collection {
   id          Int      @id @default(autoincrement())
@@ -139,8 +137,6 @@ model ProductFeature {
   text      String
   order     Int?
 }
-
-
 
 model Language {
   id   Int    @id @default(autoincrement())
@@ -207,6 +203,7 @@ model Order {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   items         OrderItem[]
+  trackingNumber String?
 }
 
 enum OrderStatus {
