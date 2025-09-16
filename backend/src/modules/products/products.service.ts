@@ -45,6 +45,7 @@ export class ProductsService {
           ? {
               create: features.map((f) => ({
                 text: f.text,
+                textEn: f.textEn,
                 order: f.order ?? null,
               })),
             }

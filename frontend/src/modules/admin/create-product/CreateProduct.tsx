@@ -26,7 +26,7 @@ const CreateProduct: React.FC = () => {
         categoryId: undefined,
         collectionId: 1,
         translations: [{ name: "", description: "", languageId: 1 }],
-        features: [{ text: "", order: 1 }],
+        features: [{ text: "",textEn: "", order: 1 }],
         variants: [], // 🔹 спочатку порожній масив
       },
     });
@@ -148,11 +148,18 @@ const CreateProduct: React.FC = () => {
         <h3>Властивості товару</h3>
         {featuresArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
-            <Input placeholder="приклад: Тканина: кашемір" {...register(`features.${index}.text`)} />
+            <Input
+              placeholder="приклад: Тканина: кашемір"
+              {...register(`features.${index}.text`)}
+            />
+            <Input
+              placeholder="Example EN"
+              {...register(`features.${index}.textEn`)}
+            />
             <Input
               type="number"
               placeholder="Order"
-            min="1"
+              min="1"
               {...register(`features.${index}.order`, { valueAsNumber: true })}
             />
             <button type="button" onClick={() => featuresArray.remove(index)}>
@@ -160,9 +167,16 @@ const CreateProduct: React.FC = () => {
             </button>
           </div>
         ))}
-        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length+1 })} className={styles.btn}>
+        <Button
+          type="button"
+          onClick={() =>
+            featuresArray.append({ text: "", textEn: "", order: featuresArray.fields.length + 1 })
+          }
+          className={styles.btn}
+        >
           + Додати властивість
         </Button>
+
 
         {/* Variants */}
         <h3>Variants</h3>
