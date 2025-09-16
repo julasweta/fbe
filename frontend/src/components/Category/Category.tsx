@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useCategoryStore } from "../../store/useCategoryStore";
 import styles from "./Category.module.scss";
+import { useTranslation } from "react-i18next";
 
 const Category: React.FC = () => {
   const { categories, loading, error } = useCategoryStore();
   const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
+    const { t} = useTranslation();
 
   useEffect(() => {
     console.log("🔄 Завантажені категорії:", categories);
@@ -55,7 +57,7 @@ const Category: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h2>Категорії</h2>
+      <h2>{t('categories')}</h2>
       {categories.length === 0 ? (
         <p>Категорії відсутні</p>
       ) : (

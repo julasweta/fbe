@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import './prerender';
+import './i18n'; 
+/* import './prerender'; */
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

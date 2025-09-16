@@ -18,6 +18,7 @@ import { useProductStore } from "../../../store";
 import { VariantImagesForUpdate } from "../../images/ImagesForUpdate";
 
 // Глибоке порівняння об'єктів
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepEqual(a: any, b: any): boolean {
   if (a === b) return true;
   if (a == null || b == null) return false;
@@ -44,6 +45,7 @@ function getChangedFields(original: IProduct, current: IProduct): Partial<IProdu
     const value = current[field];
     if (!deepEqual(original[field], value)) {
       // TS не знає, який тип value, тому приводимо через any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (changes as any)[field] = value ?? undefined;
     }
   });
@@ -59,6 +61,7 @@ function getChangedFields(original: IProduct, current: IProduct): Partial<IProdu
   if (!deepEqual(original.features, current.features)) {
     changes.features = current.features?.map((f) => ({
       text: f.text,
+      textEn: f.textEn ?? undefined,
       order: f.order,
     }));
   }
@@ -204,59 +207,138 @@ const EditProduct: React.FC = () =>  {
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         {/* SKU */}
         <div className={styles.field}>
-          <label>SKU *</label>
-          <Input {...register("sku", { required: true })} />
+          <Input {...register("sku", { required: true })} placeholder="SKU"/>
         </div>
 
         {/* Price */}
         <div className={styles.field}>
-          <label>Price *</label>
-          <Input type="number" {...register("price", { required: true, valueAsNumber: true })} />
+          <Input type="number" {...register("price", { required: true, valueAsNumber: true })} placeholder="Price" />
         </div>
 
         {/* Sale Price */}
         <div className={styles.field}>
-          <label>Sale Price</label>
-          <Input type="number" {...register("priceSale", { valueAsNumber: true })} />
+          <Input type="number" {...register("priceSale", { valueAsNumber: true })} placeholder="Sale Price" />
         </div>
 
-        {/* Category */}
-        <div className={styles.field}>
-          <label>Category</label>
-          <CategorySelect value={watch("categoryId")} onChange={(val) => setValue("categoryId", val as number)} valueKey="id" />
+        <div className={styles.chooseBox}>
+          {/* Category */}
+          <div className={styles.field}>
+            <label>Category</label>
+            <CategorySelect value={watch("categoryId")} onChange={(val) => setValue("categoryId", val as number)} valueKey="id" />
+          </div>
+          {/* Collection */}
+          <div className={styles.field}>
+            <label>Collection</label>
+            <CollectionSelect value={watch("collectionId")} onChange={(val) => setValue("collectionId", Number(val))} valueKey="id" />
+          </div>
         </div>
 
-        {/* Collection */}
-        <div className={styles.field}>
-          <label>Collection</label>
-          <CollectionSelect value={watch("collectionId")} onChange={(val) => setValue("collectionId", Number(val))} valueKey="id" />
-        </div>
+       // Додати цей код в секцію Translations
 
         {/* Translations */}
-        <h3>Translations</h3>
-        {translationsArray.fields.map((field, index) => (
-          <div key={field.id} className={styles.group}>
-            <Input placeholder="Name" {...register(`translations.${index}.name`)} />
-            <Input placeholder="Description" {...register(`translations.${index}.description`)} />
-            <Input type="number" label="Language: UA" disabled {...register(`translations.${index}.languageId`)} />
-          </div>
-        ))}
+        <h3>Назва і опис товару</h3>
+        {translationsArray.fields.map((field, index) => {
+          const currentLanguageId = watch(`translations.${index}.languageId`);
+
+          return (
+            <div key={field.id} className={styles.group}>
+              <Input placeholder="Name" {...register(`translations.${index}.name`)} />
+              <Input placeholder="Description" {...register(`translations.${index}.description`)} />
+
+              {/* Замість disabled поля, зробити select */}
+              <div className={styles.field}>
+                <label>{`Language: ${currentLanguageId === 1 ? 'Ukraine' : currentLanguageId === 2 ? 'English' : 'Unknown'}`}</label>
+                <select {...register(`translations.${index}.languageId`, { valueAsNumber: true })}>
+                  <option value={1}>Ukraine</option>
+                  <option value={2}>English</option>
+                </select>
+              </div>
+
+              {/* Додати кнопку видалення якщо більше одного перекладу */}
+              {translationsArray.fields.length > 1 && (
+                <button type="button" onClick={() => translationsArray.remove(index)}>
+                  ✕
+                </button>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Кнопка додавання перекладу */}
+        {translationsArray.fields.length < 2 && (
+          <Button
+            type="button"
+            className={styles.btn}
+            onClick={() => {
+              // Визначити наступний languageId
+              const existingLanguages = translationsArray.fields.map((_, index) =>
+                watch(`translations.${index}.languageId`)
+              );
+
+              // Якщо є українська (1) - додати англійську (2), якщо немає - додати українську
+              const nextLanguageId = existingLanguages.includes(1) ? 2 : 1;
+
+              translationsArray.append({
+                name: "",
+                description: "",
+                languageId: nextLanguageId
+              });
+            }}
+          >
+            + Add Translation
+          </Button>
+        )}
 
         {/* Features */}
-        <h3>Features</h3>
+        <h3>Властивості товару</h3>
         {featuresArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
+            <div className={styles.featureInputs}>
+              <Input
+                placeholder="Text (українська)"
+                {...register(`features.${index}.text`)}
+                className={styles.inputText}
+                title={watch(`features.${index}.text`) || ''}
+                label="Українська"
+              />
+
+              <Input
+                placeholder="Text (English)"
+                {...register(`features.${index}.textEn`)}
+                className={styles.inputText}
+                title={watch(`features.${index}.textEn`) || ''}
+                label="English"
+              />
+            </div>
+
             <Input
-              placeholder="Text"
-              {...register(`features.${index}.text`)}
-              className={styles.inputText}
-              title={watch(`features.${index}.text`) || ''}
+              type="number"
+              placeholder="Order"
+              {...register(`features.${index}.order`, { valueAsNumber: true })}
             />
 
-            <Input type="number" placeholder="Order" {...register(`features.${index}.order`, { valueAsNumber: true })} />
+            {/* Кнопка видалення */}
+            <button
+              type="button"
+              onClick={() => featuresArray.remove(index)}
+              className={styles.removeBtn}
+            >
+              ✕
+            </button>
           </div>
         ))}
-        <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length + 1 })} className={styles.btn}>+ Add Feature</Button>
+
+        <Button
+          type="button"
+          onClick={() => featuresArray.append({
+            text: "",
+            textEn: "",
+            order: featuresArray.fields.length + 1
+          })}
+          className={styles.btn}
+        >
+          + Add Feature
+        </Button>
 
         {/* Variants */}
         <h3>Variants</h3>

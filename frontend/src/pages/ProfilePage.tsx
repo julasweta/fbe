@@ -41,6 +41,7 @@ const ProfilePage = () => {
         setSuccessMessage("Профіль оновлено успішно");
         setErrorMessage(null);
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setErrorMessage(err.message || "Помилка при оновленні профілю");
       setSuccessMessage(null);

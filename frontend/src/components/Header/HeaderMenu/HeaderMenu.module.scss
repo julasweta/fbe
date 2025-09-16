@@ -8,11 +8,12 @@
   align-items: center;
   height: 50px;
   z-index: 1000;
-  width: 45%;
+  width: 55%;
 
   @media (max-width: 950px) {
     width: 20%;
     justify-content: center;
+
   }
 }
 
@@ -38,15 +39,18 @@ nav {
     top: 60px;
     left: 0;
     right: 0;
-    display: none;
     overflow: visible;
     transition: max-height 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     background-color: #959394;
+    /* спочатку приховане */
+    max-height: 0;
+    display: none;
   }
 }
 
 .menuListOpen {
+  display: flex;
   max-height: 100vh;
   /* color: #333;*/
 
@@ -62,20 +66,28 @@ nav {
 .menuItem {
   position: relative;
   overflow: visible;
-
   height: 50px;
   background-color: transparent;
   min-width: 100px;
+  /* центрування */
+  display: flex;
+  align-items: center;
+  /* по вертикалі */
 
-  @media (max-width: 768px) {
+  @media (max-width: 950px) {
     border-bottom: 1px solid #ddd;
     width: 100%;
+
 
 
     &:last-child {
       border-bottom: none;
     }
   }
+}
+
+.show {
+  display: flex;
 }
 
 .menuLink {
@@ -97,7 +109,7 @@ nav {
     color: #0070f3;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1068px) {
     justify-content: space-between;
     padding: 1rem;
     /* color: #333 !important;*/
@@ -108,7 +120,7 @@ nav {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #7c7d78;
+  background-color: #959394;
   /*color: #333;*/
   list-style: none;
   padding: 0.5rem 0;
@@ -124,12 +136,10 @@ nav {
   min-width: 400px;
 
   @media (max-width: 768px) {
-    position: relative;
     box-shadow: none;
-    position: relative;
     box-shadow: none;
     background-color: #959394;
-    top:0;
+    top: 5px;
   }
 }
 
@@ -174,11 +184,11 @@ nav {
   }
 }
 
-.btnLink {
+/* .btnLink {
   display: flex;
   flex-direction: row;
 
-}
+} */
 
 /* Бургер меню */
 .burger {

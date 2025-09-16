@@ -18,6 +18,7 @@ const authService = {
       const res = await apiService.post<ITokens>("auth/login", authData);
       console.log("[AuthService] /auth/login response:", res);
       data = res.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("[AuthService] Error during /auth/login request:", error);
       console.error("[AuthService] Error response:", error?.response?.data);
@@ -145,6 +146,7 @@ const authService = {
   async me(): Promise<IRes<IUser>> {
     try {
       return await apiService.get("users/me");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error?.response?.status === 401) {
         try {
@@ -173,6 +175,7 @@ const authService = {
           .login(state.accessToken, state.refreshToken, data);
       }
       return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
         error ? error.response.data.error.message : "Помилка оновлення профілю",
@@ -225,6 +228,7 @@ const authService = {
 
     try {
       await apiService.post("auth/change-password", data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
         error ? error.response.data.error.message : "Помилка оновлення",

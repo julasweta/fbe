@@ -1,0 +1,51 @@
+.switcher {
+  position: relative;
+  display: flex;
+  font-family: 'Inter', sans-serif;
+
+  .lang-btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 0.25rem;
+    border: none;
+    cursor: pointer;
+    min-width: 3.2rem;
+    height: 28px;
+    color: #fff;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.3s ease;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+    &.uk {
+      background: linear-gradient(135deg, #00bfff 0%, #ffd700 100%);
+    }
+
+    &.en {
+      background: linear-gradient(135deg, #1e3a8a 0%, #ef4444 100%);
+    }
+
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 105%;
+      transform: translateX(-10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  &:hover .lang-btn.hidden {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+}

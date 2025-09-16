@@ -17,6 +17,15 @@ export class UpdateProductFeatureDto {
   @IsOptional()
   text?: string;
 
+  @ApiPropertyOptional({
+    example: 'Invisible scrunch seam',
+    description: 'Окремий пункт опису товару англійською',
+  })
+  @IsString()
+  @MinLength(1)
+  @IsOptional()
+  textEn?: string;
+
   @ApiPropertyOptional({ example: 1, description: 'Порядок відображення' })
   @IsNumber()
   @IsPositive()

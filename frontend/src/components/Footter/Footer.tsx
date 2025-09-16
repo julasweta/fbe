@@ -7,6 +7,7 @@ const footerMenu = [
   { title: "About", url: "/about" },
   { title: "Contact", url: "/contact" },
   { title: "Privacy", url: "/privacy" },
+  { title: "ReturnPolicy", url: "/return-policy" },
 ];
 
 const Footer = () => {

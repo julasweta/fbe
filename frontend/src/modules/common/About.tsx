@@ -1,45 +1,44 @@
 import React from "react";
 import styles from "./About.module.scss";
+import { useTranslation } from "react-i18next";
 
 const About: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <section data-bg="dark" className={`content-section ${styles.contentSection}`}>
-    <div className={styles.aboutWrapper}>
-      <div className={styles.fbeAbout}>
-        <h1 className={styles.title}>Про FBE</h1>
-        <p className={styles.description}>
-          FBE — український бренд сучасного одягу, який поєднує якість, стиль та доступність.
-          Ми створюємо речі для тих, хто цінує комфорт та індивідуальність у щоденному житті,
-          а також для приємного спорту й активного відпочинку, що приносить задоволення.
-        </p>
-        <h2 className={styles.subtitle}>Наша місія</h2>
-        <p className={styles.description}>
-          Надавати якісний одяг, який підкреслює особистість кожного клієнта та робить їх впевненими в собі.
-          Ми віримо, що стильний та функціональний одяг має бути доступним для кожного.
-        </p>
-        <h2 className={styles.subtitle}>Що нас відрізняє</h2>
-        <ul className={styles.featuresList}>
-          <li>Якість матеріалів — використовуємо тільки перевірені тканини та фурнітуру</li>
-          <li>Актуальний дизайн — слідкуємо за світовими трендами та створюємо власні</li>
-          <li>Доступні ціни — співвідношення ціна-якість, яке вас приємно здивує</li>
-          <li>Швидка доставка — працюємо по всій Україні, Польщі, США та Канаді</li>
-        </ul>
-        <h2 className={styles.subtitle}>Наші цінності</h2>
-        <ul className={styles.valuesList}>
-          <li>Якість — кожна річ проходить ретельний контроль якості</li>
-          <li>Стиль — створюємо одяг для сучасних та активних людей</li>
-          <li>Сервіс — індивідуальний підхід до кожного клієнта</li>
-          <li>Інновації — постійно вдосконалюємо наші процеси та продукти</li>
-        </ul>
-        <h2 className={styles.subtitle}>Доставка</h2>
-        <ul className={styles.deliveryList}>
-          <li>Україна: Нова пошта (2-3 робочих дні)</li>
-          <li>Польща: Нова пошта (3-5 робочих днів)</li>
-          <li>США та Канада: Canada Post (1-3 робочих дні)</li>
-          <li>Міжнародна доставка: Meest Express (10-12 робочих днів)</li>
-        </ul>
+      <div className={styles.aboutWrapper}>
+        <div className={styles.fbeAbout}>
+          <h1 className={styles.title}>{t('about-h')}</h1>
+          <p className={styles.description}>
+            {t('about1')}
+          </p>
+          <h2 className={styles.subtitle}>{t('about-h1')}</h2>
+          <p className={styles.description}>
+            {t('about2')}
+          </p>
+          <h2 className={styles.subtitle}>{t('about-h2')}</h2>
+          <ul className={styles.featuresList}>
+            <li>{t('about3-1')}</li>
+            <li>{t('about3-2')}</li>
+            <li>{t('about3-3')}</li>
+            <li>{t('about3-4')}</li>
+          </ul>
+          <h2 className={styles.subtitle}>{t('about-h3')}</h2>
+          <ul className={styles.valuesList}>
+            <li>{t('about4-1')}</li>
+            <li>{t('about4-2')}</li>
+            <li>{t('about4-3')}</li>
+            <li>{t('about4-4')}</li>
+          </ul>
+          <h2 className={styles.subtitle}>{t('about-h4')}</h2>
+          <ul className={styles.deliveryList}>
+            <li>{t('about5-1')}</li>
+            <li>{t('about5-2')}</li>
+            <li>{t('about5-3')}</li>
+          </ul>
         </div>
-    </div>
+      </div>
     </section>
   );
 };

@@ -3,11 +3,11 @@ import { useAuthStore } from "../../store";
 import HeaderMenu from "./HeaderMenu/HeaderMenu";
 import styles from "./Header.module.scss";
 import { useState, useEffect, useRef } from "react";
-import { Button } from "../ui/Buttons/Button";
 import { useThemeStore } from "../../store/useThemeStore";
 import { FaRegUser } from "react-icons/fa";
 import { LuShoppingCart } from "react-icons/lu";
 import { useCartStore } from "../../store/useCartStore";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 const Header: React.FC = () => {
   const { logout, accessToken, user } = useAuthStore();
@@ -17,6 +17,7 @@ const Header: React.FC = () => {
   const [hasInitializedCart, setHasInitializedCart] = useState(false);
 
   const { cart, fetchCart } = useCartStore();
+   const isMobile = useMediaQuery("(max-width: 950px)");
 
   // Завантажуємо кошик тільки один раз при ініціалізації або зміні користувача
   useEffect(() => {
@@ -115,66 +116,67 @@ const Header: React.FC = () => {
 
       <div className={`${styles.authBlock} ${user ? styles.authBlockUser : ""}`}>
         {accessToken ? (
-          <>
+          <div className={styles.profileMenu}>
             <span
               className={styles.userName}
               style={{
                 color: textColor,
-                transition: 'color 0.3s ease'
+                transition: "color 0.3s ease",
               }}
             >
               <Link to="/profile" className="grey boxLine">
-                <FaRegUser
+               {!isMobile && <FaRegUser
                   style={{
-                    color: textColor === '#ffffff' ? '#ffffff' : '#000000',
-                    fontSize: '1.5rem',
-                    transition: 'color 0.3s ease',
+                    color: textColor === "#ffffff" ? "#ffffff" : "#000000",
+                    fontSize: "1.3rem",
+                    transition: "color 0.3s ease",
                   }}
-                />
-                {(user?.last_name?.[0] ?? '').toUpperCase()}
-                {(user?.first_name?.[0] ?? '').toUpperCase()}
+                />}
+                {(user?.last_name?.[0] ?? "").toUpperCase()}
+                {(user?.first_name?.[0] ?? "").toUpperCase()}
               </Link>
-
             </span>
-            <Button
-              className={styles.authButton}
-              onClick={logout}
-              style={{
-                color: textColor,
-                borderColor: textColor,
-                backgroundColor: 'transparent',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              Logout
-            </Button>
-          </>
+
+            {/* Dropdown */}
+            <div className={styles.dropdown}>
+              <button
+                className={styles.logoutBtn}
+                onClick={logout}
+                style={{
+                  color: textColor,
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         ) : (
           <Link to="/login">
             <FaRegUser
               style={{
-                color: textColor === '#ffffff' ? '#ffffff' : '#000000',
-                fontSize: '1.5rem',
-                transition: 'color 0.3s ease',
+                color: textColor === "#ffffff" ? "#ffffff" : "#000000",
+                fontSize: "1.5rem",
+                transition: "color 0.3s ease",
               }}
             />
           </Link>
         )}
 
-        <Link to="/cart"
-          className={styles.shoppingCart}>
+        <Link to="/cart" className={styles.shoppingCart}>
           <LuShoppingCart
             style={{
-              color: textColor === '#ffffff' ? '#ffffff' : '#000000',
-              fontSize: '1.5rem',
-              transition: 'color 0.3s ease',
-              marginLeft: '10px',
+              color: textColor === "#ffffff" ? "#ffffff" : "#000000",
+              fontSize: "1.5rem",
+              transition: "color 0.3s ease",
+              marginLeft: "10px",
             }}
           />
-          <span>{(cart && cart.length > 0) ? cart.length : ''}</span>
+          <span>{cart && cart.length > 0 ? cart.length : ""}</span>
         </Link>
-       
       </div>
+
     </div>
   );
 };

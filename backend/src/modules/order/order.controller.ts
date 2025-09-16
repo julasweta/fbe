@@ -13,7 +13,11 @@ import {
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { CreateOrderDto, UpdateOrderStatusDto, UpdateOrderTrackingDto } from './dto/order.dto';
+import {
+  CreateOrderDto,
+  UpdateOrderStatusDto,
+  UpdateOrderTrackingDto,
+} from './dto/order.dto';
 import { Request } from 'express';
 
 @ApiTags('Orders')
@@ -97,7 +101,9 @@ export class OrderController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('tracknumber/:id')
-  @ApiOperation({ summary: 'Оновити номер посилки для конкретного товару замовлення' })
+  @ApiOperation({
+    summary: 'Оновити номер посилки для конкретного товару замовлення',
+  })
   @ApiResponse({ status: 200, description: 'Номер посилки оновлено' })
   async updateOrderTracking(
     @Param('id') idStr: string,
@@ -108,11 +114,15 @@ export class OrderController {
 
     // Перевірка прав доступу (тільки адмін може оновлювати)
     if (req.user.role !== 'ADMIN') {
-      throw new UnauthorizedException('Тільки адміністратори можуть оновлювати номер посилки');
+      throw new UnauthorizedException(
+        'Тільки адміністратори можуть оновлювати номер посилки',
+      );
     }
 
-    const res = await this.orderService.updateOrderTracking(id, dto.trackingNumber);
+    const res = await this.orderService.updateOrderTracking(
+      id,
+      dto.trackingNumber,
+    );
     return res;
-
   }
 }

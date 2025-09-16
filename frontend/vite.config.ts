@@ -17,6 +17,7 @@ interface IRoute {
   title: string;
   description: string;
   image?: string;
+  price?: string;
 }
 
 // Функція для отримання всіх маршрутів
@@ -25,6 +26,7 @@ async function getRoutes(): Promise<IRoute[]> {
     { path: "/", title: "FULL BODY ERA - Головна", description: "Ласкаво просимо до FULL BODY ERA", image: "https://fbe.pp.ua/assets/home-og.jpg" },
     { path: "/about", title: "FULL BODY ERA - Про нас", description: "Дізнайтеся більше про FULL BODY ERA - місія та цінності.", image: "https://fbe.pp.ua/assets/about-og.jpg" },
     { path: "/contact", title: "FULL BODY ERA - Контакти", description: "Зв’яжіться з нами.", image: "https://fbe.pp.ua/assets/default-og.jpg" },
+    { path: "/return-policy", title: "Return Policy", description: "Зв’яжіться з нами.", image: "https://fbe.pp.ua/assets/default-og.jpg" },
   ];
 
   try {
@@ -44,7 +46,8 @@ async function getRoutes(): Promise<IRoute[]> {
       path: `/product/${p.id}`,
       title: `${p.translations[0].name} - FULL BODY ERA`,
       description: p.translations[0].description?.slice(0, 150) || `Переглянути ${p.translations[0].name} у FULL BODY ERA.`,
-      image: p.variants?.[0]?.images?.[0]?.url || 'https://fbe.pp.ua/assets/default-og.jpg'
+      image: p.variants?.[0]?.images?.[0]?.url || 'https://fbe.pp.ua/assets/default-og.jpg',
+      price: `${p.price}`
     }));
 
     const categoryRoutes: IRoute[] = categories.map((c: ICategory) => ({
@@ -58,7 +61,8 @@ async function getRoutes(): Promise<IRoute[]> {
       path: `/group/${col.slug}`,
       title: `Колекція ${col.name} - FULL BODY ERA`,
       description: `Досліджуйте товари з колекції ${col.name}.`,
-      image: 'https://fbe.pp.ua/assets/default-og.jpg'
+      image: 'https://fbe.pp.ua/assets/default-og.jpg',
+
     }));
 
     return [...staticRoutes, ...productRoutes, ...categoryRoutes, ...collectionRoutes];
@@ -95,11 +99,15 @@ export default defineConfig({
           let modifiedContent = indexContent
             .replace(/<title>.*?<\/title>/i, `<title>${route.title}</title>`)
             .replace(/(<meta name="description" content=")[^"]*(")/i, `$1${route.description}$2`)
-            .replace(/(<link rel="canonical" href=")[^"]*(")/i, `$1https://fbe.pp.ua${route.path}$2`);
+            .replace(/<link rel="canonical"[^>]*>/i, `<link rel="canonical" href="https://fbe.pp.ua${route.path}" />`);
+
 
           const socialMeta = `
+    <meta property="og:type" content="product" />
     <meta property="og:title" content="${route.title}" />
     <meta property="og:description" content="${route.description}" />
+    <meta property="og:price:currency" content="UAH" />
+<meta property="og:price:amount" content="${route.price}" />
     <meta property="og:url" content="https://fbe.pp.ua${route.path}" />
     <meta property="og:image" content="${route.image}" />
     <meta name="twitter:title" content="${route.title}" />
@@ -117,6 +125,11 @@ export default defineConfig({
       },
     },
   ],
+  server: {
+    host: "0.0.0.0", // дозволяє доступ з локальної мережі
+    port: 5173,
+    strictPort: true,
+  },
   build: {
     rollupOptions: {
       input: { main: resolve(__dirname, "index.html") },

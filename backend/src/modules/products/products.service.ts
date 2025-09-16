@@ -193,6 +193,7 @@ export class ProductsService {
       await this.prisma.productFeature.createMany({
         data: features.map((f) => ({
           text: f.text || '',
+          textEn: f.textEn || '',
           order: f.order ?? null,
           productId: id,
         })),
@@ -571,12 +572,12 @@ export class ProductsService {
         translations: true,
         features: true,
         category: true,
-        collection: true
+        collection: true,
       },
     });
 
-    const rows = products.flatMap(product =>
-      product.variants.map(variant => ({
+    const rows = products.flatMap((product) =>
+      product.variants.map((variant) => ({
         sku: product.sku,
         name: product.translations[0]?.name || '',
         description: product.translations[0]?.description || '',
@@ -589,13 +590,13 @@ export class ProductsService {
         collectionId: product.collectionId,
         sizes: variant.sizes.join(','),
         colors: variant.color, // якщо один колір на варіант
-        images: variant.images.map(img => img.url).join(' | '),
-        features: product.features.map(f => f.text).join(' | '),
+        images: variant.images.map((img) => img.url).join(' | '),
+        features: product.features.map((f) => f.text).join(' | '),
         variantColor: variant.color,
         variantSizes: variant.sizes.join(','),
-        variantImages: variant.images.map(img => img.url).join(' | '),
+        variantImages: variant.images.map((img) => img.url).join(' | '),
         stock: variant.stock,
-      }))
+      })),
     );
 
     const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -603,9 +604,14 @@ export class ProductsService {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    res.setHeader('Content-Disposition', 'attachment; filename="products.xlsx"');
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="products.xlsx"',
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
     res.send(buffer);
   }
-
 }

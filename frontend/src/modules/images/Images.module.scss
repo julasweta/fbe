@@ -4,3 +4,28 @@
   width: 100%;
   background-color: rgb(255, 255, 255);
 }
+
+.newphoto{
+  background-color: rgb(196, 202, 210);
+  padding: 5px;
+}
+
+/* Images.module.scss */
+.photoBox {
+  display: inline-flex;
+  /* або flex, якщо хочеш вертикально */
+  flex-direction: column;
+  align-items: center;
+  margin: 0.5rem;
+
+  img {
+    width: 100px; // фіксована ширина
+    height: 100px; // фіксована висота
+    object-fit: cover; // зберігає пропорції і обрізає зайве
+    border-radius: 4px;
+  }
+
+  button {
+    margin-top: 0.5rem;
+  }
+}

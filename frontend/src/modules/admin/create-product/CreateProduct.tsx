@@ -14,8 +14,9 @@ import { CollectionSelect } from "../../../components/Collection/CollectionSelec
 import { VariantImages } from "../../images/Images";
 import Input from "../../../components/ui/Inputs/Input";
 import { Button } from "../../../components/ui/Buttons/Button";
-
 const CreateProduct: React.FC = () => {
+
+
   const { register, control, handleSubmit, reset, setValue, watch } =
     useForm<ICreateProduct>({
       defaultValues: {
@@ -29,6 +30,8 @@ const CreateProduct: React.FC = () => {
         variants: [], // 🔹 спочатку порожній масив
       },
     });
+  
+
 
   const translationsArray = useFieldArray({ control, name: "translations" });
   const featuresArray = useFieldArray({ control, name: "features" });
@@ -36,6 +39,8 @@ const CreateProduct: React.FC = () => {
 
   const watchPrice = watch("price");
   const watchPriceSale = watch("priceSale");
+
+
 
   const onSubmit = async (data: ICreateProduct) => {
     try {
@@ -100,27 +105,38 @@ const CreateProduct: React.FC = () => {
         </div>
 
         {/* Translations */}
-        <h3>Translations</h3>
-        {translationsArray.fields.map((field, index) => (
-          <div key={field.id} className={styles.group}>
-            <input placeholder="Name" {...register(`translations.${index}.name`)} />
-            <input placeholder="Description" {...register(`translations.${index}.description`)} />
-            <Input
-              type="number"
-              placeholder="Language ID"
-              label="language: UA"
-            disabled={true}
-              {...register(`translations.${index}.languageId`, { valueAsNumber: true })}
-            />
-            <button type="button" onClick={() => translationsArray.remove(index)}>
-              ✕
-            </button>
-          </div>
-        ))}
+        <h3>Назва та опис  товару</h3>
+        {translationsArray.fields.map((field, index) => {
+          const currentLanguageId = watch(`translations.${index}.languageId`);
+
+          return (
+            <div key={field.id} className={styles.group}>
+              <input placeholder="Name" {...register(`translations.${index}.name`)} />
+              <input placeholder="Description" {...register(`translations.${index}.description`)} />
+
+              <div className={styles.field}>
+                <label>{`Language: ${currentLanguageId === 1 ? 'Ukraine' : 'English'}`}</label>
+                <select {...register(`translations.${index}.languageId`, {
+                  valueAsNumber: true,
+                  validate: value => [1, 2].includes(value) || "Тільки 1 або 2"
+                })}>
+                  <option value="">Оберіть мову</option>
+                  <option value={1}>Ukraine</option>
+                  <option value={2}>English</option>
+                </select>
+              </div>
+
+              {translationsArray.fields.length > 1 && (
+                <button type="button" onClick={() => translationsArray.remove(index)}>
+                  ✕
+                </button>
+              )}
+            </div>
+          );
+        })}
         <Button
           type="button"
           className={styles.btn}
-          disabled={true}
           onClick={() =>
             translationsArray.append({ name: "", description: "", languageId: 1 })
           }
@@ -129,7 +145,7 @@ const CreateProduct: React.FC = () => {
         </Button>
 
         {/* Features */}
-        <h3>Опис товару</h3>
+        <h3>Властивості товару</h3>
         {featuresArray.fields.map((field, index) => (
           <div key={field.id} className={styles.group}>
             <Input placeholder="приклад: Тканина: кашемір" {...register(`features.${index}.text`)} />
@@ -145,7 +161,7 @@ const CreateProduct: React.FC = () => {
           </div>
         ))}
         <Button type="button" onClick={() => featuresArray.append({ text: "", order: featuresArray.fields.length+1 })} className={styles.btn}>
-          + Add Feature
+          + Додати властивість
         </Button>
 
         {/* Variants */}

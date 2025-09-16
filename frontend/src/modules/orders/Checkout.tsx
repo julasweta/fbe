@@ -16,7 +16,7 @@ const Checkout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "card">("cod");
 
   const [form, setForm] = useState<CheckoutFormData>({
-    fullName: (user?.first_name + " " + user?.last_name) || "",
+    fullName: user ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() : "",
     phone: "",
     email: user?.email || "",
     areaRef: undefined,
@@ -25,7 +25,6 @@ const Checkout: React.FC = () => {
     branchRef: undefined,
     branchName: undefined,
   });
-
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -44,14 +43,13 @@ const Checkout: React.FC = () => {
       return;
     }
 
-  if (cart.length === 0) {
+    if (cart.length === 0) {
       alert("🛒 Ваш кошик порожній");
       return;
-    }  
+    }
 
     setLoading(true);
     try {
-      // Використовуємо збережені назви міста та відділення
       const orderData = {
         ...form,
         city: form.cityName,
@@ -83,18 +81,17 @@ const Checkout: React.FC = () => {
     <div className={styles.checkout}>
       <h1>Оформлення замовлення</h1>
 
-      <CheckoutForm
-        form={form}
-        setForm={setForm}
-      />
+      <CheckoutForm form={form} setForm={setForm} />
 
       <div className={styles.summary}>
-        {cart.map(item => {
+        {cart.map((item) => {
           const price = item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
           const qty = item?.quantity ?? 1;
           return (
             <div key={item.id} className={styles.item}>
-              <span>{item?.name} x {qty}</span>
+              <span>
+                {item?.name} x {qty}
+              </span>
               <span>₴{(price * qty).toFixed(2)}</span>
             </div>
           );
@@ -116,16 +113,29 @@ const Checkout: React.FC = () => {
         />
 
         <Input
-          label="Оплата карткою онлайн"
+          label="Оплата за реквізитами"
           type="radio"
           value="card"
           checked={paymentMethod === "card"}
           onChange={() => setPaymentMethod("card")}
         />
+
+        {paymentMethod === "card" && (
+          <div className={styles.cardDetails}>
+            <h3>Реквізити для оплати</h3>
+            <p><strong>Отримувач:</strong> ФОП Батько Ірина Ігорівна</p>
+            <p><strong>IBAN:</strong> UA333220010000026005350071455</p>
+            <p><strong>ЄДРПОУ:</strong> 3590006083</p>
+            <p><strong>МФО:</strong> 322001</p>
+            <p><strong>Призначення платежу:</strong> Оплата замовлення {cart[0].id }</p>
+          </div>
+        )}
       </div>
 
       <div className={styles.links}>
-        <Link to="/delivery-terms" className="link">📦 Умови доставки та повернення</Link>
+        <Link to="/delivery-terms" className="link">
+          📦 Умови доставки та повернення
+        </Link>
       </div>
 
       <Button onClick={handleOrder} disabled={loading}>
@@ -136,3 +146,4 @@ const Checkout: React.FC = () => {
 };
 
 export default Checkout;
+

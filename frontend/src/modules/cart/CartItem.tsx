@@ -21,7 +21,7 @@ const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) =>
         <p>Розмір: {item.size}</p>
         <p>Ціна: ₴{price.toFixed(2)}</p>
         <div className={styles.quantity}>
-          <Button onClick={() => updateQuantity(item.productId, item.quantity - 1)}>-</Button>
+          <Button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="black">-</Button>
           <Input
             className={styles.input}
             type="number"
@@ -32,7 +32,7 @@ const CartItem = ({ item, price, updateQuantity, removeItem }: CartItemProps) =>
             value={item.quantity}
             onChange={e => updateQuantity(item.productId, Number(e.target.value))}
           />
-          <Button onClick={() => updateQuantity(item.productId, item.quantity + 1)}>+</Button>
+          <Button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="black">+</Button>
         </div>
         <Button
           className={styles.remove}

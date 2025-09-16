@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateOrderDto } from './dto/order.dto';
 import { TelegramService } from '../telegram/telegram.service';
@@ -174,10 +178,9 @@ export class OrderService {
     return updatedOrder;
   }
 
-
   async updateOrderTracking(orderId: number, trackingNumber?: string) {
     if (!trackingNumber) {
-      throw new BadRequestException('trackingNumber обов\'язковий');
+      throw new BadRequestException("trackingNumber обов'язковий");
     }
 
     const order = await this.prisma.order.findUnique({
@@ -191,6 +194,4 @@ export class OrderService {
       data: { trackingNumber },
     });
   }
-
-
 }

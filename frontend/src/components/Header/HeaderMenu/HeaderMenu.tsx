@@ -8,6 +8,9 @@ import { Button } from "../../ui/Buttons/Button";
 import { useAuthStore } from "../../../store";
 import { Role } from "../../../interfaces/IRegister";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import LanguageSwitcher from "../../LanguageSwitcher/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
+import { useLanguageStore } from "../../../store/useLanguageStore";
 
 interface MenuItem {
   label: string;
@@ -27,6 +30,8 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   const { categories, fetchCategories } = useCategoryStore();
   const { collections, fetchCollections } = useCollectionStore();
   const { user } = useAuthStore();
+  const { t} = useTranslation();
+  const lang = useLanguageStore((state) => state.lang);
 
   useEffect(() => {
     fetchCategories();
@@ -34,19 +39,14 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   }, [fetchCategories, fetchCollections]);
 
   const menuItems = useMemo<MenuItem[]>(() => {
-    const baseMenu: MenuItem[] = [
-      { label: "Головна", link: "/" },
-      { label: "Магазин", submenu: true },
-      { label: "Про нас", link: "/about" },
-      { label: "Контакти", link: "/contact" },
+    return [
+      { label: t('home'), link: '/' },
+      { label: t('shop'), submenu: true },
+      { label: t('about'), link: '/about' },
+      { label: t('contact'), link: '/contact' },
+      ...(user?.role === Role.ADMIN ? [{ label: 'Адмінка', link: '/admin' }] : [])
     ];
-
-    if (user && user.role === Role.ADMIN) {
-      return [...baseMenu, { label: "Адмінка", link: "/admin" }];
-    }
-
-    return baseMenu;
-  }, [user && user.role]);
+  }, [user, lang, t])
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -60,7 +60,8 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
   const dynamicStyles = {
     color: textColor,
     transition: 'color 0.3s ease',
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    
   };
 
   const arrowStyles = {
@@ -79,6 +80,8 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
 
   return (
     <nav className={styles.headerMenu}>
+      <LanguageSwitcher />
+   
       {isMobile &&
         <Button
         className={`${styles.burger} ${mobileMenuOpen ? styles.open : ""}`}
@@ -89,7 +92,9 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
         <span style={burgerSpanStyles} />
         <span style={burgerSpanStyles} />
         <span style={burgerSpanStyles} />
-      </Button>}
+        </Button>}
+      
+ 
 
       <ul className={`${styles.menuList} ${mobileMenuOpen ? styles.menuListOpen : ""}`}>
         {menuItems.map((item, index) => (
@@ -103,11 +108,11 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
               <>
                 <button
                   type="button"
-                  className={styles.btnLink}
+                 
                   onClick={() => toggleSubmenu(index)}
                   aria-expanded={openSubmenuIndex === index}
+                  
                   style={dynamicStyles}
-
                 >
                   {item.label}
                   <span
@@ -119,11 +124,11 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
                 {(activeIndex === index || openSubmenuIndex === index) && (
                   <ul className={styles.submenu}>
                     <div className={styles.block}>
-                      <li className="submenuTitle">Категорії</li>
+                      <li className="submenuTitle">{t('categories')}</li>
                       <CategoriesSubmenu categories={categories} />
                     </div>
                     <div className={styles.block}>
-                      <li className="submenuTitle">Колекції</li>
+                      <li className="submenuTitle">{t('collections')}</li>
                       <CollectionsSubmenu collections={collections} />
                     </div>
                   </ul>
@@ -141,6 +146,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ textColor }) => {
           </li>
         ))}
       </ul>
+   
     </nav>
   );
 };

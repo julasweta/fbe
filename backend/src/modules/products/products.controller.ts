@@ -29,8 +29,8 @@ import { Response } from 'express';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
-  
+  constructor(private readonly productsService: ProductsService) {}
+
   @Post('import')
   @ApiOperation({ summary: 'Імпорт продуктів з Excel файлу' })
   @ApiConsumes('multipart/form-data')
@@ -52,7 +52,6 @@ export class ProductsController {
     if (!file) throw new Error('Файл не передано');
     return this.productsService.importProductsFromFile(file);
   }
-
 
   @Get('export')
   @ApiOperation({ summary: 'Експорт продуктів у Excel' })
@@ -135,7 +134,4 @@ export class ProductsController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }
-
-
-
 }

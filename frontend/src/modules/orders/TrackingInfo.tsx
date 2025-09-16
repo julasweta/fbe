@@ -21,6 +21,7 @@ export const TrackingInfo: React.FC<TrackingInfoProps> = ({ trackingNumber, full
         setError(null);
         const data = await novaPoshtaService.getTracking(trackingNumber);
         setTracking(data);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         setError(err.message || "Не вдалося завантажити інформацію");
       } finally {

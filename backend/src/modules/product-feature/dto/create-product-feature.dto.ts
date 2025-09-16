@@ -13,6 +13,12 @@ export class CreateProductFeatureDto {
   @MinLength(1)
   text: string;
 
+  @ApiProperty({ example: 'Invisible scrunch seam' })
+  @IsString()
+  @MinLength(1)
+  @IsOptional()
+  textEn: string;
+
   @ApiProperty({ example: 1 })
   @IsNumber()
   @IsPositive()

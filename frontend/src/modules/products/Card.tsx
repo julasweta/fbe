@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Card.module.scss";
 import { colorHexMap, type IProduct, sizeLabels } from "../../interfaces/IProduct";
+import { useLanguageStore } from "../../store/useLanguageStore";
 
 interface CardProps {
   product: IProduct;
@@ -10,9 +11,30 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const { id, translations, variants, price, priceSale } = product;
+  const lang = useLanguageStore((state) => state.lang);
 
-  const name =
-    translations && translations.length > 0 ? translations[0].name : "Назва відсутня";
+  // Функція для отримання правильного перекладу
+  const getTranslationByLanguage = (translations: IProduct['translations']) => {
+    if (!translations || translations.length === 0) return null;
+
+    // Мапинг кодів мов до languageId
+    const languageIdMap = {
+      'uk': 1,
+      'en': 2
+    };
+
+    const targetLanguageId = languageIdMap[lang as keyof typeof languageIdMap];
+
+    // Спочатку шукаємо переклад для поточної мови
+    const translation = translations.find(t => t.languageId === targetLanguageId);
+
+    // Якщо не знайдено, повертаємо перший доступний переклад
+    return translation || translations[0];
+  };
+
+  // Отримуємо актуальний переклад
+  const translation = getTranslationByLanguage(translations);
+  const name = translation?.name || (lang === 'uk' ? "Назва відсутня" : "Name not available");
 
   // fallback: перший варіант
   const firstVariant = variants?.[0];
@@ -37,6 +59,23 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const finalPrice = price ?? minVariantPrice;
   const finalSalePrice = priceSale ?? minVariantSalePrice;
 
+  // Тексти для різних мов
+  const texts = {
+    uk: {
+      noImage: "Фото відсутнє",
+      noPrice: "Ціна відсутня",
+      noSizes: "Немає",
+      noColors: "Немає"
+    },
+    en: {
+      noImage: "Photo not available",
+      noPrice: "Price not available",
+      noSizes: "None",
+      noColors: "None"
+    }
+  };
+
+  const currentTexts = texts[lang as keyof typeof texts] || texts.uk;
 
   return (
     <div className={styles.card}>
@@ -44,12 +83,14 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
         {image ? (
           <img src={image.url} alt={image.altText || name} />
         ) : (
-          <div className={styles.noImage}>Фото відсутнє</div>
+          <div className={styles.noImage}>{currentTexts.noImage}</div>
         )}
       </Link>
+
       <p className={`${styles.name} ${isMainPage ? styles.mainFont : ''}`}>
         <Link to={`/product/${id}`}>{name}</Link>
       </p>
+
       <p className={`${styles.price} ${isMainPage ? styles.mainFont : ''}`}>
         {finalPrice ? (
           finalSalePrice && finalSalePrice < finalPrice ? (
@@ -61,14 +102,15 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
             <span>₴{finalPrice.toFixed(2)}</span>
           )
         ) : (
-          "Ціна відсутня"
+          currentTexts.noPrice
         )}
       </p>
+
       <div className={styles.features}>
         {!isMainPage ? (
           allSizes.length > 0
             ? allSizes.map((size) => sizeLabels[size]).join(", ")
-            : "Немає"
+            : currentTexts.noSizes
         ) : ''}
         {!isMainPage && <br />}
         {allColors.length > 0 ? (
@@ -83,7 +125,7 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
             ))}
           </div>
         ) : (
-          "Немає"
+          !isMainPage && currentTexts.noColors
         )}
       </div>
     </div>

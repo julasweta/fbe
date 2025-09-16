@@ -5,6 +5,7 @@ import ResetPassword from "../modules/auth/ResetPassword";
 import Delivery from "../modules/common/Delivery";
 import Checkout from "../modules/orders/Checkout";
 import { AboutPage, AdminPage, AuthPage, CartPage, CategoryPage, ChangePassword, CollectionPage, ContactPage, HomePage, NotFoundPage, OrdersPage, PrivacyPage, ProductPage, ProfilePage, RegisterPage } from "../pages";
+import ReturnPolicy from "../pages/ReturnPolicy";
 
 
 export const publicRoutes = [
@@ -23,6 +24,8 @@ export const publicRoutes = [
   { path: "/cart", element: <CartPage /> },
   { path: "/checkout", element: <Checkout /> },
   { path: "/delivery-terms", element: <Delivery /> },
+  { path: "/return-policy", element: <ReturnPolicy /> },
+  
 ];
 
 export const mainRoutes = [

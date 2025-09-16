@@ -5,7 +5,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   cursor: pointer;
   border: none;
 
@@ -15,11 +14,12 @@
 }
 
 .primary {
-  background-color: #5d5d80; // blue-500
+  background-color: #1b4978; // blue-500
   color: #f5f3f3;
 
+
   &:hover {
-    background-color: #53565d; // blue-600
+    background-color: #5e8ea3; // blue-600
   }
 }
 
@@ -32,6 +32,12 @@
   }
 }
 
+.small{
+  background-color: transparent; // red-500
+    color: #666262;
+    display: inline;
+}
+
 .danger {
   background-color: #ef4444; // red-500
   color: #fff;
@@ -42,11 +48,11 @@
 }
 
 .link {
-  background-color: #390eb0; // red-500
+  background-color: #1a62c1; // red-500
   color: #fff;
 
   &:hover {
-    background-color: #5665c9; // red-600
+    background-color: #7091d8; // red-600
   }
 }
 

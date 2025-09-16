@@ -10,9 +10,9 @@ export interface CheckoutFormData {
   email: string;
   areaRef?: string;
   cityRef?: string;
-  cityName?: string;   
+  cityName?: string;
   branchRef?: string;
-  branchName?: string;  
+  branchName?: string;
   novaPoshtaBranch?: string;
   city?: string;
 }
@@ -31,86 +31,69 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm }) => {
 
   // Завантаження областей
   useEffect(() => {
-    const fetchAreas = async () => {
-      try {
-        const res = await novaPoshtaService.getAreas();
-        console.log("✅ Завантажені області:", res);
-        setAreas(res);
-      } catch (err) {
-        console.error("❌ Помилка завантаження областей:", err);
-      }
-    };
-    fetchAreas();
+    novaPoshtaService
+      .getAreas()
+      .then((res) => setAreas(res))
+      .catch((err) => console.error("❌ Помилка завантаження областей:", err));
   }, []);
 
-  // Завантаження міст при зміні області
+  // Завантаження міст
   useEffect(() => {
     if (!form.areaRef) return;
-    const fetchCities = async () => {
-      setLoadingCities(true);
-      try {
-        const res = await novaPoshtaService.getCities(form.areaRef);
-        setCities(res);
-      } catch (err) {
-        console.error("❌ Помилка завантаження міст:", err);
-      } finally {
-        setLoadingCities(false);
-      }
-    };
-    fetchCities();
+    setLoadingCities(true);
+    novaPoshtaService
+      .getCities(form.areaRef)
+      .then((res) => setCities(res))
+      .catch((err) => console.error("❌ Помилка завантаження міст:", err))
+      .finally(() => setLoadingCities(false));
   }, [form.areaRef]);
 
-  // Завантаження відділень при зміні міста
+  // Завантаження відділень
   useEffect(() => {
     if (!form.cityRef) return;
-    const fetchBranches = async () => {
-      setLoadingBranches(true);
-      try {
-        const res = await novaPoshtaService.getBranches(form.cityRef? form.cityRef:'');
-        setBranches(res);
-      } catch (err) {
-        console.error("❌ Помилка завантаження відділень:", err);
-      } finally {
-        setLoadingBranches(false);
-      }
-    };
-    fetchBranches();
+    setLoadingBranches(true);
+    novaPoshtaService
+      .getBranches(form.cityRef)
+      .then((res) => setBranches(res))
+      .catch((err) => console.error("❌ Помилка завантаження відділень:", err))
+      .finally(() => setLoadingBranches(false));
   }, [form.cityRef]);
 
-  const handleChangeValue = (name: "areaRef" | "cityRef" | "branchRef", value: string) => {
+  const handleChangeValue = (
+    name: "areaRef" | "cityRef" | "branchRef",
+    value: string
+  ) => {
     if (name === "areaRef") {
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         areaRef: value,
         cityRef: undefined,
         cityName: undefined,
         branchRef: undefined,
-        branchName: undefined
+        branchName: undefined,
       }));
       setCities([]);
       setBranches([]);
-      return;
     }
 
     if (name === "cityRef") {
-      const city = cities.find(c => c.Ref === value)?.Description || "";
-      setForm(prev => ({
+      const city = cities.find((c) => c.Ref === value)?.Description || "";
+      setForm((prev) => ({
         ...prev,
         cityRef: value,
         cityName: city,
         branchRef: undefined,
-        branchName: undefined
+        branchName: undefined,
       }));
       setBranches([]);
-      return;
     }
 
     if (name === "branchRef") {
-      const branch = branches.find(b => b.Ref === value);
-      setForm(prev => ({
+      const branch = branches.find((b) => b.Ref === value);
+      setForm((prev) => ({
         ...prev,
         branchRef: value,
-        branchName: branch ? `${branch.Number} - ${branch.ShortAddress}` : ""
+        branchName: branch ? `${branch.Number} - ${branch.ShortAddress}` : "",
       }));
     }
   };
@@ -122,7 +105,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm }) => {
         name="fullName"
         placeholder="Ім’я та прізвище"
         value={form.fullName}
-        onChange={e => setForm(prev => ({ ...prev, fullName: e.target.value }))}
+        onChange={(e) => setForm((prev) => ({ ...prev, fullName: e.target.value }))}
         required
       />
       <input
@@ -130,7 +113,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm }) => {
         name="phone"
         placeholder="Телефон"
         value={form.phone}
-        onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
+        onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
         required
       />
       <input
@@ -138,20 +121,26 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm }) => {
         name="email"
         placeholder="Email"
         value={form.email}
-        onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))}
+        onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
       />
 
       <Select
         value={form.areaRef || ""}
         onChange={(value) => handleChangeValue("areaRef", value)}
-        options={areas.map(area => ({ value: area.Ref, label: area.Description }))}
+        options={areas.map((area) => ({
+          value: area.Ref,
+          label: area.Description,
+        }))}
         placeholder="Виберіть область"
       />
 
       <Select
         value={form.cityRef || ""}
         onChange={(value) => handleChangeValue("cityRef", value)}
-        options={cities.map(city => ({ value: city.Ref, label: city.Description }))}
+        options={cities.map((city) => ({
+          value: city.Ref,
+          label: city.Description,
+        }))}
         placeholder={loadingCities ? "Завантаження міст..." : "Виберіть місто"}
         disabled={!form.areaRef}
       />
@@ -159,7 +148,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ form, setForm }) => {
       <Select
         value={form.branchRef || ""}
         onChange={(value) => handleChangeValue("branchRef", value)}
-        options={branches.map(branch => ({ value: branch.Ref, label: `${branch.Number} - ${branch.ShortAddress}` }))}
+        options={branches.map((branch) => ({
+          value: branch.Ref,
+          label: `${branch.Number} - ${branch.ShortAddress}`,
+        }))}
         placeholder={loadingBranches ? "Завантаження відділень..." : "Виберіть відділення"}
         disabled={!form.cityRef}
       />

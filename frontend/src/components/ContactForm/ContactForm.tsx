@@ -5,6 +5,7 @@ import Input from "../ui/Inputs/Input";
 import { Button } from "../ui/Buttons/Button";
 import { userService } from "../../services/UserService";
 import type { sendMessage } from "../../interfaces/IUser";
+import { useTranslation } from "react-i18next";
 
 interface ContactFormInputs {
   name: string;
@@ -20,6 +21,7 @@ const ContactForm: React.FC = () => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormInputs>();
+    const { t} = useTranslation();
 
   const onSubmit = async (data: sendMessage) => {
     try {
@@ -34,12 +36,12 @@ const ContactForm: React.FC = () => {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-      <h2 className={styles.title}>Зв'яжіться з нами</h2>
+      <h2 className={styles.title}>{t('contact-to-me')}</h2>
 
       <div className={styles.field}>
         <Input
           type="text"
-          label="Ім’я"
+          label={t('name')}
           {...register("name", { required: "Ім’я обов’язкове" })}
         />
         {errors.name && <span className={styles.error}>{errors.name.message}</span>}
@@ -61,7 +63,7 @@ const ContactForm: React.FC = () => {
       </div>
 
       <div className={styles.field}>
-        <label>Повідомлення</label>
+        <label>{t('message')}</label>
         <textarea
           rows={4}
           {...register("message", { required: "Повідомлення обов’язкове" })}
@@ -74,8 +76,9 @@ const ContactForm: React.FC = () => {
       
 
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Відправка..." : "Відправити"}
+        {isSubmitting ? t('sending') : t('send')}
       </Button>
+
     </form>
   );
 };

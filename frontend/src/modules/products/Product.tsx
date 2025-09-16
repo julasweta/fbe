@@ -14,8 +14,8 @@ import { Button } from "../../components/ui/Buttons/Button";
 import Input from "../../components/ui/Inputs/Input";
 import { useCartStore } from "../../store/useCartStore";
 import type { ICartItem } from "../../interfaces/ICartItem";
-/* import { useMetaTags } from "../../hooks/useMetaTags";
-import { generateMetaData } from "../../utils/metaHelpers"; */
+import { useLanguageStore } from "../../store/useLanguageStore";
+
 interface ProductProps {
   productId: string;
 }
@@ -26,12 +26,10 @@ interface ProductFormData {
   quantity: number;
 }
 
-
-
 const Product: React.FC<ProductProps> = ({ productId }) => {
   const [product, setProduct] = useState<IProduct | null>(null);
   const [formData, setFormData] = useState<ProductFormData>({
-    variantId: null, // Змінено з color на variantId
+    variantId: null,
     size: null,
     quantity: 1
   });
@@ -42,7 +40,26 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   const [accordionOpen, setAccordionOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+  const lang = useLanguageStore((state) => state.lang);
 
+  // Функція для отримання правильного перекладу
+  const getTranslationByLanguage = (translations: IProduct['translations']) => {
+    if (!translations || translations.length === 0) return null;
+
+    // Мапинг кодів мов до languageId
+    const languageIdMap = {
+      'uk': 1,
+      'en': 2
+    };
+
+    const targetLanguageId = languageIdMap[lang as keyof typeof languageIdMap];
+
+    // Спочатку шукаємо переклад для поточної мови
+    const translation = translations.find(t => t.languageId === targetLanguageId);
+
+    // Якщо не знайдено, повертаємо перший доступний переклад
+    return translation || translations[0];
+  };
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -57,7 +74,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         if (data?.variants?.length) {
           setFormData((prev) => ({
             ...prev,
-            variantId: data.variants[0].id || null, // Використовуємо ID варіанта
+            variantId: data.variants[0].id || null,
             size: (data.variants[0].sizes?.[0] as ESize) || null
           }));
         }
@@ -69,8 +86,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     };
     loadProduct();
   }, [productId]);
-
-
 
   // Отримуємо всі зображення з усіх варіантів для мініатюр
   const getAllImages = () => {
@@ -106,7 +121,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     }));
   };
 
-  // Обробка зміни варіанта (тепер по ID, а не по кольору)
+  // Обробка зміни варіанта
   const handleVariantChange = (variantId: number) => {
     const newVariant = product?.variants.find((v) => v.id === variantId);
     setFormData((prev) => ({
@@ -140,11 +155,11 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     if (!product) return;
 
     if (!formData.variantId) {
-      setError("Будь ласка, оберіть варіант");
+      setError(lang === 'uk' ? "Будь ласка, оберіть варіант" : "Please select a variant");
       return;
     }
     if (!formData.size) {
-      setError("Будь ласка, оберіть розмір.");
+      setError(lang === 'uk' ? "Будь ласка, оберіть розмір." : "Please select a size.");
       return;
     }
 
@@ -153,7 +168,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     );
 
     if (!variant) {
-      setError("Обраний варіант недоступний");
+      setError(lang === 'uk' ? "Обраний варіант недоступний" : "Selected variant is not available");
       return;
     }
 
@@ -161,7 +176,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     setError(null);
 
     try {
-      const translation = product.translations?.[0];
+      const translation = getTranslationByLanguage(product.translations);
       const finalPrice =
         variant.priceSale && variant.priceSale < variant.price
           ? variant.priceSale
@@ -169,9 +184,9 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
 
       const cartItem: ICartItem = {
         productId: product.id,
-        name: translation?.name || "Без назви",
+        name: translation?.name || (lang === 'uk' ? "Без назви" : "No name"),
         price: finalPrice,
-        color: variant.color, // Отримуємо колір з варіанта
+        color: variant.color,
         size: formData.size,
         quantity: formData.quantity,
         image: variant.images?.[0]?.url
@@ -184,17 +199,17 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         setAddToCartSuccess(false);
       }, 2000);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Помилка додавання в кошик");
+      setError(e instanceof Error ? e.message : (lang === 'uk' ? "Помилка додавання в кошик" : "Error adding to cart"));
     } finally {
       setIsAddingToCart(false);
     }
   };
 
-  if (loading) return <div className={styles.loading}>Завантаження...</div>;
-  if (error) return <div className={styles.error}>Помилка: {error}</div>;
-  if (!product) return <div className={styles.noProduct}>Продукт не знайдено</div>;
+  if (loading) return <div className={styles.loading}>{lang === 'uk' ? 'Завантаження...' : 'Loading...'}</div>;
+  if (error) return <div className={styles.error}>{lang === 'uk' ? 'Помилка' : 'Error'}: {error}</div>;
+  if (!product) return <div className={styles.noProduct}>{lang === 'uk' ? 'Продукт не знайдено' : 'Product not found'}</div>;
 
-  const translation = product.translations?.[0];
+  const translation = getTranslationByLanguage(product.translations);
   const currentVariant = product.variants.find((v) => v.id === formData.variantId);
   const availableSizes = currentVariant?.sizes || [];
   const currentImage = allImages[selectedImageIndex];
@@ -212,7 +227,7 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   }
 
   const getVariantDisplayInfo = (variant: ICreateProductVariant) => {
-    const displayName = variant.description || variant.description || variant.color;
+    const displayName = variant.description || variant.color;
 
     const hexColor = isEColor(variant.color)
       ? colorHexMap[variant.color]
@@ -225,22 +240,55 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
     };
   };
 
+  // Тексти для різних мов
+  const texts = {
+    uk: {
+      variant: "Варіант:",
+      size: "Розмір:",
+      quantity: "Кількість:",
+      totalPrice: "Загальна ціна:",
+      addToCart: "Додати в кошик",
+      adding: "Додавання...",
+      added: "✓ Додано в кошик!",
+      features: "Особливості",
+      delivery: "Доставка та повернення",
+      deliveryInfo: [
+        "Замовлення по Україні: «Нова пошта» (2-3 робочих дні)",
+        "Замовлення по Польщі: «Нова пошта» (3-5 робочих днів)",
+        "Замовлення по США та Канаді: «Canada Post» (1-3 робочих дні)",
+        "Міжнародна доставка: Meest Express (10-12 робочих днів)"
+      ],
+      deliveryNote: "Для додаткової інформації звертайтесь у",
+      noImage: "Фото відсутнє"
+    },
+    en: {
+      variant: "Variant:",
+      size: "Size:",
+      quantity: "Quantity:",
+      totalPrice: "Total price:",
+      addToCart: "Add to cart",
+      adding: "Adding...",
+      added: "✓ Added to cart!",
+      features: "Features",
+      delivery: "Delivery and returns",
+      deliveryInfo: [
+        "Orders in Ukraine: «Nova Poshta» (2-3 business days)",
+        "Orders in Poland: «Nova Poshta» (3-5 business days)",
+        "Orders in USA and Canada: «Canada Post» (1-3 business days)",
+        "International delivery: Meest Express (10-12 business days)"
+      ],
+      deliveryNote: "For additional information contact us on",
+      noImage: "Photo not available"
+    }
+  };
 
-
+  const currentTexts = texts[lang as keyof typeof texts] || texts.uk;
 
   return (
     <>
-
-     
-    {/*   <meta name="description" content={product.translations[0].description} />
-      <meta property="og:title" content={product.translations[0].name} />
-      <meta property="og:description" content={product.translations[0].description} />
-      <meta property="og:image" content={product && product.variants[0].images && product.variants[0].images[0].url} />
- */}
-
       <div className={styles.product}>
         <div className={styles.images}>
-          {/* Основне зображення -*/}
+          {/* Основне зображення */}
           <div className={styles.mainImageContainer}>
             {currentImage ? (
               <img
@@ -249,10 +297,10 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                 className={styles.mainImage}
               />
             ) : (
-              <div className={styles.noImage}>Фото відсутнє</div>
+              <div className={styles.noImage}>{currentTexts.noImage}</div>
             )}
           </div>
-          {/* Мініатюри - всі зображення з усіх варіантів */}
+          {/* Мініатюри */}
           {allImages.length > 0 && (
             <div className={styles.thumbnailContainer}>
               {allImages.map((image, index) => (
@@ -271,11 +319,13 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
             </div>
           )}
         </div>
+
         <div className={styles.info}>
-          <h1 className={styles.title}>{translation?.name || "Без назви"}</h1>
+          <h1 className={styles.title}>{translation?.name || (lang === 'uk' ? "Без назви" : "No name")}</h1>
           {translation?.description && (
             <p className={styles.description}>{translation.description}</p>
           )}
+
           <div className={styles.nameBlock}>
             {/* опис варіанту */}
             <div className={styles.priceWrapper}>{currentVariant?.description}</div>
@@ -287,16 +337,18 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
               {currentVariant && currentVariant.price ? '₴ ' + currentVariant.price.toFixed(2) : '₴ ' + product.price}
             </span>
           </div>
+
           {/* ціна зі знижкою */}
           {(+product.price > +finalPrice.toFixed(2)) && (
             <div className={styles.priceWrapper}>
               <span className={styles.priceSale}>₴{finalPrice.toFixed(2)}</span>
             </div>
           )}
+
           <div className={styles.productForm}>
             {product.variants.length > 0 && (
               <div className={styles.formGroup}>
-                <h4>Варіант:</h4>
+                <h4>{currentTexts.variant}</h4>
                 <div className={styles.colorOptions}>
                   {product.variants.map((variant) => {
                     const variantInfo = getVariantDisplayInfo(variant);
@@ -313,17 +365,16 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                           padding: '0',
                           border: formData.variantId === variant.id ? '3px solid #000' : '1px solid #ccc'
                         }}
-                      // Показуємо назву варіанта при наведенні
-                      >
-                      </Button>
+                      />
                     );
                   })}
                 </div>
               </div>
             )}
+
             {availableSizes.length > 0 && (
               <div className={styles.formGroup}>
-                <h4>Розмір:</h4>
+                <h4>{currentTexts.size}</h4>
                 <div className={styles.sizeOptions}>
                   {availableSizes.map((size) => (
                     <Button
@@ -337,23 +388,33 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                 </div>
               </div>
             )}
+
             {product.features && product.features.length > 0 && (
               <div className={styles.featuresSection}>
-                <h3>Особливості</h3>
+                <h3>{currentTexts.features}</h3>
                 <ul className={styles.featuresList}>
                   {product.features
                     .sort((a, b) => a.order - b.order)
                     .map((feature) => (
-                      <li key={feature.order + feature.text}>
-                        <strong>{feature.text.split(" ")[0]}</strong>{" "}
-                        {feature.text.split(" ").slice(1).join(" ")}
-                      </li>
+                      lang === 'uk' ? (
+                        <li key={feature.order + feature.text}>
+                          <strong>{feature.text.split(" ")[0]}</strong>{" "}
+                          {feature.text.split(" ").slice(1).join(" ")}
+                        </li>
+                      ) : (
+                        <li key={feature.order + (feature.textEn || '')}>
+                          <strong>{(feature.textEn || '').split(" ")[0]}</strong>{" "}
+                          {(feature.textEn || '').split(" ").slice(1).join(" ")}
+                        </li>
+                      )
                     ))}
                 </ul>
               </div>
             )}
+
+
             <div className={styles.formGroup}>
-              <h4>Кількість:</h4>
+              <h4>{currentTexts.quantity}</h4>
               <div className={styles.quantityWrapper}>
                 <Button
                   type="button"
@@ -381,38 +442,40 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
                 </Button>
               </div>
             </div>
+
             <div className={styles.totalPrice}>
-              <strong>Загальна ціна: ₴{totalPrice.toFixed(2)}</strong>
+              <strong>{currentTexts.totalPrice} ₴{totalPrice.toFixed(2)}</strong>
             </div>
+
             <Button
               className={`${styles.addToCartBtn} ${addToCartSuccess ? styles.success : ""}`}
               onClick={handleAddToCart}
               disabled={isAddingToCart}
             >
               {isAddingToCart
-                ? "Додавання..."
+                ? currentTexts.adding
                 : addToCartSuccess
-                  ? "✓ Додано в кошик!"
-                  : "Додати в кошик"}
+                  ? currentTexts.added
+                  : currentTexts.addToCart}
             </Button>
           </div>
+
           <div className={styles.accordion}>
             <button
               className={styles.accordionBtn}
               onClick={() => setAccordionOpen(!accordionOpen)}
             >
-              Доставка та повернення {accordionOpen ? "▲" : "▼"}
+              {currentTexts.delivery} {accordionOpen ? "▲" : "▼"}
             </button>
             {accordionOpen && (
               <div className={styles.accordionContent}>
                 <ul>
-                  <li>Замовлення по Україні: «Нова пошта» (2-3 робочих дні)</li>
-                  <li>Замовлення по Польщі: «Нова пошта» (3-5 робочих днів)</li>
-                  <li>Замовлення по США та Канаді: «Canada Post» (1-3 робочих дні)</li>
-                  <li>Міжнародна доставка: Meest Express (10-12 робочих днів)</li>
+                  {currentTexts.deliveryInfo.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
                 <p>
-                  Для додаткової інформації звертайтесь у{" "}
+                  {currentTexts.deliveryNote}{" "}
                   <a
                     href="https://www.instagram.com/fbe.ua/"
                     target="_blank"
@@ -427,8 +490,6 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
         </div>
       </div>
     </>
-
-
   );
 };
 

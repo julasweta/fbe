@@ -152,11 +152,15 @@ h2{
 }
 
 .grey {
-  color: rgb(154, 158, 167);
+  color: rgb(192, 205, 127);
 }
 
 .blue{
   color:blue;
+}
+
+.black {
+  color: rgb(26, 26, 27);
 }
 
 /* SPINNER */ 
@@ -217,7 +221,6 @@ h2{
       display: flex;
       flex-direction: row;
       justify-content: space-around;
-      margin: 10px;
     }
 
              .tracking-popover-wrapper {
@@ -257,4 +260,8 @@ h2{
                opacity: 1;
                transform: translateY(0);
                pointer-events: auto;
+             }
+
+             .swiper-button-next, .swiper-button-prev{
+              color:#c1c412;
              }

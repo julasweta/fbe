@@ -49,16 +49,7 @@ const productService = {
     await apiService.delete(`products/${id}`);
   },
 
-  async testConnection(): Promise<boolean> {
-    try {
-      await apiService.get("products?limit=1");
-      console.log("ProductService: Connection test successful");
-      return true;
-    } catch (error) {
-      console.error("ProductService: Connection test failed:", error);
-      return false;
-    }
-  },
+
 };
 
 export { productService };

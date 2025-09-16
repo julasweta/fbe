@@ -68,6 +68,7 @@ export interface ICreateProductTranslation {
 
 export interface ICreateProductFeature {
   text: string;
+  textEn?: string;
   order: number;
 }
 

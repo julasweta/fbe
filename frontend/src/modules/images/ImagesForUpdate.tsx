@@ -1,11 +1,17 @@
 // VariantImages.tsx
 import React, { useState } from "react";
-import { useFieldArray, type Control, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
+import {
+  useFieldArray,
+  type Control,
+  type UseFormRegister,
+  type UseFormSetValue,
+  type UseFormWatch,
+} from "react-hook-form";
 import type { IProduct } from "../../interfaces/IProduct";
 import ImageUpload from "../admin/upload-img/ImageUploader";
 import { Button } from "../../components/ui/Buttons/Button";
 import Input from "../../components/ui/Inputs/Input";
-import styles from "./Images.module.scss"
+import styles from "./Images.module.scss";
 
 type VariantImagesProps = {
   control: Control<IProduct>;
@@ -27,71 +33,76 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
     name: `variants.${variantIndex}.images` as const,
   });
 
-  // Локальний стан для ручного вводу URL
   const [manualImage, setManualImage] = useState("");
 
   return (
-    <div className={styles.imagesBlock} >
-      <h5>Images </h5>
-      {
-        fields.map((field, iIndex) => {
-          const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
-          return (
-            <div key={field.id} style={{ margin: "1rem" }
-            }>
-              <Input
-                placeholder="опис фото"
-                style={{ margin: "0.5rem" }}
-                {...register(`variants.${variantIndex}.images.${iIndex}.altText`)}
-              />
+    <div className={styles.imagesBlock}>
+      <h5>Images</h5>
 
-              {/* Компонент для завантаження фото */}
-              <ImageUpload
-                onUpload={(url) => setValue(`variants.${variantIndex}.images.${iIndex}.url`, url)}
-              />
+      {fields.map((field, iIndex) => {
+        const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
 
-              {/* Поле для ручного вставлення URL */}
-              <div style={{ display: "flex", marginTop: "0.5rem", gap: "0.5rem" }}>
-                <Input
-                  type="text"
-                  placeholder="Встав URL вручну"
-                  value={manualImage}
-                  onChange={(e) => setManualImage(e.target.value)}
-                  id="urlhandle"
+        return (
+          <div key={field.id} style={{ margin: "1rem" }}>
+            {currentUrl ? (
+              // Існуюче фото
+              <div className={styles.photoBox}>
+                <img
+                  src={currentUrl}
+                  alt={watch(`variants.${variantIndex}.images.${iIndex}.altText`) || "preview"}
                 />
-                <Button
-                  type="button"
-                  onClick={() => {
-                    if (manualImage.trim()) {
-                      setValue(`variants.${variantIndex}.images.${iIndex}.url`, manualImage.trim());
-                      setManualImage("");
-                    }
-                  }}
-                >
-                  Завантажити фото
+                <Button type="button" onClick={() => remove(iIndex)} variant="small">
+                  ✕ Видалити фото
                 </Button>
               </div>
 
-              {
-                currentUrl && (
-                  <img
-                    src={currentUrl}
-                    alt="preview"
-                    style={{ width: 100, height: "auto", marginTop: "0.5rem" }
-                    }
+            ) : (
+              // Нове фото
+              <div className={styles.newphoto}>
+                <Input
+                  placeholder="опис фото"
+                  style={{ marginBottom: "0.5rem" }}
+                  {...register(`variants.${variantIndex}.images.${iIndex}.altText`)}
+                />
+                <ImageUpload
+                  onUpload={(url) =>
+                    setValue(`variants.${variantIndex}.images.${iIndex}.url`, url)
+                  }
+                />
+                <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+                  <Input
+                    type="text"
+                    placeholder="Встав URL вручну"
+                    value={manualImage}
+                    onChange={(e) => setManualImage(e.target.value)}
                   />
-                )}
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (manualImage.trim()) {
+                        setValue(
+                          `variants.${variantIndex}.images.${iIndex}.url`,
+                          manualImage.trim()
+                        );
+                        setManualImage("");
+                      }
+                    }}
+                  >
+                    Завантажити фото
+                  </Button>
+                </div>
+                <Button type="button" onClick={() => remove(iIndex)} style={{ marginTop: "0.5rem" }} variant="small">
+                  ✕ Видалити фото
+                </Button>
+              </div>
+            )}
+          </div>
+        );
+      })}
 
-              <button type="button" onClick={() => remove(iIndex)}>
-                ✕ Видалити фото
-              </button>
-            </div>
-          );
-        })}
-
-      <button type="button" onClick={() => append({ url: "", altText: "" })}>
+      <Button type="button" onClick={() => append({ url: "", altText: "" })}>
         + Add Image
-      </button>
+      </Button>
     </div>
   );
 };

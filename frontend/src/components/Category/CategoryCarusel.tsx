@@ -5,13 +5,15 @@ import styles from "./Category.module.scss";
 import 'swiper/css';
 import "swiper/css/navigation";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CategoryCarusel = () => {
   const { categories } = useCategoryStore();
+    const { t} = useTranslation();
 
   return (
     <div className={styles.caruselBox}>
-      <h2>Обирайте за категорією</h2>
+      <h2>{t('choosecategory')}</h2>
       <Swiper
         effect={'coverflow'}
         grabCursor={true}
