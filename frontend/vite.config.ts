@@ -11,7 +11,6 @@ import type { ICollection } from './src/interfaces/IColection';
 
 const API_URL = "https://fbe.onrender.com";
 
-// Тип для маршрутів з необов’язковим полем image
 interface IRoute {
   path: string;
   title: string;
@@ -20,7 +19,6 @@ interface IRoute {
   price?: string;
 }
 
-// Функція для отримання всіх маршрутів
 async function getRoutes(): Promise<IRoute[]> {
   const staticRoutes: IRoute[] = [
     { path: "/", title: "FULL BODY ERA - Головна", description: "Ласкаво просимо до FULL BODY ERA", image: "https://fbe.pp.ua/assets/home-og.jpg" },
@@ -36,33 +34,33 @@ async function getRoutes(): Promise<IRoute[]> {
       fetch(`${API_URL}/collections`),
     ]);
 
-    const productsData = await productsRes.json() as { data: IProduct[] };
+    // Приведення типу після .json()
+    const productsData = (await productsRes.json()) as { data: IProduct[] };
     const products: IProduct[] = productsData.data;
 
-    const categories = await (await categoriesRes.json()) as ICategory[];
-    const collections = await (await collectionsRes.json()) as ICollection[];
+    const categories = (await categoriesRes.json()) as ICategory[];
+    const collections = (await collectionsRes.json()) as ICollection[];
 
-    const productRoutes: IRoute[] = products.map((p: IProduct) => ({
+    const productRoutes: IRoute[] = products.map((p) => ({
       path: `/product/${p.id}`,
       title: `${p.translations[0].name} - FULL BODY ERA`,
       description: p.translations[0].description?.slice(0, 150) || `Переглянути ${p.translations[0].name} у FULL BODY ERA.`,
       image: p.variants?.[0]?.images?.[0]?.url || 'https://fbe.pp.ua/assets/default-og.jpg',
-      price: `${p.price}`
+      price: `${p.price}`,
     }));
 
-    const categoryRoutes: IRoute[] = categories.map((c: ICategory) => ({
+    const categoryRoutes: IRoute[] = categories.map((c) => ({
       path: `/category/${c.slug}`,
       title: `Категорія ${c.name} - FULL BODY ERA`,
       description: `Перегляньте товари у категорії ${c.name}.`,
-      image: 'https://fbe.pp.ua/assets/default-og.jpg'
+      image: 'https://fbe.pp.ua/assets/default-og.jpg',
     }));
 
-    const collectionRoutes: IRoute[] = collections.map((col: ICollection) => ({
+    const collectionRoutes: IRoute[] = collections.map((col) => ({
       path: `/group/${col.slug}`,
       title: `Колекція ${col.name} - FULL BODY ERA`,
       description: `Досліджуйте товари з колекції ${col.name}.`,
       image: 'https://fbe.pp.ua/assets/default-og.jpg',
-
     }));
 
     return [...staticRoutes, ...productRoutes, ...categoryRoutes, ...collectionRoutes];
@@ -101,13 +99,12 @@ export default defineConfig({
             .replace(/(<meta name="description" content=")[^"]*(")/i, `$1${route.description}$2`)
             .replace(/<link rel="canonical"[^>]*>/i, `<link rel="canonical" href="https://fbe.pp.ua${route.path}" />`);
 
-
           const socialMeta = `
     <meta property="og:type" content="product" />
     <meta property="og:title" content="${route.title}" />
     <meta property="og:description" content="${route.description}" />
+    ${route.price ? `<meta property="og:price:amount" content="${route.price}" />` : ''}
     <meta property="og:price:currency" content="UAH" />
-<meta property="og:price:amount" content="${route.price}" />
     <meta property="og:url" content="https://fbe.pp.ua${route.path}" />
     <meta property="og:image" content="${route.image}" />
     <meta name="twitter:title" content="${route.title}" />
@@ -126,7 +123,7 @@ export default defineConfig({
     },
   ],
   server: {
-    host: "0.0.0.0", // дозволяє доступ з локальної мережі
+    host: "0.0.0.0",
     port: 5173,
     strictPort: true,
   },
@@ -135,9 +132,7 @@ export default defineConfig({
       input: { main: resolve(__dirname, "index.html") },
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+          if (id.includes('node_modules')) return 'vendor';
         },
       },
     },

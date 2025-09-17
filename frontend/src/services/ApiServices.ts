@@ -10,8 +10,10 @@ import { useAuthStore } from "../store";
 type IRes<DATA> = Promise<AxiosResponse<DATA>>;
 
 const baseURL = import.meta.env.VITE_REACT_APP_API_URL;
+
 const apiService: AxiosInstance = axios.create({ baseURL });
 
+/* ---------- REQUEST INTERCEPTOR ---------- */
 apiService.interceptors.request.use(
   (req: InternalAxiosRequestConfig) => {
     if (req.data instanceof FormData) {
@@ -22,13 +24,14 @@ apiService.interceptors.request.use(
 
     req.headers["Accept"] = "*/*";
 
-    // Виключаємо додавання токену для auth endpoints
+    // додаємо токен тільки якщо це не login/register
     if (
       req.url &&
       !req.url.includes("auth/login") &&
-      !req.url.includes("auth/register")
+      !req.url.includes("auth/register") &&
+      !req.url.includes("auth/refresh")
     ) {
-      const access = localStorage.getItem("accessToken") || null;
+      const access = localStorage.getItem("accessToken");
       if (access) {
         req.headers.Authorization = `Bearer ${access}`;
       }
@@ -39,6 +42,7 @@ apiService.interceptors.request.use(
   (error: AxiosError) => Promise.reject(error),
 );
 
+/* ---------- RESPONSE INTERCEPTOR ---------- */
 let isRefreshing = false;
 const waitList: IWaitList[] = [];
 
@@ -47,12 +51,10 @@ apiService.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config;
 
-    // ВАЖЛИВО: Виключаємо auth endpoints з автоматичного refresh
+    // Якщо 401 і це не auth запити → пробуємо refresh
     if (
-      error.response &&
-      error.response.status === 401 &&
-      originalRequest &&
-      originalRequest.url &&
+      error.response?.status === 401 &&
+      originalRequest?.url &&
       !originalRequest.url.includes("auth/login") &&
       !originalRequest.url.includes("auth/register") &&
       !originalRequest.url.includes("auth/refresh")
@@ -60,20 +62,26 @@ apiService.interceptors.response.use(
       if (!isRefreshing) {
         isRefreshing = true;
         const refreshToken = localStorage.getItem("refreshToken");
+
         if (refreshToken) {
           try {
-            await authService.refresh();
+            await authService.refresh(); // оновлюємо токени
             isRefreshing = false;
             afterRefresh();
 
-            if (originalRequest) {
-              return apiService(originalRequest);
+            // повторюємо оригінальний запит
+            if (originalRequest.headers) {
+              const newAccess = localStorage.getItem("accessToken");
+              if (newAccess) {
+                originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+              }
             }
+
+            return apiService(originalRequest);
           } catch (e) {
-            console.log("Помилка при оновленні токена:", e);
+            console.error("Помилка при оновленні токена:", e);
             useAuthStore.getState().logout();
             isRefreshing = false;
-            console.log("Не вдалося оновити токен.");
             return Promise.reject(error);
           }
         } else {
@@ -83,9 +91,14 @@ apiService.interceptors.response.use(
         }
       }
 
+      // Якщо refresh вже йде → чекаємо його завершення
       return new Promise((resolve, reject) => {
         subscribeToWaitList(() => {
           if (originalRequest) {
+            const newAccess = localStorage.getItem("accessToken");
+            if (newAccess && originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+            }
             resolve(apiService(originalRequest));
           } else {
             reject(new Error("Original request is undefined"));
@@ -94,11 +107,11 @@ apiService.interceptors.response.use(
       });
     }
 
-    // Для auth endpoints або інших помилок - просто відхиляємо
     return Promise.reject(error);
   },
 );
 
+/* ---------- HELPERS ---------- */
 type IWaitList = () => void;
 
 const subscribeToWaitList = (cb: IWaitList): void => {
@@ -106,12 +119,10 @@ const subscribeToWaitList = (cb: IWaitList): void => {
 };
 
 const afterRefresh = (): void => {
-  console.log("Оновлення токенів успішно завершене.");
+  console.log("✅ Токени успішно оновлені");
   while (waitList.length) {
     const cb = waitList.pop();
-    if (cb) {
-      cb();
-    }
+    if (cb) cb();
   }
 };
 
