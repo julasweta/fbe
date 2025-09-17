@@ -38,7 +38,10 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
 
   // fallback: перший варіант
   const firstVariant = variants?.[0];
-  const image = firstVariant?.images?.[0];
+  // Вибираємо фото першого варіанта з order === 1
+  const image =
+    firstVariant?.images?.find((img) => img.order === 1) || firstVariant?.images?.[0];
+
 
   // зібрати всі розміри і кольори з варіантів
   const allSizes = Array.from(new Set(variants?.flatMap((v) => v.sizes) || []));

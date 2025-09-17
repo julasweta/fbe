@@ -30,7 +30,6 @@ class UpdateProductVariantDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
   priceSale?: number;
 
   @ApiProperty({ required: false })
@@ -72,7 +71,6 @@ export class UpdateProductDto {
   })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
   priceSale?: number;
 
   @ApiProperty({ required: false })

@@ -88,18 +88,22 @@ const Product: React.FC<ProductProps> = ({ productId }) => {
   }, [productId]);
 
   // Отримуємо всі зображення з усіх варіантів для мініатюр
+  // Отримуємо всі зображення з усіх варіантів для мініатюр, відсортовані за order
   const getAllImages = () => {
     if (!product?.variants) return [];
 
     return product.variants.flatMap(variant =>
-      (variant.images || []).map(image => ({
-        ...image,
-        variantId: variant.id,
-        variantColor: variant.color,
-        variantSizes: variant.sizes
-      }))
+      (variant.images || [])
+        .map(image => ({
+          ...image,
+          variantId: variant.id,
+          variantColor: variant.color,
+          variantSizes: variant.sizes
+        }))
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) // Сортуємо по order
     );
   };
+
 
   const allImages = getAllImages();
 

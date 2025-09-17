@@ -75,6 +75,7 @@ export interface ICreateProductFeature {
 export interface ICreateProductImage {
   url: string;
   altText?: string;
+  order: number;
 }
 
 export interface ICreateProductVariant {

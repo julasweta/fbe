@@ -18,4 +18,8 @@ export class CreateProductImageDto {
 
   @ApiProperty()
   productId: number; // 👈 обовʼязковий
+
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  order: number = 0;
 }

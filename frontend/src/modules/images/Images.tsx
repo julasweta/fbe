@@ -1,4 +1,3 @@
-// VariantImages.tsx
 import React, { useState } from "react";
 import { useFieldArray, type Control, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
 import type { ICreateProduct, IProduct } from "../../interfaces/IProduct";
@@ -27,14 +26,22 @@ const VariantImages: React.FC<VariantImagesProps> = ({
     name: `variants.${variantIndex}.images` as const,
   });
 
-  // Локальний стан для ручного вводу URL
   const [manualImage, setManualImage] = useState("");
+
+  const handleRemove = (index: number) => {
+    remove(index);
+    // Перенумерація order після видалення
+    const images = watch(`variants.${variantIndex}.images`) || [];
+    images.forEach((img: any, i: number) => {
+      setValue(`variants.${variantIndex}.images.${i}.order`, i + 1);
+    });
+  };
 
   return (
     <div className={styles.imagesBlock}>
       <h5>Images</h5>
       {fields.map((field, iIndex) => {
-        const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url` );
+        const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
         return (
           <div key={field.id} style={{ margin: "1rem" }}>
             <Input
@@ -70,6 +77,14 @@ const VariantImages: React.FC<VariantImagesProps> = ({
               </Button>
             </div>
 
+            {/* Поле для порядку */}
+            <Input
+              type="number"
+              placeholder="Order"
+              min={1}
+              {...register(`variants.${variantIndex}.images.${iIndex}.order`, { valueAsNumber: true })}
+            />
+
             {currentUrl && (
               <img
                 src={currentUrl}
@@ -78,14 +93,23 @@ const VariantImages: React.FC<VariantImagesProps> = ({
               />
             )}
 
-            <button type="button" onClick={() => remove(iIndex)}>
+            <button type="button" onClick={() => handleRemove(iIndex)}>
               ✕ Видалити фото
             </button>
           </div>
         );
       })}
 
-      <Button type="button" onClick={() => append({ url: "", altText: "" })} >
+      <Button
+        type="button"
+        onClick={() =>
+          append({
+            url: "",
+            altText: "",
+            order: fields.length + 1, // автоматичний порядок нового зображення
+          })
+        }
+      >
         + Add Image
       </Button>
     </div>
@@ -93,4 +117,5 @@ const VariantImages: React.FC<VariantImagesProps> = ({
 };
 
 export { VariantImages };
+
 

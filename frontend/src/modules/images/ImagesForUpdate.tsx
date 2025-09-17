@@ -1,4 +1,3 @@
-// VariantImages.tsx
 import React, { useState } from "react";
 import {
   useFieldArray,
@@ -35,6 +34,15 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
 
   const [manualImage, setManualImage] = useState("");
 
+  const handleRemove = (index: number) => {
+    remove(index);
+    // Перенумерація order після видалення
+    const images = watch(`variants.${variantIndex}.images`) || [];
+    images.forEach((img: any, i: number) => {
+      setValue(`variants.${variantIndex}.images.${i}.order`, i + 1);
+    });
+  };
+
   return (
     <div className={styles.imagesBlock}>
       <h5>Images</h5>
@@ -45,19 +53,25 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
         return (
           <div key={field.id} style={{ margin: "1rem" }}>
             {currentUrl ? (
-              // Існуюче фото
               <div className={styles.photoBox}>
                 <img
                   src={currentUrl}
                   alt={watch(`variants.${variantIndex}.images.${iIndex}.altText`) || "preview"}
                 />
-                <Button type="button" onClick={() => remove(iIndex)} variant="small">
+
+                {/* Порядок */}
+                <Input
+                  type="number"
+                  placeholder="Order"
+                  min={1}
+                  {...register(`variants.${variantIndex}.images.${iIndex}.order`, { valueAsNumber: true })}
+                />
+
+                <Button type="button" onClick={() => handleRemove(iIndex)} variant="small">
                   ✕ Видалити фото
                 </Button>
               </div>
-
             ) : (
-              // Нове фото
               <div className={styles.newphoto}>
                 <Input
                   placeholder="опис фото"
@@ -91,7 +105,17 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
                     Завантажити фото
                   </Button>
                 </div>
-                <Button type="button" onClick={() => remove(iIndex)} style={{ marginTop: "0.5rem" }} variant="small">
+
+                {/* Порядок */}
+                <Input
+                  type="number"
+                  placeholder="Order"
+                  min={1}
+                  {...register(`variants.${variantIndex}.images.${iIndex}.order`, { valueAsNumber: true })}
+                  style={{ marginTop: "0.5rem" }}
+                />
+
+                <Button type="button" onClick={() => handleRemove(iIndex)} style={{ marginTop: "0.5rem" }} variant="small">
                   ✕ Видалити фото
                 </Button>
               </div>
@@ -100,7 +124,16 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
         );
       })}
 
-      <Button type="button" onClick={() => append({ url: "", altText: "" })}>
+      <Button
+        type="button"
+        onClick={() =>
+          append({
+            url: "",
+            altText: "",
+            order: fields.length + 1, // автоматичний порядок нового зображення
+          })
+        }
+      >
         + Add Image
       </Button>
     </div>

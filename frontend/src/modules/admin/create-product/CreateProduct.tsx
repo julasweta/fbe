@@ -67,7 +67,7 @@ const CreateProduct: React.FC = () => {
       price: watchPrice || 0,
       priceSale: watchPriceSale || 0,
       stock: 0,
-      images: [{ url: "", altText: "" }],
+      images: [{ url: "", altText: "", order:1 }],
       description: '',
     });
   };

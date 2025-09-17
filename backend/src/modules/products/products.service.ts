@@ -9,7 +9,7 @@ import { Response } from 'express';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   // CREATE
   async create(dto: CreateProductDto) {
@@ -32,34 +32,34 @@ export class ProductsService {
 
         translations: translations
           ? {
-            create: translations.map((t) => ({
-              name: t.name,
-              description: t.description ?? null,
-              language: { connect: { id: t.languageId } },
-            })),
-          }
+              create: translations.map((t) => ({
+                name: t.name,
+                description: t.description ?? null,
+                language: { connect: { id: t.languageId } },
+              })),
+            }
           : undefined,
 
         features: features
           ? {
-            create: features.map((f) => ({
-              text: f.text,
-              textEn: f.textEn?.trim() || "",
-              order: f.order ?? null,
-            })),
-          }
+              create: features.map((f) => ({
+                text: f.text,
+                textEn: f.textEn?.trim() || '',
+                order: f.order ?? null,
+              })),
+            }
           : undefined,
 
         variants: variants
           ? {
-            create: variants.map((v) => ({
-              color: v.color,
-              sizes: v.sizes,
-              price: v.price ?? null,
-              priceSale: v.priceSale ?? null,
-              stock: v.stock ?? 0,
-            })),
-          }
+              create: variants.map((v) => ({
+                color: v.color,
+                sizes: v.sizes,
+                price: v.price ?? null,
+                priceSale: v.priceSale ?? null,
+                stock: v.stock ?? 0,
+              })),
+            }
           : undefined,
       },
       include: {
@@ -79,6 +79,7 @@ export class ProductsService {
               altText: img.altText ?? null,
               variantId: createdVariant.id,
               productId: product.id,
+              order: img.order ?? 1,
             })),
           });
         }
@@ -226,6 +227,7 @@ export class ProductsService {
                   altText: img.altText ?? null,
                   variantId: createdVariant.id,
                   productId: id,
+                  order: img.order ?? 1,
                 })),
               });
             }
@@ -243,7 +245,9 @@ export class ProductsService {
   // DELETE
   async remove(id: number) {
     await this.prisma.productImage.deleteMany({ where: { productId: id } });
-    await this.prisma.productTranslation.deleteMany({ where: { productId: id } });
+    await this.prisma.productTranslation.deleteMany({
+      where: { productId: id },
+    });
     await this.prisma.productFeature.deleteMany({ where: { productId: id } });
     await this.prisma.productVariant.deleteMany({ where: { productId: id } });
     await this.prisma.cartItem.deleteMany({ where: { productId: id } });
@@ -282,7 +286,8 @@ export class ProductsService {
 
         const variantData = {
           color: row.variantColor as EColor,
-          sizes: row.variantSizes?.split(',').map((s) => s.trim() as ESize) || [],
+          sizes:
+            row.variantSizes?.split(',').map((s) => s.trim() as ESize) || [],
           stock: Number(row.stock ?? 0),
           price: Number(row.price),
           priceSale: row.priceSale ? Number(row.priceSale) : null,
@@ -290,16 +295,20 @@ export class ProductsService {
           variantDescription: row.variantDescription,
           images: row.variantImages
             ? row.variantImages
-              .split(/\s*\|\s*/)
-              .map((u) => u.trim())
-              .filter((u) => /^https?:\/\//i.test(u))
-              .map((u) => ({ url: u, altText: null }))
+                .split(/\s*\|\s*/)
+                .map((u) => u.trim())
+                .filter((u) => /^https?:\/\//i.test(u))
+                .map((u) => ({ url: u, altText: null }))
             : [],
         };
 
         let product = await this.prisma.product.findUnique({
           where: { sku },
-          include: { variants: { include: { images: true } }, translations: true, features: true },
+          include: {
+            variants: { include: { images: true } },
+            translations: true,
+            features: true,
+          },
         });
 
         if (!product) {
@@ -310,23 +319,31 @@ export class ProductsService {
                 sku,
                 price: 0,
                 priceSale: 0,
-                category: row.categoryId ? { connect: { id: Number(row.categoryId) } } : undefined,
-                collection: row.collectionId ? { connect: { id: Number(row.collectionId) } } : undefined,
+                category: row.categoryId
+                  ? { connect: { id: Number(row.categoryId) } }
+                  : undefined,
+                collection: row.collectionId
+                  ? { connect: { id: Number(row.collectionId) } }
+                  : undefined,
                 translations: row.name
                   ? {
-                    create: [
-                      { name: row.name, description: row.description || null, language: { connect: { id: 1 } } },
-                    ],
-                  }
+                      create: [
+                        {
+                          name: row.name,
+                          description: row.description || null,
+                          language: { connect: { id: 1 } },
+                        },
+                      ],
+                    }
                   : undefined,
                 features: row.features
                   ? {
-                    create: row.features.split('|').map((feature, index) => ({
-                      text: feature.trim(),
-                      textEn: row.featuresEn?.split('|')[index]?.trim() || '',
-                      order: index + 1,
-                    })),
-                  }
+                      create: row.features.split('|').map((feature, index) => ({
+                        text: feature.trim(),
+                        textEn: row.featuresEn?.split('|')[index]?.trim() || '',
+                        order: index + 1,
+                      })),
+                    }
                   : undefined,
                 variants: {
                   create: [
@@ -341,9 +358,18 @@ export class ProductsService {
                   ],
                 },
               },
-              include: { variants: { include: { images: true } }, translations: true, features: true },
+              include: {
+                variants: { include: { images: true } },
+                translations: true,
+                features: true,
+              },
             });
-            console.log('Created product:', product.sku, 'with id:', product.id);
+            console.log(
+              'Created product:',
+              product.sku,
+              'with id:',
+              product.id,
+            );
           } catch (error) {
             console.error('Error creating product:', error);
             continue;
@@ -354,29 +380,49 @@ export class ProductsService {
             product = await this.prisma.product.update({
               where: { id: product.id },
               data: {
-                category: row.categoryId ? { connect: { id: Number(row.categoryId) } } : undefined,
-                collection: row.collectionId ? { connect: { id: Number(row.collectionId) } } : undefined,
+                category: row.categoryId
+                  ? { connect: { id: Number(row.categoryId) } }
+                  : undefined,
+                collection: row.collectionId
+                  ? { connect: { id: Number(row.collectionId) } }
+                  : undefined,
                 translations: row.name
                   ? {
-                    upsert: {
-                      where: { productId_languageId: { productId: product.id, languageId: 1 } },
-                      update: { name: row.name, description: row.description || null },
-                      create: { name: row.name, description: row.description || null, language: { connect: { id: 1 } } },
-                    },
-                  }
+                      upsert: {
+                        where: {
+                          productId_languageId: {
+                            productId: product.id,
+                            languageId: 1,
+                          },
+                        },
+                        update: {
+                          name: row.name,
+                          description: row.description || null,
+                        },
+                        create: {
+                          name: row.name,
+                          description: row.description || null,
+                          language: { connect: { id: 1 } },
+                        },
+                      },
+                    }
                   : undefined,
                 features: row.features
                   ? {
-                    deleteMany: {},
-                    create: row.features.split('|').map((feature, index) => ({
-                      text: feature.trim(),
-                      textEn: row.featuresEn?.split('|')[index]?.trim() || '',
-                      order: index + 1,
-                    })),
-                  }
+                      deleteMany: {},
+                      create: row.features.split('|').map((feature, index) => ({
+                        text: feature.trim(),
+                        textEn: row.featuresEn?.split('|')[index]?.trim() || '',
+                        order: index + 1,
+                      })),
+                    }
                   : undefined,
               },
-              include: { variants: { include: { images: true } }, translations: true, features: true },
+              include: {
+                variants: { include: { images: true } },
+                translations: true,
+                features: true,
+              },
             });
             console.log('Updated product:', product.id);
           } catch (error) {
@@ -432,8 +478,11 @@ export class ProductsService {
 
         if (variantData.images.length > 0) {
           try {
-            const existingImageUrls = existingVariant.images?.map((img) => img.url) || [];
-            const newImages = variantData.images.filter((img) => !existingImageUrls.includes(img.url));
+            const existingImageUrls =
+              existingVariant.images?.map((img) => img.url) || [];
+            const newImages = variantData.images.filter(
+              (img) => !existingImageUrls.includes(img.url),
+            );
 
             if (newImages.length > 0) {
               await this.prisma.productImage.createMany({
@@ -455,19 +504,31 @@ export class ProductsService {
       console.log('\nImport finished successfully!');
 
       try {
-        const products = await this.prisma.product.findMany({ include: { variants: true } });
+        const products = await this.prisma.product.findMany({
+          include: { variants: true },
+        });
 
         for (const product of products) {
           if (product.variants.length > 0) {
-            const prices = product.variants.map((v) => v.price).filter((p): p is number => p !== null && p > 0);
-            const salePrices = product.variants.map((v) => v.priceSale).filter((p): p is number => p !== null && p > 0);
+            const prices = product.variants
+              .map((v) => v.price)
+              .filter((p): p is number => p !== null && p > 0);
+            const salePrices = product.variants
+              .map((v) => v.priceSale)
+              .filter((p): p is number => p !== null && p > 0);
 
             if (prices.length > 0) {
               const minPrice = Math.min(...prices);
-              const minSalePrice = salePrices.length > 0 ? Math.min(...salePrices) : null;
+              const minSalePrice =
+                salePrices.length > 0 ? Math.min(...salePrices) : null;
 
-              await this.prisma.product.update({ where: { id: product.id }, data: { price: minPrice, priceSale: minSalePrice } });
-              console.log(`Updated product ${product.sku} base price to ${minPrice}`);
+              await this.prisma.product.update({
+                where: { id: product.id },
+                data: { price: minPrice, priceSale: minSalePrice },
+              });
+              console.log(
+                `Updated product ${product.sku} base price to ${minPrice}`,
+              );
             }
           }
         }
@@ -482,7 +543,13 @@ export class ProductsService {
 
   async exportProductsToExcel(res: Response) {
     const products = await this.prisma.product.findMany({
-      include: { variants: { include: { images: true } }, translations: true, features: true, category: true, collection: true },
+      include: {
+        variants: { include: { images: true } },
+        translations: true,
+        features: true,
+        category: true,
+        collection: true,
+      },
     });
 
     const rows = products.flatMap((product) =>
@@ -514,8 +581,14 @@ export class ProductsService {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    res.setHeader('Content-Disposition', 'attachment; filename="products.xlsx"');
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="products.xlsx"',
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
     res.send(buffer);
   }
 }

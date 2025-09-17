@@ -31,7 +31,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       console.warn(`Handled exception [${status}]:`, message);
     }
 
-
     response.status(status).json({
       statusCode: status,
       timestamp: new Date().toISOString(),

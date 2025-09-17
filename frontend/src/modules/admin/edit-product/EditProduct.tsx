@@ -67,19 +67,21 @@ function getChangedFields(original: IProduct, current: IProduct): Partial<IProdu
   }
 
   if (!deepEqual(original.variants, current.variants)) {
-    changes.variants = current.variants?.map((v) => ({
-      color: v.color,
-      sizes: v.sizes,
-      price: v.price,
-      priceSale: v.priceSale ?? undefined,
-      stock: v.stock,
-      description: v.description ?? undefined,
-      images: v.images?.map((img) => ({
-        url: img.url,
-        altText: img.altText ?? undefined,
-      })),
-    }));
-  }
+  changes.variants = current.variants?.map((v) => ({
+    color: v.color,
+    sizes: v.sizes,
+    price: v.price,
+    priceSale: v.priceSale ?? undefined,
+    stock: v.stock,
+    description: v.description ?? undefined,
+    images: v.images?.map((img, iIndex) => ({
+      url: img.url,
+      altText: img.altText ?? undefined,
+      order: img.order ?? iIndex + 1,
+    })),
+  }));
+}
+
 
   return changes;
 }

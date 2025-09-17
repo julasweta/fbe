@@ -16,6 +16,14 @@ export class ProductImageDto {
   @IsString()
   @IsOptional()
   altText?: string;
+
+  @ApiPropertyOptional({
+    example: 'Зображення ноутбука',
+    description: 'Альтернативний текст',
+  })
+  @IsInt()
+  @IsOptional()
+  order?: number = 0;
 }
 
 export class CreateProductImageDto {
@@ -48,4 +56,11 @@ export class CreateProductImageDto {
   })
   @IsInt()
   productId: number;
+
+  @ApiProperty({
+    example: 1,
+    description: 'ID продукту, до якого належить зображення',
+  })
+  @IsInt()
+  order: number = 0;
 }

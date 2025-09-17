@@ -8,12 +8,23 @@ export class ProductImageService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateProductImageDto) {
+    // Підраховуємо максимальний order для варіанту або продукту
+    let maxOrder = 0;
+    if (dto.variantId) {
+      const lastImage = await this.prisma.productImage.findFirst({
+        where: { variantId: dto.variantId },
+        orderBy: { order: 'desc' },
+      });
+      maxOrder = lastImage?.order ?? 0;
+    }
+
     return this.prisma.productImage.create({
       data: {
         url: dto.url,
         altText: dto.altText ?? null,
         product: { connect: { id: dto.productId } },
         variant: dto.variantId ? { connect: { id: dto.variantId } } : undefined,
+        order: dto.order ?? maxOrder + 1, // якщо не передано, ставимо наступний порядковий
       },
     });
   }
