@@ -9,7 +9,7 @@ import { Response } from 'express';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // CREATE
   async create(dto: CreateProductDto) {
@@ -22,7 +22,6 @@ export class ProductsService {
       ...rest
     } = dto;
 
-    // First, create the product with variants (without images)
     const product = await this.prisma.product.create({
       data: {
         ...rest,
@@ -33,34 +32,34 @@ export class ProductsService {
 
         translations: translations
           ? {
-              create: translations.map((t) => ({
-                name: t.name,
-                description: t.description ?? null,
-                language: { connect: { id: t.languageId } },
-              })),
-            }
+            create: translations.map((t) => ({
+              name: t.name,
+              description: t.description ?? null,
+              language: { connect: { id: t.languageId } },
+            })),
+          }
           : undefined,
 
         features: features
           ? {
-              create: features.map((f) => ({
-                text: f.text,
-                textEn: f.textEn,
-                order: f.order ?? null,
-              })),
-            }
+            create: features.map((f) => ({
+              text: f.text,
+              textEn: f.textEn?.trim() || "",
+              order: f.order ?? null,
+            })),
+          }
           : undefined,
 
         variants: variants
           ? {
-              create: variants.map((v) => ({
-                color: v.color,
-                sizes: v.sizes,
-                price: v.price ?? null,
-                priceSale: v.priceSale ?? null,
-                stock: v.stock ?? 0,
-              })),
-            }
+            create: variants.map((v) => ({
+              color: v.color,
+              sizes: v.sizes,
+              price: v.price ?? null,
+              priceSale: v.priceSale ?? null,
+              stock: v.stock ?? 0,
+            })),
+          }
           : undefined,
       },
       include: {
@@ -68,7 +67,6 @@ export class ProductsService {
       },
     });
 
-    // Then, create images for each variant if they exist
     if (variants && product.variants) {
       for (let i = 0; i < variants.length; i++) {
         const variantDto = variants[i];
@@ -87,7 +85,6 @@ export class ProductsService {
       }
     }
 
-    // Finally, return the complete product with all relations
     return this.prisma.product.findUnique({
       where: { id: product.id },
       include: this.defaultInclude(),
@@ -148,7 +145,6 @@ export class ProductsService {
       ...rest
     } = dto;
 
-    // КРОК 1: оновлюємо сам продукт
     await this.prisma.product.update({
       where: { id },
       data: {
@@ -165,14 +161,11 @@ export class ProductsService {
       },
     });
 
-    // КРОК 2: оновлюємо переклади якщо передані
     if (translations && translations.length > 0) {
-      // Спочатку видаляємо старі переклади
       await this.prisma.productTranslation.deleteMany({
         where: { productId: id },
       });
 
-      // Створюємо нові переклади
       await this.prisma.productTranslation.createMany({
         data: translations.map((t) => ({
           name: t.name || '',
@@ -183,47 +176,35 @@ export class ProductsService {
       });
     }
 
-    // КРОК 3: оновлюємо особливості якщо передані
     if (features && features.length > 0) {
-      // Спочатку видаляємо старі особливості
       await this.prisma.productFeature.deleteMany({
         where: { productId: id },
       });
 
-      // Створюємо нові особливості
       await this.prisma.productFeature.createMany({
         data: features.map((f) => ({
           text: f.text || '',
-          textEn: f.textEn || '',
+          textEn: f.textEn?.trim() || '',
           order: f.order ?? null,
           productId: id,
         })),
       });
     }
 
-    // КРОК 4: оновлюємо варіанти якщо передані
     if (variants) {
-      // Спочатку чистимо пов'язані зображення і варіанти
-      await this.prisma.productImage.deleteMany({
-        where: { productId: id },
-      });
-      await this.prisma.productVariant.deleteMany({
-        where: { productId: id },
-      });
+      await this.prisma.productImage.deleteMany({ where: { productId: id } });
+      await this.prisma.productVariant.deleteMany({ where: { productId: id } });
 
-      // Створюємо нові варіанти (якщо є)
       if (variants.length > 0) {
-        // Фільтруємо варіанти з обов'язковими полями
         const validVariants = variants.filter((v) => v.color);
 
         if (validVariants.length > 0) {
-          // Створюємо варіанти без зображень спочатку
           const createdVariants = await Promise.all(
             validVariants.map((v) =>
               this.prisma.productVariant.create({
                 data: {
                   product: { connect: { id } },
-                  color: v.color!, // використовуємо ! оскільки ми відфільтрували
+                  color: v.color!,
                   sizes: v.sizes || [],
                   price: v.price ?? null,
                   priceSale: v.priceSale ?? null,
@@ -234,7 +215,6 @@ export class ProductsService {
             ),
           );
 
-          // Тепер створюємо зображення для варіантів
           for (let i = 0; i < validVariants.length; i++) {
             const variantDto = validVariants[i];
             const createdVariant = createdVariants[i];
@@ -254,7 +234,6 @@ export class ProductsService {
       }
     }
 
-    // Повертаємо оновлений продукт з усіма зв'язками
     return this.prisma.product.findUnique({
       where: { id },
       include: this.defaultInclude(),
@@ -263,11 +242,8 @@ export class ProductsService {
 
   // DELETE
   async remove(id: number) {
-    // видаляємо залежності у безпечному порядку
     await this.prisma.productImage.deleteMany({ where: { productId: id } });
-    await this.prisma.productTranslation.deleteMany({
-      where: { productId: id },
-    });
+    await this.prisma.productTranslation.deleteMany({ where: { productId: id } });
     await this.prisma.productFeature.deleteMany({ where: { productId: id } });
     await this.prisma.productVariant.deleteMany({ where: { productId: id } });
     await this.prisma.cartItem.deleteMany({ where: { productId: id } });
@@ -288,12 +264,10 @@ export class ProductsService {
 
   async importProductsFromFile(file: Express.Multer.File) {
     try {
-      // Читаємо Excel
       const workbook = XLSX.read(file.buffer, { type: 'buffer' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows: ExcelRow[] = XLSX.utils.sheet_to_json<ExcelRow>(sheet);
 
-      // Функція для порівняння масивів незалежно від порядку
       const arraysEqualIgnoreOrder = (a: string[], b: string[]): boolean => {
         if (a.length !== b.length) return false;
         const sortedA = [...a].sort();
@@ -308,30 +282,24 @@ export class ProductsService {
 
         const variantData = {
           color: row.variantColor as EColor,
-          sizes:
-            row.variantSizes?.split(',').map((s) => s.trim() as ESize) || [],
-          stock: Number(row.stock ?? row.stock) || 0,
+          sizes: row.variantSizes?.split(',').map((s) => s.trim() as ESize) || [],
+          stock: Number(row.stock ?? 0),
           price: Number(row.price),
           priceSale: row.priceSale ? Number(row.priceSale) : null,
           description: row.description,
           variantDescription: row.variantDescription,
           images: row.variantImages
             ? row.variantImages
-                .split(/\s*\|\s*/)
-                .map((u) => u.trim())
-                .filter((u) => /^https?:\/\//i.test(u))
-                .map((u) => ({ url: u, altText: null }))
+              .split(/\s*\|\s*/)
+              .map((u) => u.trim())
+              .filter((u) => /^https?:\/\//i.test(u))
+              .map((u) => ({ url: u, altText: null }))
             : [],
         };
 
-        // Перевіряємо, чи продукт уже існує
         let product = await this.prisma.product.findUnique({
           where: { sku },
-          include: {
-            variants: { include: { images: true } },
-            translations: true,
-            features: true,
-          },
+          include: { variants: { include: { images: true } }, translations: true, features: true },
         });
 
         if (!product) {
@@ -342,30 +310,23 @@ export class ProductsService {
                 sku,
                 price: 0,
                 priceSale: 0,
-                category: row.categoryId
-                  ? { connect: { id: Number(row.categoryId) } }
-                  : undefined,
-                collection: row.collectionId
-                  ? { connect: { id: Number(row.collectionId) } }
-                  : undefined,
+                category: row.categoryId ? { connect: { id: Number(row.categoryId) } } : undefined,
+                collection: row.collectionId ? { connect: { id: Number(row.collectionId) } } : undefined,
                 translations: row.name
                   ? {
-                      create: [
-                        {
-                          name: row.name,
-                          description: row.description || null,
-                          language: { connect: { id: 1 } },
-                        },
-                      ],
-                    }
+                    create: [
+                      { name: row.name, description: row.description || null, language: { connect: { id: 1 } } },
+                    ],
+                  }
                   : undefined,
                 features: row.features
                   ? {
-                      create: row.features.split('|').map((feature, index) => ({
-                        text: feature.trim(),
-                        order: index + 1,
-                      })),
-                    }
+                    create: row.features.split('|').map((feature, index) => ({
+                      text: feature.trim(),
+                      textEn: row.featuresEn?.split('|')[index]?.trim() || '',
+                      order: index + 1,
+                    })),
+                  }
                   : undefined,
                 variants: {
                   create: [
@@ -380,71 +341,42 @@ export class ProductsService {
                   ],
                 },
               },
-              include: {
-                variants: { include: { images: true } },
-                translations: true,
-                features: true,
-              },
+              include: { variants: { include: { images: true } }, translations: true, features: true },
             });
-            console.log(
-              'Created product:',
-              product.sku,
-              'with id:',
-              product.id,
-            );
+            console.log('Created product:', product.sku, 'with id:', product.id);
           } catch (error) {
             console.error('Error creating product:', error);
             continue;
           }
         } else {
           console.log('Product exists. Updating...');
-
           try {
             product = await this.prisma.product.update({
               where: { id: product.id },
               data: {
-                category: row.categoryId
-                  ? { connect: { id: Number(row.categoryId) } }
-                  : undefined,
-                collection: row.collectionId
-                  ? { connect: { id: Number(row.collectionId) } }
-                  : undefined,
+                category: row.categoryId ? { connect: { id: Number(row.categoryId) } } : undefined,
+                collection: row.collectionId ? { connect: { id: Number(row.collectionId) } } : undefined,
                 translations: row.name
                   ? {
-                      upsert: {
-                        where: {
-                          productId_languageId: {
-                            productId: product.id,
-                            languageId: 1,
-                          },
-                        },
-                        update: {
-                          name: row.name,
-                          description: row.description || null,
-                        },
-                        create: {
-                          name: row.name,
-                          description: row.description || null,
-                          language: { connect: { id: 1 } },
-                        },
-                      },
-                    }
+                    upsert: {
+                      where: { productId_languageId: { productId: product.id, languageId: 1 } },
+                      update: { name: row.name, description: row.description || null },
+                      create: { name: row.name, description: row.description || null, language: { connect: { id: 1 } } },
+                    },
+                  }
                   : undefined,
                 features: row.features
                   ? {
-                      deleteMany: {},
-                      create: row.features.split('|').map((feature, index) => ({
-                        text: feature.trim(),
-                        order: index + 1,
-                      })),
-                    }
+                    deleteMany: {},
+                    create: row.features.split('|').map((feature, index) => ({
+                      text: feature.trim(),
+                      textEn: row.featuresEn?.split('|')[index]?.trim() || '',
+                      order: index + 1,
+                    })),
+                  }
                   : undefined,
               },
-              include: {
-                variants: { include: { images: true } },
-                translations: true,
-                features: true,
-              },
+              include: { variants: { include: { images: true } }, translations: true, features: true },
             });
             console.log('Updated product:', product.id);
           } catch (error) {
@@ -454,7 +386,6 @@ export class ProductsService {
 
         if (!product) continue;
 
-        // Оновлюємо/створюємо variant
         let existingVariant = product.variants.find(
           (v) =>
             v.color === variantData.color &&
@@ -499,14 +430,10 @@ export class ProductsService {
           }
         }
 
-        // Оновлюємо картинки
         if (variantData.images.length > 0) {
           try {
-            const existingImageUrls =
-              existingVariant.images?.map((img) => img.url) || [];
-            const newImages = variantData.images.filter(
-              (img) => !existingImageUrls.includes(img.url),
-            );
+            const existingImageUrls = existingVariant.images?.map((img) => img.url) || [];
+            const newImages = variantData.images.filter((img) => !existingImageUrls.includes(img.url));
 
             if (newImages.length > 0) {
               await this.prisma.productImage.createMany({
@@ -527,34 +454,20 @@ export class ProductsService {
 
       console.log('\nImport finished successfully!');
 
-      // Оновлюємо ціни продуктів на основі мінімальних цін варіантів
       try {
-        const products = await this.prisma.product.findMany({
-          include: { variants: true },
-        });
+        const products = await this.prisma.product.findMany({ include: { variants: true } });
 
         for (const product of products) {
           if (product.variants.length > 0) {
-            const prices = product.variants
-              .map((v) => v.price)
-              .filter((p): p is number => p !== null && p > 0);
-
-            const salePrices = product.variants
-              .map((v) => v.priceSale)
-              .filter((p): p is number => p !== null && p > 0);
+            const prices = product.variants.map((v) => v.price).filter((p): p is number => p !== null && p > 0);
+            const salePrices = product.variants.map((v) => v.priceSale).filter((p): p is number => p !== null && p > 0);
 
             if (prices.length > 0) {
               const minPrice = Math.min(...prices);
-              const minSalePrice =
-                salePrices.length > 0 ? Math.min(...salePrices) : null;
+              const minSalePrice = salePrices.length > 0 ? Math.min(...salePrices) : null;
 
-              await this.prisma.product.update({
-                where: { id: product.id },
-                data: { price: minPrice, priceSale: minSalePrice },
-              });
-              console.log(
-                `Updated product ${product.sku} base price to ${minPrice}`,
-              );
+              await this.prisma.product.update({ where: { id: product.id }, data: { price: minPrice, priceSale: minSalePrice } });
+              console.log(`Updated product ${product.sku} base price to ${minPrice}`);
             }
           }
         }
@@ -566,15 +479,10 @@ export class ProductsService {
       throw error;
     }
   }
+
   async exportProductsToExcel(res: Response) {
     const products = await this.prisma.product.findMany({
-      include: {
-        variants: { include: { images: true } },
-        translations: true,
-        features: true,
-        category: true,
-        collection: true,
-      },
+      include: { variants: { include: { images: true } }, translations: true, features: true, category: true, collection: true },
     });
 
     const rows = products.flatMap((product) =>
@@ -584,15 +492,16 @@ export class ProductsService {
         description: product.translations[0]?.description || '',
         price: variant.price || product.price,
         priceSale: variant.priceSale || product.priceSale,
-        nameCategory: product.category?.name || '', // підставляється як у формулі
+        nameCategory: product.category?.name || '',
         categoryId: product.categoryId,
         variantDescription: variant.description || '',
         nameCollection: product.collection?.name || '',
         collectionId: product.collectionId,
         sizes: variant.sizes.join(','),
-        colors: variant.color, // якщо один колір на варіант
+        colors: variant.color,
         images: variant.images.map((img) => img.url).join(' | '),
         features: product.features.map((f) => f.text).join(' | '),
+        featuresEn: product.features.map((f) => f.textEn || '').join(' | '),
         variantColor: variant.color,
         variantSizes: variant.sizes.join(','),
         variantImages: variant.images.map((img) => img.url).join(' | '),
@@ -605,14 +514,8 @@ export class ProductsService {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename="products.xlsx"',
-    );
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
+    res.setHeader('Content-Disposition', 'attachment; filename="products.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.send(buffer);
   }
 }

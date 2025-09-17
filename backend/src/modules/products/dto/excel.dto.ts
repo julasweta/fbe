@@ -12,6 +12,7 @@ export interface ExcelRow {
   categoryId?: number | string;
   collectionId?: number | string;
   features?: string; // comma-separated features
+  featuresEn?: string;
   stock?: string;
 
   // Варіанти

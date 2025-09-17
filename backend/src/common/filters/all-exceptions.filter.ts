@@ -14,7 +14,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let status: number = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: any = 'Internal server error';
 
     if (exception instanceof HttpException) {
@@ -25,7 +25,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     // Лог у консоль для розробника
-    console.error('Global exception caught:', exception);
+    if (status >= 500) {
+      console.error('Global exception caught:', exception);
+    } else {
+      console.warn(`Handled exception [${status}]:`, message);
+    }
+
 
     response.status(status).json({
       statusCode: status,

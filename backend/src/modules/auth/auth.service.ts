@@ -60,34 +60,32 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
-    try {
-      const payload = this.jwtService.verify(refreshToken);
-      const user = await this.prisma.user.findUnique({
-        where: { id: payload.sub },
-      });
+  try {
+    const payload = this.jwtService.verify(refreshToken);
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
 
-      if (!user || user.refreshToken !== refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
-
-      const newPayload = { sub: user.id, email: user.email, role: user.role };
-      const accessToken = this.jwtService.sign(newPayload, {
-        expiresIn: '10s',
-      });
-      const newRefreshToken = this.jwtService.sign(newPayload, {
-        expiresIn: '360s',
-      });
-
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: { accessToken, refreshToken: newRefreshToken },
-      });
-
-      return { accessToken, refreshToken: newRefreshToken };
-    } catch (error) {
-      throw new UnauthorizedException(error.message || 'Invalid refresh token');
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
     }
+
+    const newPayload = { sub: user.id, email: user.email, role: user.role };
+    const accessToken = this.jwtService.sign(newPayload, { expiresIn: '1h' });
+    const newRefreshToken = this.jwtService.sign(newPayload, { expiresIn: '7d' });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: newRefreshToken },
+    });
+
+    return { accessToken, refreshToken: newRefreshToken };
+  } catch {
+    // 👇 тут не прокидаємо внутрішню помилку, а просто віддаємо 401
+    throw new UnauthorizedException('Invalid refresh token');
   }
+}
+
 
   async register(data: CreateUserDto) {
     const existing = await this.prisma.user.findUnique({
