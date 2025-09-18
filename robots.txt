@@ -1,20 +1,17 @@
 User-agent: *
 Allow: /
 
-# Заборонити індексацію службових файлів
 Disallow: /admin/
 Disallow: /api/
 Disallow: /_next/
 Disallow: /node_modules/
 
-# Дозволити статичні файли
 Allow: /images/
 Allow: /css/
 Allow: /js/
 Allow: /fonts/
 
-# Sitemap
 Sitemap: https://fbe.pp.ua/sitemap.xml
+Sitemap: https://fbe.pp.ua/sitemap.txt
 
-# Затримка між запитами (в секундах)
 Crawl-delay: 1
