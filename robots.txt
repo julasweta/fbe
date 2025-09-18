@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Allow: /fonts/
+
 Sitemap: https://fbe.pp.ua/sitemap.xml
+
