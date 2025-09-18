@@ -7,67 +7,55 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/products</loc>
-    <lastmod>2025-09-18</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://fbe.pp.ua/categories</loc>
-    <lastmod>2025-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://fbe.pp.ua/about</loc>
+    <loc>https://fbe.pp.ua/about/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/contact</loc>
+    <loc>https://fbe.pp.ua/contact/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/bottoms</loc>
+    <loc>https://fbe.pp.ua/category/bottoms/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/new</loc>
+    <loc>https://fbe.pp.ua/category/new/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/dress</loc>
+    <loc>https://fbe.pp.ua/category/dress/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/tops</loc>
+    <loc>https://fbe.pp.ua/category/tops/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/shortdress</loc>
+    <loc>https://fbe.pp.ua/category/shortdress/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/bottoms-skirts</loc>
+    <loc>https://fbe.pp.ua/category/bottoms-skirts/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://fbe.pp.ua/category/Active bottoms</loc>
+    <loc>https://fbe.pp.ua/category/Active bottoms/</loc>
     <lastmod>2025-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
