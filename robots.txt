@@ -1,13 +1,20 @@
-User-agent: Googlebot
-
-Disallow: /api/
-Disallow: /admin/
-Disallow: /_next/
-Disallow: /scripts/
-Disallow: /cart
-Disallow: /checkout
-
 User-agent: *
 Allow: /
 
+# Заборонити індексацію службових файлів
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+
+# Дозволити статичні файли
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Allow: /fonts/
+
+# Sitemap
 Sitemap: https://fbe.pp.ua/sitemap.xml
+
+# Затримка між запитами (в секундах)
+Crawl-delay: 1
