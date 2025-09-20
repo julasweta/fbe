@@ -11,5 +11,5 @@ Allow: /css/
 Allow: /js/
 Allow: /fonts/
 
-Sitemap: https://fbe.pp.ua/sitemap.xml
+Sitemap: https://fbe.pp.ua/sitemap.xml/
 
