@@ -3,7 +3,7 @@
 **FBE** is a full-featured e-commerce application for managing products, carts, orders, and users.
 
 **Live Production:** https://fbe.pp.ua/  
-**Backend API:** https://fbe-8ldlbw.fly.dev/  
+**Backend API:** https://fbe-8ldlbw.fly.dev/api 
 
 ## Technologies
 - **Backend:** Node.js, Nest.js, Prisma, PostgreSQL
