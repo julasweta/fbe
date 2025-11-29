@@ -9,7 +9,6 @@ const Category: React.FC = () => {
     const { t} = useTranslation();
 
   useEffect(() => {
-    console.log("🔄 Завантажені категорії:", categories);
     if (categories.length > 0) {
       setExpandedCategories(categories.map(cat => cat.id));
     }

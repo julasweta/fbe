@@ -14,45 +14,56 @@
 }
 
 .primary {
-  background-color: #1b4978; // blue-500
+  background-color: #1b4978; // blue-500   
   color: #f5f3f3;
 
-
   &:hover {
-    background-color: #5e8ea3; // blue-600
+    background-color: #5e8ea3; // blue-600   
   }
 }
 
 .secondary {
-  background-color: #d1d5db; // gray-300
-  color: #1f2937; // gray-800
+  background-color: #d1d5db; // gray-300   
+  color: #1f2937; // gray-800    
 
   &:hover {
-    background-color: #9ca3af; // gray-400
+    background-color: #9ca3af; // gray-400   
   }
 }
 
-.small{
-  background-color: transparent; // red-500
-    color: #666262;
-    display: inline;
+.small {
+  background-color: transparent; // red-500     
+  color: #666262;
+  display: inline;
 }
 
 .danger {
-  background-color: #ef4444; // red-500
+  background-color: #ef4444; // red-500   
   color: #fff;
 
   &:hover {
-    background-color: #dc2626; // red-600
+    background-color: #dc2626; // red-600   
   }
 }
 
 .link {
-  background-color: #1a62c1; // red-500
+  background-color: #1a62c1; // red-500   
   color: #fff;
 
   &:hover {
-    background-color: #7091d8; // red-600
+    background-color: #7091d8; // red-600   
+  }
+}
+
+
+
+.full {
+  background-color: #1dc11a; // red-500   
+  color: #fff;
+  width: 100%;
+
+  &:hover {
+    background-color: #116a1b; // red-600   
   }
 }
 
@@ -77,5 +88,17 @@
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+// Контейнер для категорій (якщо потрібно)
+.categoriesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+
+  @media (max-width: 768px) {
+    justify-content: center;
   }
 }

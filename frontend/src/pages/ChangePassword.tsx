@@ -14,7 +14,6 @@ const ChangePassword = () => {
   const { register, handleSubmit,  formState: { errors } } = useForm<IChangePasswordForm>();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  console.log('error', errorMessage);
 
   const onSubmit = async (data: IChangePasswordForm) => {
     if (data.newPassword !== data.confirmPassword) {
@@ -24,8 +23,9 @@ const ChangePassword = () => {
 
     try {
       await authService.changePassword(data.currentPassword, data.newPassword);
-      setSuccessMessage("Пароль успішно змінено");
+      setSuccessMessage("Пароль успішно змінено ");
       setErrorMessage(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setErrorMessage(err.message || "Помилка при зміні пароля");
       setSuccessMessage(null);

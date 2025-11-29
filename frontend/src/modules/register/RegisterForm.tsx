@@ -33,6 +33,7 @@ const RegisterForm: React.FC = () => {
     try {
       await authService.register(data);
       reset();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.log("RegisterForm: Error during registration:", err);
       setError("email", {

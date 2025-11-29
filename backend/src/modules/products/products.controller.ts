@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import {
@@ -57,6 +58,37 @@ export class ProductsController {
   @ApiOperation({ summary: 'Експорт продуктів у Excel' })
   async exportProducts(@Res() res: Response) {
     return this.productsService.exportProductsToExcel(res);
+  }
+
+
+  @Get('export-google')
+  @ApiOperation({
+    summary: 'Експорт товарів у форматі Google Merchant Center',
+    description:
+      'Генерує XLSX файл із товарами та їхніми варіантами для завантаження у Google Merchant Center.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'XLSX файл з товарами',
+    content: {
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+        schema: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Помилка при генерації Google Merchant фіду',
+  })
+  async exportGoogle(@Res() res: Response) {
+    try {
+      await this.productsService.exportProductsToGoogle(res);
+    } catch (error) {
+      console.error(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Помилка при генерації Google Merchant фіду',
+      });
+    }
   }
 
   @Post()

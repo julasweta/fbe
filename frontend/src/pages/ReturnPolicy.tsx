@@ -1,14 +1,22 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const ReturnPolicy: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="page">
       <h1 >Політика повернення та обміну</h1>
 
       <section className="form">
         <h2>Країни</h2>
-        <p>Ми здійснюємо обслуговування та продаж товарів лише на території України.</p>
+        <ul>
+          {(t("deliveryInfo", { returnObjects: true }) as string[]).map((item, index) => (
+            <li key={index}> - {item}</li>
+          ))}
+
+        </ul>
       </section>
 
       <section className="form">

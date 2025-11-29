@@ -119,7 +119,6 @@ const subscribeToWaitList = (cb: IWaitList): void => {
 };
 
 const afterRefresh = (): void => {
-  console.log("✅ Токени успішно оновлені");
   while (waitList.length) {
     const cb = waitList.pop();
     if (cb) cb();

@@ -554,3 +554,56 @@
     height: 500px;
   }
 }
+
+
+/* ONE CLICK  */
+.buttonsGroup {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+  }
+}
+
+.buyNowBtn {
+  position: absolute;
+  top: 160px;
+  background-color: #ff6b35;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 7rem;
+  height: 60px;
+  color: white;
+  animation: textColor 3s infinite linear;
+
+  &:hover:not(:disabled) {
+    background-color: #e55a2b;
+  }
+}
+
+@keyframes textColor {
+  0% {
+    color: #ffffff;
+  }
+
+  25% {
+    color: #b2cb60;
+  }
+
+
+
+  /* бірюза */
+  75% {
+    color: #f9f8f9;
+  }
+
+  /* рожевий */
+  100% {
+    color: #ffffff;
+  }
+}

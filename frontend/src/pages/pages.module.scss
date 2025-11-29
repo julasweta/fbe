@@ -161,3 +161,205 @@ flex-direction: row;
 justify-content: space-around;
 margin:10px;
 }
+
+
+
+/* CATEGORY PAGE  */
+// Стилі для підкатегорій з зображеннями
+.subcategories {
+  margin-bottom: 2rem;
+  padding: 1.5rem 0;
+}
+
+.subcategoriesTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.subcategoriesList {
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-around;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.8rem;
+  }
+}
+
+.subcategoryLink {
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  @media (max-width: 768px) {
+    max-width: 150px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 120px;
+  }
+}
+
+// Стилі для карток категорій
+.category {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    height: 180px;
+  }
+
+  @media (max-width: 480px) {
+    height: 150px;
+  }
+}
+
+// Зображення категорії
+.categoryImage {
+  width: 100%;
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+
+  // Fallback градієнт якщо зображення не завантажилося
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3));
+  }
+
+  @media (max-width: 768px) {
+    height: 120px;
+  }
+
+  @media (max-width: 480px) {
+    height: 100px;
+  }
+}
+
+// Різні кольори для категорій без зображень (fallback)
+.category:nth-child(6n+1) .categoryImage {
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.category:nth-child(6n+2) .categoryImage {
+  background-image: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.category:nth-child(6n+3) .categoryImage {
+  background-image: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.category:nth-child(6n+4) .categoryImage {
+  background-image: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.category:nth-child(6n+5) .categoryImage {
+  background-image: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.category:nth-child(6n+6) .categoryImage {
+  background-image: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+// Назва категорії
+.categoryName {
+  padding: 1rem 0.75rem;
+  background: #fff;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.3;
+
+  @media (max-width: 768px) {
+    padding: 0.8rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+// Іконка категорії (якщо потрібна)
+.categoryIcon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  z-index: 2;
+
+  @media (max-width: 480px) {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+// Анімація завантаження зображення
+.categoryImage.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}

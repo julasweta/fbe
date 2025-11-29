@@ -5,7 +5,6 @@ import Products from "../modules/products/Products";
 
 const CollectionPage = () => {
   const { collectionSlug } = useParams<{ collectionSlug: string }>();
-  console.log("Collection slug:", collectionSlug);
 
   return (
     <div className={styles.page}>

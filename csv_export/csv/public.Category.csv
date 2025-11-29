@@ -1,0 +1,8 @@
+id,name,parentId,slug,imageUrl
+13,Bottoms,,bottoms,https://res.cloudinary.com/divhalkcr/image/upload/v1756932346/59459202-IMG_8171_ercof0.jpg
+5,New,,new,https://res.cloudinary.com/divhalkcr/image/upload/v1756927449/photo_2025-09-03_21-49-59_fv0daa.jpg
+1,Dress,,dress,https://res.cloudinary.com/divhalkcr/image/upload/v1756937553/IMG_4872_qjjwl5.jpg
+12,Tops,,tops,https://res.cloudinary.com/divhalkcr/image/upload/v1756937705/photo_2025-09-03_22-08-11_bqqcli.jpg
+15,ShortDress,1,shortdress
+16,Skirts,13,bottoms-skirts,https://res.cloudinary.com/divhalkcr/image/upload/v1757006572/photo_2025-09-03_22-08-11_2_c69p47.jpg
+17,Active bottoms,13,Active bottoms,https://res.cloudinary.com/divhalkcr/image/upload/v1756932411/photo_2025-09-03_21-58-25_p37ptm.jpg

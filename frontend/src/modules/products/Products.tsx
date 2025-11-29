@@ -27,7 +27,6 @@ const Products = ({ categorySlug, collectionSlug }:ProductsProps) => {
       };
       try {
         await fetchProducts(filters );
-        console.log("Products loaded successfully from store");
       } catch (err) {
         console.error("Failed to load products:", err);
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -67,15 +66,7 @@ const Products = ({ categorySlug, collectionSlug }:ProductsProps) => {
     );
   }
 
-  if (products.length === 0) {
-    return (
-      <div className={styles.productsGrid}>
-        <div className={styles.emptyState}>
-          <p>Товарів поки немає</p>
-        </div>
-      </div>
-    );
-  }
+ 
 
   return (
     <div className={styles.productsContainer}>

@@ -10,23 +10,22 @@ const novaPoshtaService = {
 
   async getCities(areaRef?: string): Promise<ICity[]> {
     const response = await apiService.get(
-      `nova-poshta/cities${areaRef ? `?areaRef=${areaRef}` : ""}`
+      `nova-poshta/cities${areaRef ? `?areaRef=${areaRef}` : ""}`,
     );
     return response.data; // повертаємо масив міст
   },
 
   async getBranches(cityRef: string): Promise<IBranch[]> {
-    const response = await apiService.get(`nova-poshta/warehouses?cityRef=${cityRef}`);
+    const response = await apiService.get(
+      `nova-poshta/warehouses?cityRef=${cityRef}`,
+    );
     return response.data; // повертаємо масив відділень
   },
 
   async getTracking(ttn: string): Promise<INovaPoshtaOrder> {
     const response = await apiService.get(`nova-poshta/tracking?ttn=${ttn}`);
     return response.data[0]; // одразу повертаємо об’єкт
-  }
-
-
- 
+  },
 };
 
 export { novaPoshtaService };

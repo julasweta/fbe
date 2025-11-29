@@ -1,13 +1,17 @@
-User-agent: Googlebot
-
-Disallow: /api/
-Disallow: /admin/
-Disallow: /_next/
-Disallow: /scripts/
-Disallow: /cart
-Disallow: /checkout
-
 User-agent: *
 Allow: /
+Allow: /sitemap.xml
+
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Allow: /fonts/
 
 Sitemap: https://fbe.pp.ua/sitemap.xml
+

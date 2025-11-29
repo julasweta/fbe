@@ -65,7 +65,7 @@ export const useProductStore = create<ProductState>((set) => ({
 
     try {
       const products = await productService.getAll(filters);
-     
+
       set({ products, isLoading: false });
     } catch (error) {
       console.error("❌ Error fetching products:", error);

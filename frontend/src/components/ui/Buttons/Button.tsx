@@ -8,7 +8,7 @@ import classNames from "classnames";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
-  variant?: "primary" | "secondary" | "danger" | "link" | "small";
+  variant?: "primary" | "secondary" | "danger" | "link" | "small" | "full";
   children?: ReactNode;
 }
 

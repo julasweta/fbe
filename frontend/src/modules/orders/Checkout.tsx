@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./Checkout.module.scss";
 import { Button } from "../../components/ui/Buttons/Button";
 import { useAuthStore } from "../../store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "../../store/useCartStore";
 import { orderService } from "../../services/OrderService";
 import type { CheckoutFormData } from "./CheckoutForm";
@@ -14,6 +14,8 @@ const Checkout: React.FC = () => {
   const { cart, setCart, clearCart } = useCartStore();
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "card">("cod");
+  const navigate = useNavigate();
+
 
   const [form, setForm] = useState<CheckoutFormData>({
     fullName: user ? `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim() : "",
@@ -56,13 +58,48 @@ const Checkout: React.FC = () => {
         novaPoshtaBranch: form.branchName,
       };
 
-      await orderService.createOrder(user?.id ?? null, cart, paymentMethod, orderData);
+      // ✅ Створюємо замовлення
+      const createdOrder = await orderService.createOrder(
+        user?.id ?? null,
+        cart,
+        paymentMethod,
+        orderData
+      );
 
+      // 🗑 Очищення кошика
       localStorage.removeItem("cart");
       clearCart();
       if (user) useCartStore.getState().deleteCartItems();
 
       alert("✅ Замовлення відправлено!");
+
+      // ✅ Google Customer Reviews Survey Opt-in
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window as any).gapi) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).gapi.load("surveyoptin", function () {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).gapi.surveyoptin.render({
+            merchant_id: 5655937585,
+            order_id: createdOrder.id,
+            email: form.email,
+            delivery_country: "UA",
+            estimated_delivery_date: "2025-09-30",
+
+
+          });
+
+          // ✅ відслідковуємо вставлений iframe
+          const interval = setInterval(() => {
+            const iframe = document.querySelector("iframe[src*='surveyoptin']");
+            if (!iframe) {
+              clearInterval(interval);
+              navigate("/"); // коли iframe зникне → редірект
+            }
+          }, 1000);
+        });
+      }
+
     } catch (err) {
       console.error(err);
       alert("❌ Сталася помилка при оформленні замовлення");
@@ -71,6 +108,7 @@ const Checkout: React.FC = () => {
     }
   };
 
+
   const total = cart.reduce((sum, item) => {
     const price = item?.priceSale && item?.priceSale < item?.price ? item.priceSale : item?.price || 0;
     const qty = item?.quantity ?? 1;
@@ -78,7 +116,7 @@ const Checkout: React.FC = () => {
   }, 0);
 
   return (
-    <div className={styles.checkout}>
+    <div className={`${styles.checkout} page`}>
       <h1>Оформлення замовлення</h1>
 
       <CheckoutForm form={form} setForm={setForm} />
@@ -90,9 +128,9 @@ const Checkout: React.FC = () => {
           return (
             <div key={item.id} className={styles.item}>
               <span>
-                {item?.name} x {qty}
+                {item?.name} (color:  {item.color}) -  <strong>{qty}</strong>
               </span>
-              <span>₴{(price * qty).toFixed(2)}</span>
+              <span> x {(price * qty).toFixed(2)} </span>
             </div>
           );
         })}

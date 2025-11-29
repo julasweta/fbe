@@ -22,7 +22,6 @@ const HomePage = () => {
         setError(null);
         try {
           await fetchProducts(); 
-          console.log("Products loaded successfully from store");
         } catch (err) {
           console.error("Failed to load products:", err);
           setError(err instanceof Error ? err.message : "Unknown error");

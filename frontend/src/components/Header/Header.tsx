@@ -132,8 +132,8 @@ const Header: React.FC = () => {
                     transition: "color 0.3s ease",
                   }}
                 />}
-                {(user?.last_name?.[0] ?? "").toUpperCase()}
                 {(user?.first_name?.[0] ?? "").toUpperCase()}
+                {(user?.last_name?.[0] ?? "").toUpperCase()}
               </Link>
             </span>
 

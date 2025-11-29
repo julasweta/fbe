@@ -1,0 +1,3 @@
+id,cartId,productId,quantity,color,image,name,price,priceSale,size
+58,1,34,1,BLUE,https://res.cloudinary.com/divhalkcr/image/upload/v1758138297/q5gstxkdqwwwzfdena3c.jpg,Топ Orchid,1900,,L
+62,4,38,1,BLACK,https://res.cloudinary.com/divhalkcr/image/upload/v1757016040/DSC01808_ed1zbu.jpg,Сукня Noir Rose,3900,,L

@@ -38,7 +38,7 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
     remove(index);
     // Перенумерація order після видалення
     const images = watch(`variants.${variantIndex}.images`) || [];
-    images.forEach((img: any, i: number) => {
+    images.forEach((_, i: number) => {
       setValue(`variants.${variantIndex}.images.${i}.order`, i + 1);
     });
   };
@@ -126,6 +126,7 @@ const VariantImagesForUpdate: React.FC<VariantImagesProps> = ({
 
       <Button
         type="button"
+        variant="full"
         onClick={() =>
           append({
             url: "",

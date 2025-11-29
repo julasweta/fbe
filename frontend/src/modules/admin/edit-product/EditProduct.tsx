@@ -178,9 +178,12 @@ const EditProduct: React.FC = () =>  {
       priceSale: watchedData.priceSale ?? undefined,
       stock: 0,
       description: "",
-      images: [{ url: "", altText: undefined }],
+      images: [
+        { url: "", altText: "", order: 1 } // додаємо поле order для сортування
+      ],
     });
   };
+
 
   const handleReset = () => {
     if (originalDataRef.current) {
@@ -235,7 +238,7 @@ const EditProduct: React.FC = () =>  {
           </div>
         </div>
 
-       // Додати цей код в секцію Translations
+     
 
         {/* Translations */}
         <h3>Назва і опис товару</h3>
@@ -345,7 +348,7 @@ const EditProduct: React.FC = () =>  {
         {/* Variants */}
         <h3>Variants</h3>
         {variantsArray.fields.map((variant, vIndex) => (
-          <div key={variant.id} className={styles.variantBlock}>
+          <div key={variant.id} className={`${styles.variantBlock} form form2`}>
             <h4>Variant {vIndex + 1}</h4>
             <div className={styles.field}>
               <label>Color</label>
@@ -379,7 +382,7 @@ const EditProduct: React.FC = () =>  {
             </div>
 
             <div className={styles.field}>
-              <label>Stock</label>
+              <label className="label">Послідовність варіантів - введіть 1, якщо це головний варіант який буде відображатись всюди перший</label>
               <Input type="number" {...register(`variants.${vIndex}.stock`, { valueAsNumber: true })} />
             </div>
 

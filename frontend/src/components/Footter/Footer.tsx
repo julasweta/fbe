@@ -1,7 +1,7 @@
-// Footer.tsx
 import { Link } from "react-router-dom";
 import { FaInstagram } from "react-icons/fa";
 import styles from "./Footer.module.scss";
+import GoogleRatingBadge from "./GoogleRatingBadge";
 
 const footerMenu = [
   { title: "About", url: "/about" },
@@ -25,11 +25,9 @@ const Footer = () => {
         </div>
 
         <div className={styles.social}>
-          
           <a href="https://www.instagram.com/fbe.ua/" target="_blank" rel="noreferrer">
             <FaInstagram />
           </a>
-          
         </div>
 
         <div className={styles.copy}>
@@ -40,7 +38,8 @@ const Footer = () => {
           Всі права захищені.
         </div>
 
-
+        {/* Контейнер для бейджу */}
+        <GoogleRatingBadge />
       </div>
     </footer>
   );

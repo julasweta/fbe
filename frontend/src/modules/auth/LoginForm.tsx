@@ -44,9 +44,7 @@ export const LoginForm = () => {
     setError(null);
 
     try {
-      console.log("LoginForm: Starting login process for:", form.email);
       await authService.login(form);
-      console.log("LoginForm: Login successful, redirecting...");
       navigate("/");
     } catch (error) {
       console.error("LoginForm: Login failed:", error);

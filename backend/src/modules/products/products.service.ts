@@ -541,7 +541,11 @@ export class ProductsService {
     }
   }
 
+
+
   async exportProductsToExcel(res: Response) {
+
+
     const products = await this.prisma.product.findMany({
       include: {
         variants: { include: { images: true } },
@@ -591,4 +595,100 @@ export class ProductsService {
     );
     res.send(buffer);
   }
+
+  async exportProductsToGoogle(res: Response) {
+    const categoryMapping = {
+      Tops: 'Apparel & Accessories > Clothing > Shirts & Tops',
+      Dress: 'Apparel & Accessories > Clothing > Dresses',
+      Bottoms: 'Apparel & Accessories > Clothing > Pants',
+      Shortdress: 'Apparel & Accessories > Clothing > Dresses',
+      New: 'Apparel & Accessories > Clothing',
+    };
+
+    
+    const products = await this.prisma.product.findMany({
+      include: {
+        variants: { include: { images: true } },
+        translations: true,
+        category: true,
+        collection: true,
+        images: true,
+      },
+    });
+
+    const rows = products.flatMap((product) =>
+      product.variants.flatMap((variant) =>
+        variant.sizes.map((size) => {
+          const title = product.translations[0]?.name || '';
+          const description = product.translations[0]?.description || '';
+          const price = (variant.price || product.price).toFixed(2) + ' UAH';
+          const salePrice = variant.priceSale
+            ? variant.priceSale.toFixed(2) + ' UAH'
+            : product.priceSale
+              ? product.priceSale.toFixed(2) + ' UAH'
+              : undefined;
+
+          // Генерація тегів
+          const words = title.split(/\s+/);
+          const tags = [
+            ...words,
+            ...words.map((w) => `${w} FBE`),
+          ];
+
+          return {
+            id: product.id,
+            item_group_id: product.id,
+            title,
+            description,
+            link: `https://fbe.pp.ua/product/${product.id}/`,
+            image_link:
+              variant.images[0]?.url ||
+              product.images[0]?.url ||
+              'https://fbe.pp.ua/default.jpg',
+            additional_image_link: variant.images
+              .map((img) => img.url)
+              .slice(1)
+              .join(','),
+            price,
+            sale_price: salePrice,
+            availability: variant.stock > 0 ? 'in stock' : 'out of stock',
+            condition: 'new',
+            brand: 'FBE',
+            gender: "female",
+            "material": "Спандекс",
+            "size_type": "regular",
+            "size_system": "EU",
+            "included_destination": "Free_listings, Free_local_listings",
+            google_product_category: product.category?.name
+              ? categoryMapping[product.category.name]
+              : "Одяг",
+            product_type: product.collection?.name || '',
+            color: variant.color,
+            size,
+            tags: tags.join(','), 
+            coumtry: 'UA'
+          };
+        }),
+      ),
+    );
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
+
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="google_products.xlsx"',
+    );
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.send(buffer);
+  }
+
+
+
+
 }

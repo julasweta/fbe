@@ -9,19 +9,16 @@ const authService = {
     apiService.post("auth/register", user),
 
   async login(authData: IAuth): Promise<IUser> {
-    console.log("[AuthService] login() called with:", authData.email);
 
     let data: ITokens;
 
     try {
-      console.log("[AuthService] Sending login request to /auth/login");
       const res = await apiService.post<ITokens>("auth/login", authData);
-      console.log("[AuthService] /auth/login response:", res);
+ 
       data = res.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("[AuthService] Error during /auth/login request:", error);
-      console.error("[AuthService] Error response:", error?.response?.data);
       console.error("[AuthService] Error status:", error?.response?.status);
 
       // Детальна обробка помилок
@@ -29,8 +26,6 @@ const authService = {
         const status = error.response.status;
         const responseData = error.response.data || {};
 
-        console.log("[AuthService] Processing error - status:", status);
-        console.log("[AuthService] Response data:", responseData);
 
         if (status === 401) {
           // Пріоритет: message > error > стандартне повідомлення
@@ -102,8 +97,6 @@ const authService = {
       throw new Error("Помилка під час входу");
     }
 
-  
-
     if (!data.accessToken || !data.refreshToken) {
       console.error("[AuthService] Missing tokens in response");
       throw new Error("Сервер не повернув токени авторизації");
@@ -113,7 +106,6 @@ const authService = {
 
     // Тепер пробуємо отримати користувача
     try {
-    
       const { data: user } = await this.me();
       useAuthStore.getState().login(data.accessToken, data.refreshToken, user);
       return user;
@@ -146,7 +138,7 @@ const authService = {
   async me(): Promise<IRes<IUser>> {
     try {
       return await apiService.get("users/me");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error?.response?.status === 401) {
         try {
@@ -175,7 +167,7 @@ const authService = {
           .login(state.accessToken, state.refreshToken, data);
       }
       return data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
         error ? error.response.data.error.message : "Помилка оновлення профілю",
@@ -228,7 +220,7 @@ const authService = {
 
     try {
       await apiService.post("auth/change-password", data);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
         error ? error.response.data.error.message : "Помилка оновлення",

@@ -10,8 +10,7 @@ export const orderService = {
     cart: ICartItem[],
     paymentMethod: string,
     form: CheckoutFormData,
-  ) {
-    console.log("➡️ Відправка замовлення на бекенд", form);
+  ): Promise<IOrderResponse> {
 
     // підрахунок загальної суми
     const finalPrice = cart.reduce((sum, item) => {
@@ -57,6 +56,7 @@ export const orderService = {
     page = 1,
     limit = 10,
   ): Promise<IOrderResponse[]> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = { page, limit };
     if (filters?.orderId) params.orderId = filters.orderId;
     if (filters?.dateFrom) params.dateFrom = filters.dateFrom;
@@ -93,7 +93,6 @@ export const orderService = {
     const response = await apiService.patch(
       `/orders/tracknumber/${orderItemId}`,
       { trackingNumber },
-     
     );
     return response.data;
   },

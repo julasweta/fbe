@@ -1,0 +1,14 @@
+id,color,sizes,price,priceSale,stock,productId,description
+145,WHITE,{XS,S,M,L},1900,,1,39,WHITE
+155,BLACK,{XS,S,M,L,XL},1900,,1,41,BLACK
+130,BLACK,{XS,S,M,L},1500,,2,35,Black color
+134,PINK,{XS,S,M,L,XL},1500,,2,36,Viva Magenta
+156,BLUE,{XS,S,M,L,XL},1900,,2,41,У ніжному небесно-блакитному кольорі
+162,WHITE,{XS,S,M,L,XL},1300,,1,37,Milkshake.
+163,PINK,{XS,S,M,L,XL},1300,,2,37,Viva Magenta
+164,BLUE,{XS,S,M,L,XL},1900,,1,34,Serenity color
+165,BLACK,{XS,S,M,L,XL},1900,,2,34,Black color
+167,BLACK,{XS,S,M,L,XL},3900,,1,38,BLACK
+170,WHITE,{XS,S,M,L},2100,,1,40,WHITE
+129,BLUE,{XS,S,M,L,XL},1500,,1,35,Serenity color
+133,WHITE,{XS,S,M,L,XL},1500,,1,36,Milkshake

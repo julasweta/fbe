@@ -7,12 +7,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:gh": "vite build && echo '' > dist/.nojekyll",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "npx serve -s dist -l 5173",
     "clean": "rimraf dist",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist --cname fbe.pp.ua",
+    "predeploy": "npm run build:gh",
+    "deploy": "gh-pages -d dist --cname fbe.pp.ua --dotfiles",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "seo-audit": "node scripts/seo-monitor.js"
@@ -65,7 +66,8 @@
     "ts-node": "^10.9.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.0",
-    "vite": "^7.1.0",
+    "vite": "^7.1.6",
+    "vite-plugin-sitemap": "^0.8.2",
     "vite-prerender-plugin": "^0.5.12"
   }
 }

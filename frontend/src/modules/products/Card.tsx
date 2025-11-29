@@ -1,3 +1,4 @@
+// Card.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Card.module.scss";
@@ -13,81 +14,49 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
   const { id, translations, variants, price, priceSale } = product;
   const lang = useLanguageStore((state) => state.lang);
 
-  // Функція для отримання правильного перекладу
+  // Переклад
   const getTranslationByLanguage = (translations: IProduct['translations']) => {
     if (!translations || translations.length === 0) return null;
-
-    // Мапинг кодів мов до languageId
-    const languageIdMap = {
-      'uk': 1,
-      'en': 2
-    };
-
+    const languageIdMap = { uk: 1, en: 2 };
     const targetLanguageId = languageIdMap[lang as keyof typeof languageIdMap];
-
-    // Спочатку шукаємо переклад для поточної мови
-    const translation = translations.find(t => t.languageId === targetLanguageId);
-
-    // Якщо не знайдено, повертаємо перший доступний переклад
-    return translation || translations[0];
+    return translations.find(t => t.languageId === targetLanguageId) || translations[0];
   };
-
-  // Отримуємо актуальний переклад
   const translation = getTranslationByLanguage(translations);
   const name = translation?.name || (lang === 'uk' ? "Назва відсутня" : "Name not available");
 
-  // fallback: перший варіант
-  const firstVariant = variants?.[0];
-  // Вибираємо фото першого варіанта з order === 1
-  const image =
-    firstVariant?.images?.find((img) => img.order === 1) || firstVariant?.images?.[0];
+  // вибираємо перший варіант з stock > 0
+  const firstAvailableVariant = variants?.find(v => v.stock === 1) || variants?.[0];
 
+  // фото варіанту
+  const image =
+    firstAvailableVariant?.images?.find(img => img.order === 1) || firstAvailableVariant?.images?.[0];
 
   // зібрати всі розміри і кольори з варіантів
-  const allSizes = Array.from(new Set(variants?.flatMap((v) => v.sizes) || []));
-  const allColors = Array.from(new Set(variants?.map((v) => v.color) || []));
+  const allSizes = Array.from(new Set(variants?.flatMap(v => v.sizes) || []));
+  const allColors = Array.from(new Set(variants?.map(v => v.color) || []));
 
-  // fallback: ціни з варіантів
+  // fallback: ціни
   const variantPrices =
-    variants?.map((v) => v.price).filter((p): p is number => p !== null && p !== undefined) || [];
+    variants?.map(v => v.price).filter((p): p is number => p != null) || [];
   const variantSalePrices =
-    variants?.map((v) => v.priceSale).filter((p): p is number => p !== null && p !== undefined) ||
-    [];
+    variants?.map(v => v.priceSale).filter((p): p is number => p != null) || [];
 
   const minVariantPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : undefined;
-  const minVariantSalePrice =
-    variantSalePrices.length > 0 ? Math.min(...variantSalePrices) : undefined;
+  const minVariantSalePrice = variantSalePrices.length > 0 ? Math.min(...variantSalePrices) : undefined;
 
-  // фінальні ціни: пріоритет product.price / product.priceSale
   const finalPrice = price ?? minVariantPrice;
   const finalSalePrice = priceSale ?? minVariantSalePrice;
 
-  // Тексти для різних мов
   const texts = {
-    uk: {
-      noImage: "Фото відсутнє",
-      noPrice: "Ціна відсутня",
-      noSizes: "Немає",
-      noColors: "Немає"
-    },
-    en: {
-      noImage: "Photo not available",
-      noPrice: "Price not available",
-      noSizes: "None",
-      noColors: "None"
-    }
+    uk: { noImage: "Фото відсутнє", noPrice: "Ціна відсутня", noSizes: "Немає", noColors: "Немає" },
+    en: { noImage: "Photo not available", noPrice: "Price not available", noSizes: "None", noColors: "None" }
   };
-
   const currentTexts = texts[lang as keyof typeof texts] || texts.uk;
 
   return (
     <div className={styles.card}>
-      <Link to={`/product/${id}`} className={styles.imageWrapper} rel="canonical">
-        {image ? (
-          <img src={image.url} alt={image.altText || name} />
-        ) : (
-          <div className={styles.noImage}>{currentTexts.noImage}</div>
-        )}
+      <Link to={`/product/${id}/`} className={styles.imageWrapper} >
+        {image ? <img src={image.url} alt={image.altText || name} /> : <div className={styles.noImage}>{currentTexts.noImage}</div>}
       </Link>
 
       <p className={`${styles.name} ${isMainPage ? styles.mainFont : ''}`}>
@@ -104,21 +73,19 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
           ) : (
             <span>₴{finalPrice.toFixed(2)}</span>
           )
-        ) : (
-          currentTexts.noPrice
-        )}
+        ) : currentTexts.noPrice}
       </p>
 
       <div className={styles.features}>
         {!isMainPage ? (
           allSizes.length > 0
-            ? allSizes.map((size) => sizeLabels[size]).join(", ")
+            ? allSizes.map(size => sizeLabels[size]).join(", ")
             : currentTexts.noSizes
         ) : ''}
         {!isMainPage && <br />}
         {allColors.length > 0 ? (
           <div className={styles.colorDots}>
-            {allColors.map((color) => (
+            {allColors.map(color => (
               <span
                 key={color}
                 className={styles.colorDot}
@@ -127,15 +94,14 @@ const Card: React.FC<CardProps> = ({ product, isMainPage }) => {
               />
             ))}
           </div>
-        ) : (
-          !isMainPage && currentTexts.noColors
-        )}
+        ) : (!isMainPage && currentTexts.noColors)}
       </div>
     </div>
   );
 };
 
 export default Card;
+
 
 
 

@@ -78,7 +78,6 @@ const Cart: React.FC = () => {
 
 
   const removeItem = (cartItem: ICartItem) => {
-    console.log(cartItem);
     if (cartItem.id) {
       // 🟢 авторизований → видаляємо по id з бекенду
       setCartItems(prev => prev.filter(item => item.id !== cartItem.id));

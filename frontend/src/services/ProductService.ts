@@ -15,7 +15,6 @@ const productService = {
   },
 
   async getById(id: number): Promise<IProduct> {
-
     const { data } = await apiService.get<IProduct>(`products/${id}`);
     return data;
   },
@@ -48,8 +47,6 @@ const productService = {
 
     await apiService.delete(`products/${id}`);
   },
-
-
 };
 
 export { productService };

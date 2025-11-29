@@ -181,7 +181,7 @@ const CreateProduct: React.FC = () => {
         {/* Variants */}
         <h3>Variants</h3>
         {variantsArray.fields.map((variant, vIndex) => (
-          <div key={variant.id} className={styles.variantBlock}>
+          <div key={variant.id} className={`${styles.variantBlock} form form2`}>
             <h4>Variant {vIndex + 1}</h4>
 
             <input type="hidden" {...register(`variants.${vIndex}.productId`)} />
@@ -236,8 +236,8 @@ const CreateProduct: React.FC = () => {
             </div>
 
             {/* Stock */}
-            <div className={styles.field}>
-              <label>Stock</label>
+            <div className={styles.field }>
+              <label>Послідовність варіантів - введіть 1, якщо це головний варіант який буде відображатись всюди перший</label>
               <input type="number" {...register(`variants.${vIndex}.stock`, { valueAsNumber: true })} />
             </div>
 

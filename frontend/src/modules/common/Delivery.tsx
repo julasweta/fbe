@@ -1,60 +1,72 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./Delivery.module.scss";
+import { Link } from "react-router-dom";
 
 const Delivery: React.FC = () => {
+  const { t } = useTranslation();
+
+
+
   return (
     <div className="page">
       <div className={styles.delivery}>
-        <h1>ДОСТАВКА ТА ПОВЕРНЕННЯ</h1>
+        <h1>{t("delivery-title")}</h1>
+
         <section className={styles.section}>
-          <h2>УМОВИ ДОСТАВКИ</h2>
-          <p className={styles.warning}>
-            ВАЖЛИВЕ ПОВІДОМЛЕННЯ – ВІЙНА В УКРАЇНІ: Через війну можливі невеликі затримки.
-            Після відправки ваше замовлення прибуде протягом 2-6 робочих днів.
-          </p>
+          <h2>{t("delivery-conditions-title")}</h2>
+          <p className={styles.warning}>{t("delivery-warning")}</p>
           <ul className={styles.list}>
-            <li>Замовлення по Україні відправляються «Новою Поштою» (2-3 робочих дні)</li>
-            <li>Замовлення по Польщі відправляємо «Нова пошта» (3-5 робочих дні)</li>
-            <li>Замовлення по США та Канаді відправляються «Пошта Канади» (1-3 робочих дні)</li>
-         
+            <li>{t("delivery-ua")}</li>
+            <li>{t("delivery-pl")}</li>
+            <li>{t("delivery-us-ca")}</li>
           </ul>
-          <p className={styles.freeShipping}>БЕЗКОШТОВНА ЕКСПРЕС-доставка замовлень на суму понад 300$</p>
-          <p><strong>Зверніть увагу:</strong> ми не доставляємо товари в Росію та Білорусь.</p>
+          <p className={styles.freeShipping}>{t("delivery-free")}</p>
+          <p>{t("delivery-restrictions")}</p>
         </section>
+
         <section className={styles.section}>
-          <h2>ВІДСТЕЖУЙТЕ СВОЄ ЗАМОВЛЕННЯ</h2>
-          <p>
-            Щойно ваше замовлення буде відправлено, ви отримаєте електронний лист із інформацією про відстеження.
-            Усі деталі відстеження є в електронному листі.
-          </p>
-          <p>
-            Мита та податки: можуть стягуватися митні збори та/або ПДВ.
-            <br></br>
-            <strong>FBE</strong> не несе відповідальності за митні або місцеві податки.
-          </p>
+          <h2>{t("tracking-title")}</h2>
+          <p>{t("tracking-info")}</p>
+          <p>{t("tracking-taxes")}</p>
         </section>
+
         <section className={styles.section}>
-          <h2>ПОВЕРНЕННЯ</h2>
-          <p>Купальники поверненню та обміну не підлягають.</p>
+          <h2>{t("exchange-title")}</h2>
+          <p>{t("exchange-info")}</p>
+          <p>{t("exchange-costs")}</p>
         </section>
+
         <section className={styles.section}>
-          <h2>ОПЛАТА</h2>
+          <h2>{t("return-title")}</h2>
+          <p>{t("return-info")}</p>
+        </section>
+
+        <section className={`${styles.section}`}>
+          <h2>{t("exchange-return-how-title")}</h2>
+          <ul>
+            <li>
+              {t("exchange-return-step1")}{" "}
+              <Link to="/contact" className="blue">
+                {t("exchange-return-contact")}
+              </Link>
+            </li>
+            <li>{t("exchange-return-step2")}</li>
+            <li>{t("exchange-return-step3")}</li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>{t("payment-title")}</h2>
           <div className={styles.payment}>
-            <h3>Рахунок на оплату</h3>
-            <p>
-              Після оформлення замовлення ми надішлемо вам рахунок на електронну пошту або у месенджер.
-              Ви зможете оплатити замовлення зручним способом. Після оплати отримаєте підтвердження та деталі доставки.
-            </p>
-            <h3>Передоплата</h3>
-            <p>
-              Для замовлень, де потрібна передоплата, необхідно внести <strong>200₴</strong>.
-              Ця сума гарантує резервування товару.
-            </p>
-            <h3>Післяплата / оплата повної суми</h3>
-            <p>
-              Якщо товар оплачується повністю після отримання рахунку, оплатіть зазначену суму згідно з інструкціями.
-              Після отримання платежу ми відправимо ваше замовлення.
-            </p>
+            <h3>{t("payment-invoice-title")}</h3>
+            <p>{t("payment-invoice-info")}</p>
+
+            <h3>{t("payment-prepay-title")}</h3>
+            <p>{t("payment-prepay-info")}</p>
+
+            <h3>{t("payment-postpay-title")}</h3>
+            <p>{t("payment-postpay-info")}</p>
           </div>
         </section>
       </div>
@@ -63,3 +75,5 @@ const Delivery: React.FC = () => {
 };
 
 export default Delivery;
+
+

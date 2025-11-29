@@ -32,7 +32,7 @@ const VariantImages: React.FC<VariantImagesProps> = ({
     remove(index);
     // Перенумерація order після видалення
     const images = watch(`variants.${variantIndex}.images`) || [];
-    images.forEach((img: any, i: number) => {
+    images.forEach((_, i: number) => {
       setValue(`variants.${variantIndex}.images.${i}.order`, i + 1);
     });
   };
@@ -44,54 +44,54 @@ const VariantImages: React.FC<VariantImagesProps> = ({
         const currentUrl = watch(`variants.${variantIndex}.images.${iIndex}.url`);
         return (
           <div key={field.id} style={{ margin: "1rem" }}>
-            <Input
-              placeholder="опис фото"
-              style={{ margin: "0.5rem" }}
-              {...register(`variants.${variantIndex}.images.${iIndex}.altText`)}
-            />
-
-            {/* Компонент для завантаження фото */}
-            <ImageUpload
-              onUpload={(url) => setValue(`variants.${variantIndex}.images.${iIndex}.url`, url)}
-            />
-
-            {/* Поле для ручного вставлення URL */}
-            <div style={{ display: "flex", marginTop: "0.5rem", gap: "0.5rem" }}>
-              <Input
-                type="text"
-                placeholder="Встав URL вручну"
-                value={manualImage}
-                onChange={(e) => setManualImage(e.target.value)}
-                id="urlhandle"
-              />
-              <Button
-                type="button"
-                onClick={() => {
-                  if (manualImage.trim()) {
-                    setValue(`variants.${variantIndex}.images.${iIndex}.url`, manualImage.trim());
-                    setManualImage("");
-                  }
-                }}
-              >
-                Завантажити фото
-              </Button>
+            <div className="column">
+              <div className="padding">
+                <Input
+                  placeholder="опис фото"
+                  style={{ margin: "0.5rem" }}
+                  {...register(`variants.${variantIndex}.images.${iIndex}.altText`)}
+                />
+                {/* Компонент для завантаження фото */}
+                <ImageUpload
+                  onUpload={(url) => setValue(`variants.${variantIndex}.images.${iIndex}.url`, url)}
+                />
+                {/* Поле для ручного вставлення URL */}
+                <div style={{ display: "flex", marginTop: "0.5rem", gap: "0.5rem" }}>
+                  <Input
+                    type="text"
+                    placeholder="Встав URL вручну"
+                    value={manualImage}
+                    onChange={(e) => setManualImage(e.target.value)}
+                    id="urlhandle"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (manualImage.trim()) {
+                        setValue(`variants.${variantIndex}.images.${iIndex}.url`, manualImage.trim());
+                        setManualImage("");
+                      }
+                    }}
+                  >
+                    Завантажити фото
+                  </Button>
+                </div>
+                {/* Поле для порядку */}
+                <Input
+                  type="number"
+                  placeholder="Order"
+                  min={1}
+                  {...register(`variants.${variantIndex}.images.${iIndex}.order`, { valueAsNumber: true })}
+                />
+              </div>
+              {currentUrl && (
+                <img
+                  src={currentUrl}
+                  alt="preview"
+                  style={{ width: 100, height: "auto", marginTop: "0.5rem" }}
+                />
+              )}
             </div>
-
-            {/* Поле для порядку */}
-            <Input
-              type="number"
-              placeholder="Order"
-              min={1}
-              {...register(`variants.${variantIndex}.images.${iIndex}.order`, { valueAsNumber: true })}
-            />
-
-            {currentUrl && (
-              <img
-                src={currentUrl}
-                alt="preview"
-                style={{ width: 100, height: "auto", marginTop: "0.5rem" }}
-              />
-            )}
 
             <button type="button" onClick={() => handleRemove(iIndex)}>
               ✕ Видалити фото
@@ -102,6 +102,7 @@ const VariantImages: React.FC<VariantImagesProps> = ({
 
       <Button
         type="button"
+        variant="full"
         onClick={() =>
           append({
             url: "",
