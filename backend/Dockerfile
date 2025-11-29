@@ -16,7 +16,6 @@ COPY . .
 # Генеруємо Prisma клієнт
 RUN npx prisma generate
 
-RUN npx prisma migrate deploy
 
 # Будуємо проект (якщо Nest.js)
 RUN npm run build
