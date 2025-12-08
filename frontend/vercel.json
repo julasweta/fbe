@@ -1,9 +1,9 @@
 {
-  "redirects": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "https://www.fbe.pp.ua",
-      "permanent": true
+      "src": "/[^.]+",
+      "dest": "/",
+      "status": 200
     }
   ]
 }
