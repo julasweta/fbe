@@ -15,7 +15,7 @@ interface IRoute {
   price?: string;
 }
 
-const API_URL = 'https://fbe.onrender.com';
+const API_URL = 'https://fbe-8ldlbw.fly.dev';
 const excludedPaths = ['/404', '/index'];
 
 // Нормалізація шляхів
