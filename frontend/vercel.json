@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://www.fbe.pp.ua",
+      "permanent": true
+    }
+  ]
+}
