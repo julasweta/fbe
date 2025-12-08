@@ -37,7 +37,7 @@ function ProductPage() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`https://fbe.onrender.com/products/${id}/`)
+    fetch(`https://fbe-8ldlbw.fly.dev/products/${id}/`)
       .then((res) => res.json())
       .then((data) => setProduct(data))
       .catch(console.error);

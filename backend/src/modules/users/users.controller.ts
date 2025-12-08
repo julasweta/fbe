@@ -26,8 +26,11 @@ import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UsersService) { }
+  
 
+@ApiBearerAuth()
+  @UseGuards(AuthGuard('bearer'))
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Returns all users' })
   @Get('all')

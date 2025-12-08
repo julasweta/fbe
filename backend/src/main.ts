@@ -27,7 +27,7 @@ async function bootstrap() {
 
   // Swagger конфігурація
   const config = new DocumentBuilder()
-    .setTitle('MyMarketAgregator')
+    .setTitle('FBE')
     .setDescription('Description Project')
     .setVersion('1.0')
     .addBearerAuth()
