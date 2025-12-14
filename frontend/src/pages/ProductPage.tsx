@@ -82,6 +82,7 @@ function ProductPage() {
       priceCurrency: "UAH",
       price: product.price ? String(product.price) : "0",
       availability: "https://schema.org/InStock",
+      priceValidUntil: "2027-12-31"
     },
     brand: {
       "@type": "Brand",
