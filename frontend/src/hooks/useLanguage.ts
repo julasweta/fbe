@@ -8,7 +8,7 @@ export const useLanguage = () => {
     localStorage.setItem("language", lng);
   };
 
-  const currentLanguage = i18n.language || "uk";
+  const currentLanguage = i18n.language || "en";
 
   return { currentLanguage, changeLanguage };
 };

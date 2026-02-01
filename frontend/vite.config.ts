@@ -189,7 +189,7 @@ async function generateStaticPages(distDir: string, routes: IRoute[]) {
     const canonicalHref = route.path === '/' ? 'https://fbe.pp.ua/' : `https://fbe.pp.ua${route.path}`;
 
     let modifiedContent = indexContent
-      .replace(/<title>.*?<\/title>/i, `<title>${escapeHtml(route.title)}</title>`)
+      .replace(/<title>.*?<\/title>/i, `<title>${escapeHtml(route.title.toUpperCase())}</title>`)
       .replace(/(<meta name="description" content=")[^"]*(")/i, `$1${escapeHtml(route.description)}$2`)
       .replace(/<link rel="canonical"[^>]*>/i, `<link rel="canonical" href="${canonicalHref}" />`);
 

@@ -8,12 +8,12 @@ const resources = {
   uk: { translation: uk },
 };
 
-const storedLang = localStorage.getItem("language") || "uk";
+const storedLang = localStorage.getItem("language") || "en";
 
 i18n.use(initReactI18next).init({
   resources,
   lng: storedLang,
-  fallbackLng: "uk",
+  fallbackLng: "en",
   interpolation: { escapeValue: false },
 });
 
